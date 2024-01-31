@@ -2,6 +2,8 @@ import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 
+import courses from '../../public/testing-data/courses.json'
+
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 
 import { api } from "~/utils/api";
@@ -34,11 +36,9 @@ export default function Home() {
                   </div>
                 </MenuItem>
                 <SubMenu label="Sections">
-                  {/* Put a for-loop to populate with section titles from the database. For now, I just hard-coded placeholders until Firebase is implemented. */}
-                  <MenuItem>Two-Factor Authentication</MenuItem>
-                  <MenuItem>Phishing</MenuItem>
-                  <MenuItem>Password Security</MenuItem>
-                  <MenuItem>Online Privacy</MenuItem>
+                  {courses.map((course) => (
+                    <MenuItem key={course.title}>{course.title}</MenuItem>
+                  ))}
                 </SubMenu>
               </Menu>
             </Sidebar>
