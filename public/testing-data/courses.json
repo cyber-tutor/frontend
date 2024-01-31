@@ -1,0 +1,26 @@
+[
+    {
+      "title": "Two-Factor Authentication",
+      "date": "2022-01-01",
+      "description": "A course that explores the concept of Two-Factor Authentication.",
+      "content": "In this course, we delve into the concept of Two-Factor Authentication (2FA). 2FA is a method of confirming a user's claimed identity by utilizing a combination of two different factors: something they know, something they possess, or something they are. This course will cover the importance of 2FA, how it works, and how it can be implemented to enhance security."
+    },
+    {
+      "title": "Phishing",
+      "date": "2022-02-01",
+      "description": "A comprehensive guide to understanding and preventing phishing attacks.",
+      "content": "This course provides an in-depth look at phishing attacks, a common cyber threat where attackers disguise themselves as a trustworthy entity to deceive victims into revealing sensitive information. We will explore different types of phishing attacks, how they are carried out, and effective strategies for recognizing and preventing these attacks."
+    },
+    {
+      "title": "Password Security",
+      "date": "2022-03-01",
+      "description": "Learn about the importance of strong passwords and how to create them.",
+      "content": "Password Security is a crucial aspect of protecting online accounts. This course will cover the importance of password security, common mistakes in creating passwords, and best practices for creating strong, secure passwords. We will also discuss the use of password managers and other tools to enhance password security."
+    },
+    {
+      "title": "Online Privacy",
+      "date": "2022-04-01",
+      "description": "A course that delves into the concept of online privacy and how to protect it.",
+      "content": "Online privacy refers to the privacy and security level of personal data published via the internet. This course will cover the importance of online privacy, potential threats to your online privacy, and practical steps you can take to improve your online privacy. We will also discuss laws and regulations that protect online privacy."
+    }
+  ]
