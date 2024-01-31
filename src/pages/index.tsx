@@ -1,14 +1,22 @@
+import { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-
-import courses from '../../public/testing-data/courses.json'
-
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
+
+import courses from "../../public/testing-data/courses.json";
 
 import { api } from "~/utils/api";
 
+type Course = {
+  title: string;
+  date: string;
+  description: string;
+  content: string;
+};
+
 export default function Home() {
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const hello = api.post.hello.useQuery({ text: "from tRPC" });
 
   return (
@@ -37,7 +45,12 @@ export default function Home() {
                 </MenuItem>
                 <SubMenu label="Sections">
                   {courses.map((course) => (
-                    <MenuItem key={course.title}>{course.title}</MenuItem>
+                    <MenuItem
+                      key={course.title}
+                      onClick={() => setSelectedCourse(course)}
+                    >
+                      {course.title}
+                    </MenuItem>
                   ))}
                 </SubMenu>
               </Menu>
@@ -54,8 +67,12 @@ export default function Home() {
         </div>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <p className="text-2xl text-black">
-            {hello.data ? hello.data.greeting : "Loading tRPC query..."}
+            {selectedCourse
+              ? selectedCourse.content
+              : "Select a course from the menu."}
+            
           </p>
+          {hello.data ? hello.data.greeting : "Loading tRPC query..."}
         </div>
       </main>
     </>
