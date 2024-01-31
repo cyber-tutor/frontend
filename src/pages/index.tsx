@@ -44,6 +44,7 @@ export default function Home() {
                   </div>
                 </MenuItem>
                 <SubMenu label="Sections">
+                  {/* add real data when we have it */}
                   {courses.map((course) => (
                     <MenuItem
                       key={course.title}
