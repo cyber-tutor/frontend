@@ -66,13 +66,16 @@ export default function Home() {
           </div>
         </div>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <p className="text-2xl text-black">
-            {selectedCourse
-              ? selectedCourse.content
-              : "Select a course from the menu."}
-            
-          </p>
-          {hello.data ? hello.data.greeting : "Loading tRPC query..."}
+          {selectedCourse ? (
+            <>
+              <h1 className="text-3xl font-bold">{selectedCourse.title}</h1>
+              <p className="text-sm text-gray-500">{selectedCourse.date}</p>
+              <p className="text-lg">{selectedCourse.description}</p>
+              <p className="text-base">{selectedCourse.content}</p>
+            </>
+          ) : (
+            <p>Select a course from the menu.</p>
+          )}
         </div>
       </main>
     </>
