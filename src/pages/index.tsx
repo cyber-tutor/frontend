@@ -16,17 +16,29 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen items-stretch bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <div className="flex h-full flex-col items-center justify-center">
-          <Sidebar>
-            <Menu>
-              <SubMenu label="Charts">
-                <MenuItem> Pie charts </MenuItem>
-                <MenuItem> Line charts </MenuItem>
-              </SubMenu>
-              <MenuItem> Documentation </MenuItem>
-              <MenuItem> Calendar </MenuItem>
-            </Menu>
-          </Sidebar>
+        <div className="flex h-screen flex-col items-center bg-slate-200">
+          <div className="flex h-full flex-col justify-between">
+            <Sidebar className="flex h-full flex-col">
+              <Menu>
+                <MenuItem className="text-center"> Cyber Tutor </MenuItem>
+                <SubMenu label="Sections">
+                  {/* Put a for-loop to populate with section titles from the database. For now, I just hard-coded placeholders until Firebase is implemented. */}
+                  <MenuItem>Two-Factor Authentication</MenuItem>
+                  <MenuItem>Phishing</MenuItem>
+                  <MenuItem>Password Security</MenuItem>
+                  <MenuItem>Online Privacy</MenuItem>
+                </SubMenu>
+              </Menu>
+            </Sidebar>
+            <div>
+              <Menu className="text-center">
+                {/* What we want here, is when the user clicks on this area: */}
+                {/* If logged in: Profile, Logout */}
+                {/* If logged out: Login, Register */}
+                <MenuItem> PUT USER STUFF HERE </MenuItem>
+              </Menu>
+            </div>
+          </div>
         </div>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <p className="text-2xl text-white">
