@@ -4,11 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 
-import courses from "../../public/testing-data/courses.json";
+import courses from "../../public/testing-data/topics.json";
 
 import { api } from "~/utils/api";
 
-type Course = {
+type Topic = {
   title: string;
   date: string;
   description: string;
@@ -16,7 +16,7 @@ type Course = {
 };
 
 export default function Home() {
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
   const hello = api.post.hello.useQuery({ text: "from tRPC" });
 
   return (
@@ -45,12 +45,12 @@ export default function Home() {
                 </MenuItem>
                 <SubMenu label="Sections">
                   {/* add real data when we have it */}
-                  {courses.map((course) => (
+                  {courses.map((topic) => (
                     <MenuItem
-                      key={course.title}
-                      onClick={() => setSelectedCourse(course)}
+                      key={topic.title}
+                      onClick={() => setSelectedTopic(topic)}
                     >
-                      {course.title}
+                      {topic.title}
                     </MenuItem>
                   ))}
                 </SubMenu>
@@ -67,15 +67,15 @@ export default function Home() {
           </div>
         </div>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          {selectedCourse ? (
+          {selectedTopic ? (
             <>
-              <h1 className="text-3xl font-bold">{selectedCourse.title}</h1>
-              <p className="text-sm text-gray-500">{selectedCourse.date}</p>
-              <p className="text-lg">{selectedCourse.description}</p>
-              <p className="text-base">{selectedCourse.content}</p>
+              <h1 className="text-3xl font-bold">{selectedTopic.title}</h1>
+              <p className="text-sm text-gray-500">{selectedTopic.date}</p>
+              <p className="text-lg">{selectedTopic.description}</p>
+              <p className="text-base">{selectedTopic.content}</p>
             </>
           ) : (
-            <p>Select a course from the menu.</p>
+            <p>Select a topic from the menu.</p>
           )}
         </div>
       </main>
