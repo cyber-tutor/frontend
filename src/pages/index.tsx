@@ -10,9 +10,13 @@ import { api } from "~/utils/api";
 
 type Topic = {
   title: string;
-  date: string;
   description: string;
-  content: string;
+  chapters: Chapter[];
+};
+
+type Chapter = {
+  title: string;
+  description: string;
 };
 
 export default function Home() {
@@ -70,9 +74,14 @@ export default function Home() {
           {selectedTopic ? (
             <>
               <h1 className="text-3xl font-bold">{selectedTopic.title}</h1>
-              <p className="text-sm text-gray-500">{selectedTopic.date}</p>
               <p className="text-lg">{selectedTopic.description}</p>
-              <p className="text-base">{selectedTopic.content}</p>
+              <h2 className="text-2xl font-bold">Chapters</h2>
+              {selectedTopic.chapters.map((chapter, index) => (
+                <div key={index} className="flex justify-between gap-12">
+                  <p className="text-lg">{chapter.title}</p>
+                  <p className="text-lg">{chapter.description}</p>
+                </div>
+              ))}
             </>
           ) : (
             <p>Select a topic from the menu.</p>
