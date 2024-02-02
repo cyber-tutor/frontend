@@ -1,26 +1,122 @@
 [
-    {
-      "title": "Two-Factor Authentication",
-      "date": "2022-01-01",
-      "description": "A course that explores the concept of Two-Factor Authentication.",
-      "content": "In this course, we delve into the concept of Two-Factor Authentication (2FA). 2FA is a method of confirming a user's claimed identity by utilizing a combination of two different factors: something they know, something they possess, or something they are. This course will cover the importance of 2FA, how it works, and how it can be implemented to enhance security."
-    },
-    {
-      "title": "Phishing",
-      "date": "2022-02-01",
-      "description": "A comprehensive guide to understanding and preventing phishing attacks.",
-      "content": "This course provides an in-depth look at phishing attacks, a common cyber threat where attackers disguise themselves as a trustworthy entity to deceive victims into revealing sensitive information. We will explore different types of phishing attacks, how they are carried out, and effective strategies for recognizing and preventing these attacks."
-    },
-    {
-      "title": "Password Security",
-      "date": "2022-03-01",
-      "description": "Learn about the importance of strong passwords and how to create them.",
-      "content": "Password Security is a crucial aspect of protecting online accounts. This course will cover the importance of password security, common mistakes in creating passwords, and best practices for creating strong, secure passwords. We will also discuss the use of password managers and other tools to enhance password security."
-    },
-    {
-      "title": "Online Privacy",
-      "date": "2022-04-01",
-      "description": "A course that delves into the concept of online privacy and how to protect it.",
-      "content": "Online privacy refers to the privacy and security level of personal data published via the internet. This course will cover the importance of online privacy, potential threats to your online privacy, and practical steps you can take to improve your online privacy. We will also discuss laws and regulations that protect online privacy."
-    }
-  ]
+  {
+    "title": "Two-Factor Authentication",
+    "description": "A course that explores the concept of Two-Factor Authentication.",
+    "chapters": [
+      {
+        "title": "Chapter 1: Introduction to Two-Factor Authentication",
+        "description": "An overview of the concept of Two-Factor Authentication."
+      },
+      {
+        "title": " Chapter 2: How Two-Factor Authentication Works",
+        "description": "A detailed explanation of how Two-Factor Authentication works."
+      },
+      {
+        "title": "Quiz: Chapter 1, Chapter 2",
+        "description": "A quiz to test your knowledge of Two-Factor Authentication."
+      },
+      {
+        "title": "Chapter 3: Types of Two-Factor Authentication",
+        "description": "An exploration of the different types of Two-Factor Authentication."
+      },
+      {
+        "title": "Quiz: Chapter 3",
+        "description": "A quiz to test your knowledge of Two-Factor Authentication."
+      },
+      {
+        "title": "Setting Up Two-Factor Authentication",
+        "description": "A guide to setting up Two-Factor Authentication on various platforms."
+      }
+    ]
+  },
+  {
+    "title": "Phishing",
+    "description": "A comprehensive guide to understanding and preventing phishing attacks.",
+    "chapters": [
+      {
+        "title": "Chapter 1: Introduction to Phishing",
+        "description": "An overview of the concept of phishing and its impact."
+      },
+      {
+        "title": "Chapter 2: How Phishing Works",
+        "description": "A detailed explanation of how phishing attacks are carried out."
+      },
+      {
+        "title": "Quiz: Chapter 1, Chapter 2",
+        "description": "A quiz to test your knowledge of phishing attacks."
+      },
+      {
+        "title": "Chapter 3: Types of Phishing Attacks",
+        "description": "An exploration of the different types of phishing attacks."
+      },
+      {
+        "title": "Quiz: Chapter 3",
+        "description": "A quiz to test your knowledge of phishing attacks."
+      },
+      {
+        "title": "Chapter 4: Preventing Phishing Attacks",
+        "description": "A guide to preventing and protecting against phishing attacks."
+      }
+    ]
+  },
+  {
+    "title": "Password Security",
+    "description": "Learn about the importance of strong passwords and how to create them.",
+    "chapters": [
+      {
+        "title": "Chapter 1: Introduction to Password Security",
+        "description": "An overview of the importance of strong passwords."
+      },
+      {
+        "title": "Chapter 2: Creating Strong Passwords",
+        "description": "A guide to creating strong and secure passwords."
+      },
+      {
+        "title": "Quiz: Chapter 1, Chapter 2",
+        "description": "A quiz to test your knowledge of password security."
+      },
+      {
+        "title": "Chapter 3: Managing Passwords",
+        "description": "Best practices for managing and storing passwords securely."
+      },
+      {
+        "title": "Quiz: Chapter 3",
+        "description": "A quiz to test your knowledge of password security."
+      },
+      {
+        "title": "Chapter 4: Multi-Factor Authentication",
+        "description": "An introduction to multi-factor authentication and its benefits."
+      }
+    ]
+  },
+  {
+    "title": "Online Privacy",
+    "description": "A course that delves into the concept of online privacy and how to protect it.",
+    "chapters": [
+      {
+        "title": "Chapter 1: Introduction to Online Privacy",
+        "description": "An overview of the concept of online privacy and its importance."
+      },
+      {
+        "title": "Chapter 2: Protecting Your Online Privacy",
+        "description": "Best practices for protecting your online privacy and personal information."
+      },
+      {
+        "title": "Quiz: Chapter 1, Chapter 2",
+        "description": "A quiz to test your knowledge of online privacy."
+      },
+      {
+        "title": "Chapter 3: Privacy Settings and Tools",
+        "description": "A guide to adjusting privacy settings and using privacy tools on various platforms."
+      },
+      {
+        "title": "Quiz: Chapter 3",
+        "description": "A quiz to test your knowledge of online privacy."
+      },
+      {
+        "title": "Chapter 4: Privacy Laws and Regulations",
+        "description": "An overview of privacy laws and regulations that protect online privacy."
+      }
+    ]
+  }
+]
