@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 
-import courses from "../../public/testing-data/topics.json";
+import topics from "../../public/testing-data/topics.json";
 
 import { api } from "~/utils/api";
 
@@ -49,7 +49,7 @@ export default function Home() {
                 </MenuItem>
                 <SubMenu label="Sections">
                   {/* add real data when we have it */}
-                  {courses.map((topic) => (
+                  {topics.map((topic) => (
                     <MenuItem
                       key={topic.title}
                       onClick={() => setSelectedTopic(topic)}
