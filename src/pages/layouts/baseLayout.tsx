@@ -53,7 +53,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                   <span className="font-mono">Cyber Tutor</span>
                 </div>
               </MenuItem>
-              <SubMenu label="Sections">
+              <SubMenu label="Topics">
                 {topics.map((topic) => (
                   <MenuItem
                     key={topic.title}
