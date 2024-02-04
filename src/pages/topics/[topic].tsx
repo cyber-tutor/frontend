@@ -37,7 +37,7 @@ export default function TopicPage() {
           {topic.chapters.map((chapter, index) => (
             <Link
               key={index}
-              href={`/chapters/${chapter.title}`}
+              href={`/topics/${encodeURIComponent(topic.title)}/${encodeURIComponent(chapter.title)}`}
               className="px-3 pt-3 hover:bg-slate-200"
             >
               <div>
