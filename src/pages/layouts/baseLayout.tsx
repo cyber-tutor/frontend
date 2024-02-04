@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import Image from "next/image";
 import topics from "../../../public/testing-data/topics.json";
@@ -21,8 +21,15 @@ type LayoutProps = {
 
 export const BaseLayout = ({ children }: LayoutProps) => {
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
-  const [isSubMenuOpen, setSubMenuOpen] = useState(true);
+  const [isSubMenuOpen, setSubMenuOpen] = useState<boolean>(() => {
+    const persistedState = localStorage.getItem('isSubMenuOpen');
+    return persistedState ? JSON.parse(persistedState) : true;
+  });
   const router = useRouter();
+
+  useEffect(() => {
+    localStorage.setItem('isSubMenuOpen', JSON.stringify(isSubMenuOpen));
+  }, [isSubMenuOpen]);
 
   const handleTopicClick = (topic: Topic) => {
     setSelectedTopic(topic);
