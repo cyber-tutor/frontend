@@ -20,26 +20,35 @@ type LayoutProps = {
 };
 
 export const BaseLayout = ({ children }: LayoutProps) => {
+  // This sets a state variable for the currently selected topic.
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+  // This sets a state variable for the open state of the submenu.
   const [isSubMenuOpen, setSubMenuOpen] = useState<boolean>(() => {
-    const persistedState = localStorage.getItem('isSubMenuOpen');
+    // This checks localStorage for a persisted state of isSubMenuOpen.
+    const persistedState = localStorage.getItem("isSubMenuOpen");
+    // This returns the persisted state if it exists. If not, then it returns true.
     return persistedState ? JSON.parse(persistedState) : true;
   });
+
   const router = useRouter();
 
+  // This stores the state of isSubMenuOpen in localStorage whenever it changes. This allows the state to persist across page reloads.
   useEffect(() => {
-    localStorage.setItem('isSubMenuOpen', JSON.stringify(isSubMenuOpen));
+    localStorage.setItem("isSubMenuOpen", JSON.stringify(isSubMenuOpen));
   }, [isSubMenuOpen]);
 
+  // This sets the selected topic and navigates to its corresponding page.
   const handleTopicClick = (topic: Topic) => {
     setSelectedTopic(topic);
     router.push(`/topics/${encodeURIComponent(topic.title)}`);
   };
 
+  // This navigates to the home page.
   const handleLogoClick = () => {
     router.push("/");
   };
 
+  // This toggles the open state of the submenu.
   const toggleSubMenu = () => {
     setSubMenuOpen(!isSubMenuOpen);
   };
