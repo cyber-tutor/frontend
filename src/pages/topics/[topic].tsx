@@ -5,12 +5,15 @@ import Link from "next/link";
 
 export default function TopicPage() {
   const router = useRouter();
+  // This gets the topic parameter from the URL.
   const { topic: topicTitle } = router.query;
 
+  // This gets the topic parameter from the URL, decoding it, and then finding the topic in the topics array using Next.js
   const topic = topics.find(
     (topic) => topic.title === decodeURIComponent(topicTitle as string),
   );
 
+  // This is some error handling.
   if (!topic) {
     return (
       <BaseLayout>
@@ -27,8 +30,9 @@ export default function TopicPage() {
             {topic.title}
           </h1>
           <div className="flex justify-end">
+            {/* We want to have it so this is a boolean later on */}
             <span className="decoration-5 rounded-full border border-solid border-black bg-slate-200 p-1.5 text-xs font-bold">
-              Incomplete ❌
+              Incomplete ❌{/* Complete ✅ */}
             </span>
           </div>
         </div>
@@ -45,9 +49,10 @@ export default function TopicPage() {
                   <h3 className="col-span-5 text-xl font-bold">
                     {chapter.title}
                   </h3>
+                  {/* Same here, boolean stuff */}
                   <div className="flex justify-end">
                     <span className="decoration-5 rounded-full border border-solid border-black bg-slate-200 p-1.5 text-xs font-bold">
-                      Incomplete ❌
+                      Incomplete ❌{/* Complete ✅ */}
                     </span>
                   </div>
                 </div>
