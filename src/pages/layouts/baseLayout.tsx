@@ -21,6 +21,7 @@ type LayoutProps = {
 
 export const BaseLayout = ({ children }: LayoutProps) => {
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+  const [isSubMenuOpen, setSubMenuOpen] = useState(true);
   const router = useRouter();
 
   const handleTopicClick = (topic: Topic) => {
@@ -53,7 +54,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                   <span className="font-mono">Cyber Tutor</span>
                 </div>
               </MenuItem>
-              <SubMenu label="Topics">
+              <SubMenu label="Topics" open={isSubMenuOpen}>
                 {topics.map((topic) => (
                   <MenuItem
                     key={topic.title}
