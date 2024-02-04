@@ -72,7 +72,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
           </div>
         </div>
       </div>
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+      <div className="container flex h-screen flex-col items-center gap-4 overflow-auto py-16">
         {children}
       </div>
     </div>
