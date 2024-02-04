@@ -1,7 +1,8 @@
-import { ReactNode, Dispatch, SetStateAction } from "react";
+import { ReactNode, useState } from "react";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import Image from "next/image";
 import topics from "../../../public/testing-data/topics.json";
+import { useRouter } from "next/router";
 
 type Topic = {
   title: string;
@@ -16,18 +17,31 @@ type Chapter = {
 
 type LayoutProps = {
   children: ReactNode;
-  selectedTopic: Topic | null;
-  setSelectedTopic: Dispatch<SetStateAction<Topic | null>>;
 };
 
-export const BaseLayout = ({ children, selectedTopic, setSelectedTopic }: LayoutProps) => {
+export const BaseLayout = ({ children }: LayoutProps) => {
+  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+  const router = useRouter();
+
+  const handleTopicClick = (topic: Topic) => {
+    setSelectedTopic(topic);
+    router.push(`/topics/${encodeURIComponent(topic.title)}`);
+  };
+
+  const handleLogoClick = () => {
+    router.push("/");
+  };
+
   return (
     <div className="flex min-h-screen items-stretch bg-slate-50">
       <div className="flex h-screen flex-col items-center bg-slate-400">
         <div className="flex h-full flex-col justify-between">
           <Sidebar className="flex h-full flex-col">
             <Menu>
-              <MenuItem className="flex flex-col justify-center text-center">
+              <MenuItem
+                className="flex flex-col justify-center text-center"
+                onClick={handleLogoClick}
+              >
                 <div className="flex items-center justify-center">
                   <Image
                     src="/Cyber-Tutor_Logo.png"
@@ -43,7 +57,7 @@ export const BaseLayout = ({ children, selectedTopic, setSelectedTopic }: Layout
                 {topics.map((topic) => (
                   <MenuItem
                     key={topic.title}
-                    onClick={() => setSelectedTopic(topic)}
+                    onClick={() => handleTopicClick(topic)}
                   >
                     {topic.title}
                   </MenuItem>
