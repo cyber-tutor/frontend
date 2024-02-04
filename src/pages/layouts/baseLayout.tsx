@@ -33,6 +33,10 @@ export const BaseLayout = ({ children }: LayoutProps) => {
     router.push("/");
   };
 
+  const toggleSubMenu = () => {
+    setSubMenuOpen(!isSubMenuOpen);
+  };
+
   return (
     <div className="flex min-h-screen items-stretch bg-slate-50">
       <div className="flex h-screen flex-col items-center bg-slate-400">
@@ -54,7 +58,11 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                   <span className="font-mono">Cyber Tutor</span>
                 </div>
               </MenuItem>
-              <SubMenu label="Topics" open={isSubMenuOpen}>
+              <SubMenu
+                label="Topics"
+                open={isSubMenuOpen}
+                onOpenChange={toggleSubMenu}
+              >
                 {topics.map((topic) => (
                   <MenuItem
                     key={topic.title}
