@@ -1,3 +1,5 @@
+// What I'm trying to have here is make it similar to Coursera in the sense that when you navigate to a chapter, it then changes the sidebar to show the chapters within that topic, rather than a list of topics. I didn't edit anything in this file yet.
+
 import { ReactNode, useState } from "react";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import Image from "next/image";
