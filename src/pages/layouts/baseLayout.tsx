@@ -20,21 +20,28 @@ type LayoutProps = {
 };
 
 export const BaseLayout = ({ children }: LayoutProps) => {
-  // This sets a state variable for the currently selected topic.
+  // This sets a state variable for the currently selected topic. We intent to use this to highlight the selected topic in the sidebar.
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+
   // This sets a state variable for the open state of the submenu.
   const [isSubMenuOpen, setSubMenuOpen] = useState<boolean>(() => {
-    // This checks localStorage for a persisted state of isSubMenuOpen.
-    const persistedState = localStorage.getItem("isSubMenuOpen");
-    // This returns the persisted state if it exists. If not, then it returns true.
-    return persistedState ? JSON.parse(persistedState) : true;
+    // This checks if window is defined to make sure we're not on the server.
+    if (typeof window !== "undefined") {
+      const persistedState = localStorage.getItem("isSubMenuOpen");
+      // This returns the persisted state if it exists. If not, then it returns true.
+      return persistedState ? JSON.parse(persistedState) : true;
+    }
+    // If we're on the server, just return true.
+    return true;
   });
 
   const router = useRouter();
-
   // This stores the state of isSubMenuOpen in localStorage whenever it changes. This allows the state to persist across page reloads.
   useEffect(() => {
-    localStorage.setItem("isSubMenuOpen", JSON.stringify(isSubMenuOpen));
+    // This checks if window is defined to make sure we're not on the server.
+    if (typeof window !== "undefined") {
+      localStorage.setItem("isSubMenuOpen", JSON.stringify(isSubMenuOpen));
+    }
   }, [isSubMenuOpen]);
 
   // This sets the selected topic and navigates to its corresponding page.
