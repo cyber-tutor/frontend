@@ -3,6 +3,8 @@ import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import Image from "next/image";
 import topics from "../../../public/testing-data/topics.json";
 import { useRouter } from "next/router";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../firebase/config";
 
 type Topic = {
   title: string;
@@ -35,6 +37,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
     return true;
   });
 
+  const [user, loading, error] = useAuthState(auth);
   const router = useRouter();
   // This stores the state of isSubMenuOpen in localStorage whenever it changes. This allows the state to persist across page reloads.
   useEffect(() => {
@@ -60,12 +63,13 @@ export const BaseLayout = ({ children }: LayoutProps) => {
     setSubMenuOpen(!isSubMenuOpen);
   };
 
-  const handleSignInClick = () => {
-    router.push("/users/sign-in");
-  };
-
-  const handleSignUpClick = () => {
-    router.push("/users/sign-up");
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      router.push("/users/sign-in");
+    } catch (error) {
+      console.error("Logout Error:", error);
+    }
   };
 
   return (
@@ -118,21 +122,32 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                 },
               }}
             >
-              <MenuItem>
-                {" "}
-                <button
-                  className="pointer-events-auto rounded px-1 hover:bg-blue-500"
-                  onClick={() => handleSignInClick()}
-                >
-                  Login
-                </button>
-                <button
-                  className="pointer-events-auto rounded px-1 hover:bg-blue-500"
-                  onClick={() => handleSignUpClick()}
-                >
-                  Register
-                </button>{" "}
-              </MenuItem>
+              {!user && !loading && (
+                <MenuItem>
+                  <button
+                    className="pointer-events-auto rounded px-3 hover:bg-blue-500"
+                    onClick={() => router.push("/users/sign-in")}
+                  >
+                    Login
+                  </button>
+                  <button
+                    className="pointer-events-auto rounded px-3 hover:bg-blue-500"
+                    onClick={() => router.push("/users/sign-up")}
+                  >
+                    Register
+                  </button>
+                </MenuItem>
+              )}
+              {user && (
+                <MenuItem>
+                  <button
+                    className="pointer-events-auto rounded px-3 hover:bg-blue-500"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                </MenuItem>
+              )}
             </Menu>
           </div>
         </div>
