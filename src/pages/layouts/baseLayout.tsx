@@ -162,12 +162,16 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                 )}
                 {user && (
                   <MenuItem>
+                    <p>
+                      Welcome {user.displayName}
+                    </p>
                     <button
                       className="pointer-events-auto rounded px-3 hover:bg-blue-500"
                       onClick={handleLogout}
                     >
-                      {collapsed ? 'L' : 'Logout'}
+                      {collapsed ? 'L' : 'Logout' }
                     </button>
+
                   </MenuItem>
                 )}
               </Menu>
