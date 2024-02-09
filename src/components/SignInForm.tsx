@@ -3,6 +3,7 @@ import { useAuthState, useSignInWithEmailAndPassword } from "react-firebase-hook
 import { auth } from "../pages/firebase/config";
 import { useRouter } from "next/router";
 import { signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider } from "firebase/auth";
+import { FcGoogle } from 'react-icons/fc';
 
 const SignInForm = () => {
   const [email, setEmail] = useState("");
@@ -81,8 +82,11 @@ const SignInForm = () => {
         Sign In
       </button>
 
-      <button onClick={handleGoogleSignIn}>
-        Login With Google
+      <button
+      onClick={handleGoogleSignIn}
+      className="flex w-full justify-center items-center rounded bg-white py-2 px-4 border border-gray-300 shadow-sm hover:bg-gray-50"
+      >
+      <FcGoogle className="mr-2" /> Login with Google
       </button>
 
 
