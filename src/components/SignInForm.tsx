@@ -82,6 +82,13 @@ const SignInForm = () => {
         Sign In
       </button>
 
+      <div className="flex items-center justify-center my-4">
+        <div className="flex-grow border-t border-gray-300"></div>
+        <span className="flex-shrink mx-4 text-gray-600">or</span>
+        <div className="flex-grow border-t border-gray-300"></div>
+      </div>
+
+
       <button
       onClick={handleGoogleSignIn}
       className="flex w-full justify-center items-center rounded bg-white py-2 px-4 border border-gray-300 shadow-sm hover:bg-gray-50"
