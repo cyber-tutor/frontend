@@ -1,14 +1,23 @@
-import React, { useState } from "react";
-import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
+import React, { useEffect, useState } from "react";
+import { useAuthState, useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "../pages/firebase/config";
 import { useRouter } from "next/router";
+import { signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider } from "firebase/auth";
 
 const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [user, setUser] = useAuthState(auth);
+
+
 
   const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
   const router = useRouter();
+
+  const emptyTextBoxes = () => {
+    setEmail("");
+    setPassword("");
+  };
 
   const handleSignIn = async (event: React.FormEvent) => {
     // This prevents the default behavior of a form submission is to reload the page. We don't want that because of async behavior.
@@ -16,13 +25,26 @@ const SignInForm = () => {
     // This is the try-catch block that will handle the actual sign-in process. If it succeeds, they will be redirected to the home page. If it fails, well, nothing really at the moment on the front end, YET. It logs the error to the console though.
     try {
       const res = await signInWithEmailAndPassword(email, password);
-      setEmail("");
-      setPassword("");
+      emptyTextBoxes
       router.push("/");
     } catch (e) {
       console.error(e);
     }
   };
+
+  const provider = new GoogleAuthProvider()
+  const handleGoogleSignIn = async () => {
+    emptyTextBoxes
+    const result =  signInWithPopup(auth,provider);
+    router.push("/");
+  }
+
+  useEffect(() => {
+    console.log(user);
+  }, [user])
+
+
+
 
   return (
     <form onSubmit={handleSignIn} className="space-y-6">
@@ -58,6 +80,12 @@ const SignInForm = () => {
       >
         Sign In
       </button>
+
+      <button onClick={handleGoogleSignIn}>
+        Login With Google
+      </button>
+
+
     </form>
   );
 };
