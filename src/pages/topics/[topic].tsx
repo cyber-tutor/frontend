@@ -24,15 +24,15 @@ export default function TopicPage() {
 
   return (
     <BaseLayout>
-      <div className="w-7/12 rounded-lg border-2 border-solid p-10 text-center">
+      <div className="lg:w-7/12 rounded-lg border-2 border-solid lg:p-10 text-center">
         <div className="grid grid-cols-6 items-center">
           <h1 className="col-span-5 flex justify-start text-3xl font-bold">
             {topic.title}
           </h1>
           <div className="flex justify-end">
             {/* We want to have it so this is a boolean later on */}
-            <span className="decoration-5 rounded-full border border-solid border-black bg-slate-200 p-1.5 text-xs font-bold">
-              Incomplete ❌{/* Complete ✅ */}
+            <span className="flex decoration-5 rounded-full border border-solid border-black bg-slate-200 p-1.5 text-xs font-bold ">
+              ❌{/* Complete ✅ */}
             </span>
           </div>
         </div>
@@ -52,7 +52,7 @@ export default function TopicPage() {
                   {/* Same here, boolean stuff */}
                   <div className="flex justify-end">
                     <span className="decoration-5 rounded-full border border-solid border-black bg-slate-200 p-1.5 text-xs font-bold">
-                      Incomplete ❌{/* Complete ✅ */}
+                      ❌{/* Complete ✅ */}
                     </span>
                   </div>
                 </div>
