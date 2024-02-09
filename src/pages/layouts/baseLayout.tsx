@@ -83,7 +83,6 @@ export const BaseLayout = ({ children }: LayoutProps) => {
             <Menu>
               <MenuItem
                 className="flex flex-col justify-center p-2 text-center"
-                onClick={handleLogoClick}
               >
                 <div className="flex items-center justify-center">
                   <Image
@@ -92,9 +91,10 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                     width={40}
                     height={40}
                     layout="fixed"
+                    onClick={handleLogoClick}
                   />
                   {!collapsed && (
-                    <span className="pe-2 font-mono">Cyber Tutor </span>
+                    <span className="pe-2 font-mono" onClick={handleLogoClick} >Cyber Tutor </span>
                   )}
                 </div>
                 <button
