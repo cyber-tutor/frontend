@@ -4,6 +4,8 @@ import Image from "next/image";
 import topics from "../../../public/testing-data/topics.json";
 import { FiMenu } from "react-icons/fi";
 import { useRouter } from "next/router";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../firebase/config";
 
 type Topic = {
   title: string;
@@ -38,6 +40,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
     return true;
   });
 
+  const [user, loading, error] = useAuthState(auth);
   const router = useRouter();
   // This stores the state of isSubMenuOpen in localStorage whenever it changes. This allows the state to persist across page reloads.
   useEffect(() => {
@@ -47,20 +50,29 @@ export const BaseLayout = ({ children }: LayoutProps) => {
     }
   }, [isSubMenuOpen]);
 
+  // This navigates to the home page.
+  const handleLogoClick = () => {
+    router.push("/");
+  };
+
   // This sets the selected topic and navigates to its corresponding page.
   const handleTopicClick = (topic: Topic) => {
     setSelectedTopic(topic);
     router.push(`/topics/${encodeURIComponent(topic.title)}`);
   };
 
-  // This navigates to the home page.
-  const handleLogoClick = () => {
-    router.push("/");
-  };
-
   // This toggles the open state of the submenu.
   const toggleSubMenu = () => {
     setSubMenuOpen(!isSubMenuOpen);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      router.push("/users/sign-in");
+    } catch (error) {
+      console.error("Logout Error:", error);
+    }
   };
 
   useEffect(() => {
@@ -123,6 +135,47 @@ export const BaseLayout = ({ children }: LayoutProps) => {
               </Menu>
             </Menu>
           </Sidebar>
+          <div>
+            <Menu
+              className="text-center"
+              menuItemStyles={{
+                button: {
+                  "&:hover": {
+                    background: "none",
+                    color: "inherit",
+                  },
+                  pointerEvents: "none",
+                },
+              }}
+            >
+              {!user && !loading && (
+                <MenuItem>
+                  <button
+                    className="pointer-events-auto rounded px-3 hover:bg-blue-500"
+                    onClick={() => router.push("/users/sign-in")}
+                  >
+                    Login
+                  </button>
+                  <button
+                    className="pointer-events-auto rounded px-3 hover:bg-blue-500"
+                    onClick={() => router.push("/users/sign-up")}
+                  >
+                    Register
+                  </button>
+                </MenuItem>
+              )}
+              {user && (
+                <MenuItem>
+                  <button
+                    className="pointer-events-auto rounded px-3 hover:bg-blue-500"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                </MenuItem>
+              )}
+            </Menu>
+          </div>
         </div>
       </div>
       <div className="container flex h-screen flex-col items-center gap-4  lg:py-16">
