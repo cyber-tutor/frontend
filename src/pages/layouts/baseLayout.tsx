@@ -2,6 +2,7 @@ import { ReactNode, useState, useEffect } from "react";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import Image from "next/image";
 import topics from "../../../public/testing-data/topics.json";
+import { FiMenu } from "react-icons/fi";
 import { useRouter } from "next/router";
 
 type Topic = {
@@ -22,6 +23,8 @@ type LayoutProps = {
 export const BaseLayout = ({ children }: LayoutProps) => {
   // This sets a state variable for the currently selected topic. We intent to use this to highlight the selected topic in the sidebar.
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
+  const [collapsed, setCollapsed] = useState(window.innerWidth <= 640);
+
 
   // This sets a state variable for the open state of the submenu.
   const [isSubMenuOpen, setSubMenuOpen] = useState<boolean>(() => {
@@ -60,26 +63,46 @@ export const BaseLayout = ({ children }: LayoutProps) => {
     setSubMenuOpen(!isSubMenuOpen);
   };
 
+  useEffect(() => {
+    const handleResize = () => {
+      setCollapsed(window.innerWidth <= 640);
+    };
+  
+    window.addEventListener('resize', handleResize);
+  
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <div className="flex min-h-screen items-stretch bg-slate-50">
       <div className="flex h-screen flex-col items-center bg-slate-400">
         <div className="flex h-full flex-col justify-between">
-          <Sidebar className="flex h-full flex-col">
+          <Sidebar collapsed={collapsed} className="flex h-full flex-col">
             <Menu>
               <MenuItem
-                className="flex flex-col justify-center text-center"
+                className="flex flex-col justify-center p-2 text-center"
                 onClick={handleLogoClick}
               >
                 <div className="flex items-center justify-center">
                   <Image
                     src="/Cyber-Tutor_Logo.png"
                     alt="Cyber Tutor Logo"
-                    width={50}
-                    height={50}
+                    width={40}
+                    height={40}
                     layout="fixed"
                   />
-                  <span className="font-mono">Cyber Tutor</span>
+                  {!collapsed && (
+                    <span className="pe-2 font-mono">Cyber Tutor </span>
+                  )}
                 </div>
+                <button
+                  className="sb-button font-mono"
+                  onClick={() => setCollapsed(!collapsed)}
+                >
+                  <FiMenu />
+                </button>
               </MenuItem>
               <SubMenu
                 label="Topics"
@@ -95,13 +118,11 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                   </MenuItem>
                 ))}
               </SubMenu>
+              <Menu>
+                <MenuItem> (Login icon) </MenuItem>
+              </Menu>
             </Menu>
           </Sidebar>
-          <div>
-            <Menu className="text-center">
-              <MenuItem> PUT USER STUFF HERE </MenuItem>
-            </Menu>
-          </div>
         </div>
       </div>
       <div className="container flex h-screen flex-col items-center gap-4 overflow-auto py-16">
