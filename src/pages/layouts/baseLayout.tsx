@@ -150,13 +150,13 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                       className="pointer-events-auto rounded px-3 hover:bg-blue-500"
                       onClick={() => router.push("/users/sign-in")}
                     >
-                      Login
+                      {collapsed ? 'L' : 'Login'}
                     </button>
                     <button
                       className="pointer-events-auto rounded px-3 hover:bg-blue-500"
                       onClick={() => router.push("/users/sign-up")}
                     >
-                      Register
+                      {collapsed ? 'R' : 'Register'}
                     </button>
                   </MenuItem>
                 )}
@@ -166,7 +166,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                       className="pointer-events-auto rounded px-3 hover:bg-blue-500"
                       onClick={handleLogout}
                     >
-                      Logout
+                      {collapsed ? 'L' : 'Logout'}
                     </button>
                   </MenuItem>
                 )}
