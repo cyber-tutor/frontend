@@ -44,20 +44,28 @@ export const BaseLayout = ({ children }: LayoutProps) => {
     }
   }, [isSubMenuOpen]);
 
+  // This navigates to the home page.
+  const handleLogoClick = () => {
+    router.push("/");
+  };
+
   // This sets the selected topic and navigates to its corresponding page.
   const handleTopicClick = (topic: Topic) => {
     setSelectedTopic(topic);
     router.push(`/topics/${encodeURIComponent(topic.title)}`);
   };
 
-  // This navigates to the home page.
-  const handleLogoClick = () => {
-    router.push("/");
-  };
-
   // This toggles the open state of the submenu.
   const toggleSubMenu = () => {
     setSubMenuOpen(!isSubMenuOpen);
+  };
+
+  const handleSignInClick = () => {
+    router.push("/users/sign-in");
+  };
+
+  const handleSignUpClick = () => {
+    router.push("/users/sign-up");
   };
 
   return (
@@ -98,8 +106,33 @@ export const BaseLayout = ({ children }: LayoutProps) => {
             </Menu>
           </Sidebar>
           <div>
-            <Menu className="text-center">
-              <MenuItem> PUT USER STUFF HERE </MenuItem>
+            <Menu
+              className="text-center"
+              menuItemStyles={{
+                button: {
+                  "&:hover": {
+                    background: "none",
+                    color: "inherit",
+                  },
+                  pointerEvents: "none",
+                },
+              }}
+            >
+              <MenuItem>
+                {" "}
+                <button
+                  className="pointer-events-auto rounded px-1 hover:bg-blue-500"
+                  onClick={() => handleSignInClick()}
+                >
+                  Login
+                </button>
+                <button
+                  className="pointer-events-auto rounded px-1 hover:bg-blue-500"
+                  onClick={() => handleSignUpClick()}
+                >
+                  Register
+                </button>{" "}
+              </MenuItem>
             </Menu>
           </div>
         </div>
