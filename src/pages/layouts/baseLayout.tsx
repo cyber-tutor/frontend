@@ -25,8 +25,7 @@ type LayoutProps = {
 export const BaseLayout = ({ children }: LayoutProps) => {
   // This sets a state variable for the currently selected topic. We intent to use this to highlight the selected topic in the sidebar.
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
-  const [collapsed, setCollapsed] = useState(window.innerWidth <= 640);
-
+  const [collapsed, setCollapsed] = useState(false);
 
   // This sets a state variable for the open state of the submenu.
   const [isSubMenuOpen, setSubMenuOpen] = useState<boolean>(() => {
@@ -79,11 +78,11 @@ export const BaseLayout = ({ children }: LayoutProps) => {
     const handleResize = () => {
       setCollapsed(window.innerWidth <= 640);
     };
-  
-    window.addEventListener('resize', handleResize);
-  
+
+    window.addEventListener("resize", handleResize);
+
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -93,9 +92,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
         <div className="flex h-full flex-col justify-between">
           <Sidebar collapsed={collapsed} className="flex h-full flex-col">
             <Menu>
-              <MenuItem
-                className="flex flex-col justify-center p-2 text-center"
-              >
+              <MenuItem className="flex flex-col justify-center p-2 text-center">
                 <div className="flex items-center justify-center">
                   <Image
                     src="/Cyber-Tutor_Logo.png"
@@ -106,7 +103,9 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                     onClick={handleLogoClick}
                   />
                   {!collapsed && (
-                    <span className="pe-2 font-mono" onClick={handleLogoClick} >Cyber Tutor </span>
+                    <span className="pe-2 font-mono" onClick={handleLogoClick}>
+                      Cyber Tutor{" "}
+                    </span>
                   )}
                 </div>
                 <button
@@ -130,57 +129,55 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                   </MenuItem>
                 ))}
               </SubMenu>
-              <Menu>
-                <MenuItem> (Login icon) </MenuItem>
-              </Menu>
             </Menu>
-          </Sidebar>
-          <div>
-            <Menu
-              className="text-center"
-              menuItemStyles={{
-                button: {
-                  "&:hover": {
-                    background: "none",
-                    color: "inherit",
+
+            <div>
+              <Menu
+                className="text-center"
+                menuItemStyles={{
+                  button: {
+                    "&:hover": {
+                      background: "none",
+                      color: "inherit",
+                    },
+                    pointerEvents: "none",
                   },
-                  pointerEvents: "none",
-                },
-              }}
-            >
-              {!user && !loading && (
-                <MenuItem>
-                  <button
-                    className="pointer-events-auto rounded px-3 hover:bg-blue-500"
-                    onClick={() => router.push("/users/sign-in")}
-                  >
-                    Login
-                  </button>
-                  <button
-                    className="pointer-events-auto rounded px-3 hover:bg-blue-500"
-                    onClick={() => router.push("/users/sign-up")}
-                  >
-                    Register
-                  </button>
-                </MenuItem>
-              )}
-              {user && (
-                <MenuItem>
-                  <button
-                    className="pointer-events-auto rounded px-3 hover:bg-blue-500"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </button>
-                </MenuItem>
-              )}
-            </Menu>
-          </div>
+                }}
+              >
+                {!user && !loading && (
+                  <MenuItem>
+                    <button
+                      className="pointer-events-auto rounded px-3 hover:bg-blue-500"
+                      onClick={() => router.push("/users/sign-in")}
+                    >
+                      Login
+                    </button>
+                    <button
+                      className="pointer-events-auto rounded px-3 hover:bg-blue-500"
+                      onClick={() => router.push("/users/sign-up")}
+                    >
+                      Register
+                    </button>
+                  </MenuItem>
+                )}
+                {user && (
+                  <MenuItem>
+                    <button
+                      className="pointer-events-auto rounded px-3 hover:bg-blue-500"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  </MenuItem>
+                )}
+              </Menu>
+            </div>
+          </Sidebar>
         </div>
       </div>
       <div className="container flex h-screen flex-col items-center gap-4  lg:py-16">
-  {children}
-</div>
+        {children}
+      </div>
     </div>
   );
 };
