@@ -37,7 +37,7 @@ const SignUpForm = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="flex w-full justify-center rounded p-1"
+          className="flex w-full justify-center rounded p-1 border-2"
         />
       </div>
       <div>
@@ -50,7 +50,7 @@ const SignUpForm = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="flex w-full justify-center rounded p-1"
+          className="flex w-full justify-center rounded p-1 border-2"
         />
       </div>
       <button
