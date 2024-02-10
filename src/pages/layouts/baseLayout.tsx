@@ -109,6 +109,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                   )}
                 </div>
                 <button
+                  type="button"
                   className="sb-button font-mono"
                   onClick={() => setCollapsed(!collapsed)}
                   aria-label="Sidebar Toggle Button"
@@ -148,12 +149,14 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                 {!user && !loading && (
                   <MenuItem>
                     <button
+                      type="button"
                       className="pointer-events-auto rounded px-3 hover:bg-blue-500"
                       onClick={() => router.push("/users/sign-in")}
                     >
                       {collapsed ? "L" : "Login"}
                     </button>
                     <button
+                      type="button"
                       className="pointer-events-auto rounded px-3 hover:bg-blue-500"
                       onClick={() => router.push("/users/sign-up")}
                     >
@@ -165,6 +168,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                   <MenuItem>
                     <p>Welcome {user.displayName}</p>
                     <button
+                      type="button"
                       className="pointer-events-auto rounded px-3 hover:bg-blue-500"
                       onClick={handleLogout}
                     >
