@@ -1,11 +1,11 @@
 import { ReactNode, useState, useEffect } from "react";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import Image from "next/image";
-import topics from "../../../public/testing-data/topics.json";
 import { FiMenu } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../firebase/config";
+import { auth, db } from "../firebase/config";
+import { ref, get } from "firebase/database";
 
 type Topic = {
   title: string;
@@ -23,6 +23,9 @@ type LayoutProps = {
 };
 
 export const BaseLayout = ({ children }: LayoutProps) => {
+  // This is for the topics fetched from firebase.
+  const [topics, setTopics] = useState<Topic[]>([]);
+
   // This sets a state variable for the currently selected topic. We intent to use this to highlight the selected topic in the sidebar.
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
   const [collapsed, setCollapsed] = useState(false);
@@ -48,6 +51,23 @@ export const BaseLayout = ({ children }: LayoutProps) => {
       localStorage.setItem("isSubMenuOpen", JSON.stringify(isSubMenuOpen));
     }
   }, [isSubMenuOpen]);
+
+  useEffect(() => {
+    const topicsRef = ref(db, "/");
+    // This fetches the topics from the database and sets the state variable.
+    get(topicsRef)
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          setTopics(Object.values(data));
+        } else {
+          console.log("No data available");
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to fetch data: ", error);
+      });
+  }, []);
 
   // This navigates to the home page.
   const handleLogoClick = () => {
@@ -122,9 +142,10 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                 open={isSubMenuOpen}
                 onOpenChange={toggleSubMenu}
               >
-                {topics.map((topic) => (
+                {topics.map((topic, index) => (
                   <MenuItem
-                    key={topic.title}
+                    // This is a unique identifier for each topic, which is made up of the title and the index.
+                    key={topic.title + index}
                     onClick={() => handleTopicClick(topic)}
                   >
                     {topic.title}
