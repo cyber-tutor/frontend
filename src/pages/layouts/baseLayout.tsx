@@ -111,6 +111,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                 <button
                   className="sb-button font-mono"
                   onClick={() => setCollapsed(!collapsed)}
+                  aria-label="Sidebar Toggle Button"
                 >
                   <FiMenu />
                 </button>
@@ -150,28 +151,25 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                       className="pointer-events-auto rounded px-3 hover:bg-blue-500"
                       onClick={() => router.push("/users/sign-in")}
                     >
-                      {collapsed ? 'L' : 'Login'}
+                      {collapsed ? "L" : "Login"}
                     </button>
                     <button
                       className="pointer-events-auto rounded px-3 hover:bg-blue-500"
                       onClick={() => router.push("/users/sign-up")}
                     >
-                      {collapsed ? 'R' : 'Register'}
+                      {collapsed ? "R" : "Register"}
                     </button>
                   </MenuItem>
                 )}
                 {user && (
                   <MenuItem>
-                    <p>
-                      Welcome {user.displayName}
-                    </p>
+                    <p>Welcome {user.displayName}</p>
                     <button
                       className="pointer-events-auto rounded px-3 hover:bg-blue-500"
                       onClick={handleLogout}
                     >
-                      {collapsed ? 'L' : 'Logout' }
+                      {collapsed ? "L" : "Logout"}
                     </button>
-
                   </MenuItem>
                 )}
               </Menu>
