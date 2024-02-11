@@ -1,29 +1,79 @@
-import { useRouter } from "next/router";
 import { BaseLayout } from "../../layouts/baseLayout";
-import topics from "../../../../public/testing-data/topics.json";
+import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
+import { getDatabase, ref, get } from "firebase/database";
+
+type Chapter = {
+  title: string;
+  description: string;
+};
+
+type Topic = {
+  title: string;
+  description: string;
+  chapters: Chapter[];
+};
 
 export default function ChapterPage() {
-  
+  const [chapter, setChapter] = useState<Chapter | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const router = useRouter();
   // This gets the topic and chapter parameters from the URL.
   const { topic: topicTitle, chapter: chapterTitle } = router.query;
 
-  // This gets the topic parameter from the URL, decoding it, and then finding the topic in the topics array using Next.js
-  const topic = topics.find(
-    (topic) => topic.title === decodeURIComponent(topicTitle as string),
-  );
-  const chapter = topic?.chapters.find(
-    (chapter) => chapter.title === decodeURIComponent(chapterTitle as string),
-  );
+  useEffect(() => {
+    if (topicTitle && chapterTitle) {
+      const db = getDatabase();
+      const topicsRef = ref(db, "/");
 
-  // This is some error handling.
-  if (!chapter) {
+      get(topicsRef)
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            const topics: Topic[] = Object.values(snapshot.val());
+            const foundTopic = topics.find(
+              (t) => t.title === decodeURIComponent(topicTitle as string),
+            );
+            if (foundTopic) {
+              const foundChapter = foundTopic.chapters.find(
+                (c) => c.title === decodeURIComponent(chapterTitle as string),
+              );
+              setChapter(foundChapter || null);
+            } else {
+              setError("Topic not found");
+            }
+          } else {
+            setError("No topics available");
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          setError(error.message);
+          setLoading(false);
+        });
+    }
+  }, [topicTitle, chapterTitle]);
+
+  // The following 3 conditionals are just to handle the different states of the page.
+  if (loading)
+    return (
+      <BaseLayout>
+        <div>Loading...</div>
+      </BaseLayout>
+    );
+  if (error)
+    return (
+      <BaseLayout>
+        <div>Error: {error}</div>
+      </BaseLayout>
+    );
+  if (!chapter)
     return (
       <BaseLayout>
         <div>Chapter not found</div>
       </BaseLayout>
     );
-  }
 
   return (
     <BaseLayout>

@@ -1,37 +1,83 @@
 import { BaseLayout } from "../layouts/baseLayout";
 import { useRouter } from "next/router";
-import topics from "../../../public/testing-data/topics.json";
+import { useState, useEffect } from "react";
+import { getDatabase, ref, get } from "firebase/database";
 import Link from "next/link";
 
+type Chapter = {
+  title: string;
+  description: string;
+};
+
+type Topic = {
+  title: string;
+  description: string;
+  chapters: Chapter[];
+};
+
 export default function TopicPage() {
+  const [topic, setTopic] = useState<Topic | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const router = useRouter();
-  // This gets the topic parameter from the URL.
   const { topic: topicTitle } = router.query;
 
-  // This gets the topic parameter from the URL, decoding it, and then finding the topic in the topics array using Next.js
-  const topic = topics.find(
-    (topic) => topic.title === decodeURIComponent(topicTitle as string),
-  );
+  useEffect(() => {
+    if (topicTitle) {
+      const db = getDatabase();
+      const topicsRef = ref(db, "/");
 
-  // This is some error handling.
-  if (!topic) {
+      get(topicsRef)
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            const topics: Topic[] = Object.values(snapshot.val());
+            const foundTopic = topics.find(
+              (t) => t.title === decodeURIComponent(topicTitle as string),
+            );
+            setTopic(foundTopic || null);
+          } else {
+            setError("No topics available");
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          setError(error.message);
+          setLoading(false);
+        });
+    }
+  }, [topicTitle]);
+
+  // The following 3 conditionals are just to handle the different states of the page.
+  if (loading)
+    return (
+      <BaseLayout>
+        <div>Loading...</div>
+      </BaseLayout>
+    );
+  if (error)
+    return (
+      <BaseLayout>
+        <div>Error: {error}</div>
+      </BaseLayout>
+    );
+  if (!topic)
     return (
       <BaseLayout>
         <div>Topic not found</div>
       </BaseLayout>
     );
-  }
 
   return (
     <BaseLayout>
-      <div className="lg:w-7/12 rounded-lg border-2 border-solid lg:p-10 text-center">
+      <div className="rounded-lg border-2 border-solid text-center lg:w-7/12 lg:p-10">
         <div className="grid grid-cols-6 items-center">
           <h1 className="col-span-5 flex justify-start text-3xl font-bold">
             {topic.title}
           </h1>
           <div className="flex justify-end">
             {/* We want to have it so this is a boolean later on */}
-            <span className="flex decoration-5 rounded-full border border-solid border-black bg-slate-200 p-1.5 text-xs font-bold ">
+            <span className="decoration-5 flex rounded-full border border-solid border-black bg-slate-200 p-1.5 text-xs font-bold ">
               ❌{/* Complete ✅ */}
             </span>
           </div>
