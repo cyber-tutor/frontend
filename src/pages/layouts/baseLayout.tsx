@@ -8,14 +8,33 @@ import { auth, db } from "../firebase/config";
 import { ref, get } from "firebase/database";
 
 type Topic = {
-  title: string;
-  description: string;
+  topicId: string;
+  topicTitle: string;
+  topicDescription: string;
   chapters: Chapter[];
 };
 
 type Chapter = {
-  title: string;
-  description: string;
+  chapterId: string;
+  chapterType: string;
+  chapterTitle: string;
+  chapterDescription: string;
+  chapterPrompt: string;
+  chapterQuestions?: Question[];
+};
+
+type Question = {
+  questionId: string;
+  questionTitle: string;
+  questionDifficulty: string;
+  options: Option[];
+};
+
+type Option = {
+  optionId: string;
+  optionTitle: string;
+  optionCorrectness: string;
+  optionReasoning: string;
 };
 
 type LayoutProps = {
@@ -53,13 +72,13 @@ export const BaseLayout = ({ children }: LayoutProps) => {
   }, [isSubMenuOpen]);
 
   useEffect(() => {
-    const topicsRef = ref(db, "/");
+    const topicsRef = ref(db, "/topics");
     // This fetches the topics from the database and sets the state variable.
     get(topicsRef)
       .then((snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.val();
-          setTopics(Object.values(data));
+          setTopics(data);
         } else {
           console.log("No data available");
         }
@@ -77,7 +96,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
   // This sets the selected topic and navigates to its corresponding page.
   const handleTopicClick = (topic: Topic) => {
     setSelectedTopic(topic);
-    router.push(`/topics/${encodeURIComponent(topic.title)}`);
+    router.push(`/topics/${encodeURIComponent(topic.topicTitle)}`);
   };
 
   // This toggles the open state of the submenu.
@@ -144,11 +163,11 @@ export const BaseLayout = ({ children }: LayoutProps) => {
               >
                 {topics.map((topic, index) => (
                   <MenuItem
-                    // This is a unique identifier for each topic, which is made up of the title and the index.
-                    key={topic.title + index}
+                    // Topics now have a unique id, so we can use that as the key.
+                    key={topic.topicId}
                     onClick={() => handleTopicClick(topic)}
                   >
-                    {topic.title}
+                    {topic.topicTitle}
                   </MenuItem>
                 ))}
               </SubMenu>

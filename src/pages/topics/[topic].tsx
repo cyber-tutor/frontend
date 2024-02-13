@@ -4,15 +4,34 @@ import { useState, useEffect } from "react";
 import { getDatabase, ref, get } from "firebase/database";
 import Link from "next/link";
 
-type Chapter = {
-  title: string;
-  description: string;
+type Topic = {
+  topicId: string;
+  topicTitle: string;
+  topicDescription: string;
+  chapters: Chapter[];
 };
 
-type Topic = {
-  title: string;
-  description: string;
-  chapters: Chapter[];
+type Chapter = {
+  chapterId: string;
+  chapterType: string;
+  chapterTitle: string;
+  chapterDescription: string;
+  chapterPrompt: string;
+  chapterQuestions?: Question[];
+};
+
+type Question = {
+  questionId: string;
+  questionTitle: string;
+  questionDifficulty: string;
+  options: Option[];
+};
+
+type Option = {
+  optionId: string;
+  optionTitle: string;
+  optionCorrectness: string;
+  optionReasoning: string;
 };
 
 export default function TopicPage() {
@@ -26,14 +45,14 @@ export default function TopicPage() {
   useEffect(() => {
     if (topicTitle) {
       const db = getDatabase();
-      const topicsRef = ref(db, "/");
+      const topicsRef = ref(db, "/topics");
 
       get(topicsRef)
         .then((snapshot) => {
           if (snapshot.exists()) {
             const topics: Topic[] = Object.values(snapshot.val());
             const foundTopic = topics.find(
-              (t) => t.title === decodeURIComponent(topicTitle as string),
+              (t) => t.topicTitle === decodeURIComponent(topicTitle as string),
             );
             setTopic(foundTopic || null);
           } else {
@@ -73,7 +92,7 @@ export default function TopicPage() {
       <div className="rounded-lg border-2 border-solid text-center lg:w-7/12 lg:p-10">
         <div className="grid grid-cols-6 items-center">
           <h1 className="col-span-5 flex justify-start text-3xl font-bold">
-            {topic.title}
+            {topic.topicTitle}
           </h1>
           <div className="flex justify-end">
             {/* We want to have it so this is a boolean later on */}
@@ -82,18 +101,18 @@ export default function TopicPage() {
             </span>
           </div>
         </div>
-        <p className="border-b-4 py-3">{topic.description}</p>
+        <p className="border-b-4 py-3">{topic.topicDescription}</p>
         <div className="flex flex-col text-start">
           {topic.chapters.map((chapter, index) => (
             <Link
               key={index}
-              href={`/topics/${encodeURIComponent(topic.title)}/${encodeURIComponent(chapter.title)}`}
+              href={`/topics/${encodeURIComponent(topic.topicTitle)}/${encodeURIComponent(chapter.chapterTitle)}`}
               className="px-3 pt-3 hover:bg-slate-200"
             >
               <div>
                 <div className="grid grid-cols-6 items-center">
                   <h3 className="col-span-5 text-xl font-bold">
-                    {chapter.title}
+                    {chapter.chapterTitle}
                   </h3>
                   {/* Same here, boolean stuff */}
                   <div className="flex justify-end">
@@ -103,7 +122,7 @@ export default function TopicPage() {
                   </div>
                 </div>
                 <div></div>
-                <p className="border-b-2 pb-3">{chapter.description}</p>
+                <p className="border-b-2 pb-3">{chapter.chapterDescription}</p>
               </div>
             </Link>
           ))}

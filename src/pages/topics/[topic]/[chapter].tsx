@@ -3,15 +3,34 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { getDatabase, ref, get } from "firebase/database";
 
-type Chapter = {
-  title: string;
-  description: string;
+type Topic = {
+  topicId: string;
+  topicTitle: string;
+  topicDescription: string;
+  chapters: Chapter[];
 };
 
-type Topic = {
-  title: string;
-  description: string;
-  chapters: Chapter[];
+type Chapter = {
+  chapterId: string;
+  chapterType: string;
+  chapterTitle: string;
+  chapterDescription: string;
+  chapterPrompt: string;
+  chapterQuestions?: Question[];
+};
+
+type Question = {
+  questionId: string;
+  questionTitle: string;
+  questionDifficulty: string;
+  options: Option[];
+};
+
+type Option = {
+  optionId: string;
+  optionTitle: string;
+  optionCorrectness: string;
+  optionReasoning: string;
 };
 
 export default function ChapterPage() {
@@ -26,18 +45,19 @@ export default function ChapterPage() {
   useEffect(() => {
     if (topicTitle && chapterTitle) {
       const db = getDatabase();
-      const topicsRef = ref(db, "/");
+      const topicsRef = ref(db, "/topics");
 
       get(topicsRef)
         .then((snapshot) => {
           if (snapshot.exists()) {
             const topics: Topic[] = Object.values(snapshot.val());
             const foundTopic = topics.find(
-              (t) => t.title === decodeURIComponent(topicTitle as string),
+              (t) => t.topicTitle === decodeURIComponent(topicTitle as string),
             );
             if (foundTopic) {
               const foundChapter = foundTopic.chapters.find(
-                (c) => c.title === decodeURIComponent(chapterTitle as string),
+                (c) =>
+                  c.chapterTitle === decodeURIComponent(chapterTitle as string),
               );
               setChapter(foundChapter || null);
             } else {
@@ -77,8 +97,8 @@ export default function ChapterPage() {
 
   return (
     <BaseLayout>
-      <h1 className="text-3xl font-bold">{chapter.title}</h1>
-      <p className="border-b-4 py-3">{chapter.description}</p>
+      <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
+      <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
       {/* We want to have the content on this page be similar to Coursera. We should probably structure our test data to reflect what we actually want in Firebase. For example, we would probably want to have a field that tells us what type of content should be displayed (video, text-based, quiz, etc.) then have conditionals. Like, for a YouTube video, we would want the video as well as a transcript, but for text, we would just want text, or for an assessment, we would want just the SurveyJS implementation. */}
     </BaseLayout>
   );
