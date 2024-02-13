@@ -99,7 +99,18 @@ export default function ChapterPage() {
     <BaseLayout>
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
       <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
-      {/* We want to have the content on this page be similar to Coursera. We should probably structure our test data to reflect what we actually want in Firebase. For example, we would probably want to have a field that tells us what type of content should be displayed (video, text-based, quiz, etc.) then have conditionals. Like, for a YouTube video, we would want the video as well as a transcript, but for text, we would just want text, or for an assessment, we would want just the SurveyJS implementation. */}
+      {/* Depending on the chapter type, render different content */}
+      {chapter.chapterType === "text" && (
+        <div>
+          {/* Blah blah, paraphrased text */}This is a text-based chapter
+        </div>
+      )}
+      {chapter.chapterType === "video" && (
+        <div>{/* Blah blah, video */}This is a video chapter.</div>
+      )}
+      {chapter.chapterType === "quiz" && (
+        <div>{/* Blah blah, quiz */}This is an assessment chapter</div>
+      )}
     </BaseLayout>
   );
 }
