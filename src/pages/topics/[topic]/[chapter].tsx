@@ -108,8 +108,8 @@ export default function ChapterPage() {
       {chapter.chapterType === "video" && (
         <div>{/* Blah blah, video */}This is a video chapter.</div>
       )}
-      {chapter.chapterType === "quiz" && (
-        <div>{/* Blah blah, quiz */}This is an assessment chapter</div>
+      {chapter.chapterType === "assessment" && (
+        <div>{/* Blah blah, assessment */}This is an assessment chapter</div>
       )}
     </BaseLayout>
   );
