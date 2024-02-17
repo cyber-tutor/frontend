@@ -17,6 +17,13 @@ type Chapter = {
   chapterDescription: string;
   chapterPrompt: string;
   chapterQuestions?: Question[];
+  chapterContent?: string;
+  controlGroup: {
+    chapterContent: string;
+  };
+  experimentalGroup: {
+    chapterContent: string;
+  };
 };
 
 type Question = {
@@ -99,14 +106,20 @@ export default function ChapterPage() {
     <BaseLayout>
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
       <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
-      {/* Depending on the chapter type, render different content */}
+      {/* Later on, AFTER we set up user profiles, we want to implement conditional logic to determine what content we want to display based on what group they are assigned after either signing up/completing initial assessment */}
       {chapter.chapterType === "text" && (
-        <div>
-          {/* Blah blah, paraphrased text */}This is a text-based chapter
-        </div>
+        <div>{chapter.controlGroup.chapterContent}</div>
       )}
       {chapter.chapterType === "video" && (
-        <div>{/* Blah blah, video */}This is a video chapter.</div>
+        <div>
+          <iframe
+            title="YouTube video player"
+            width="560"
+            height="315"
+            allowFullScreen
+            src={chapter.controlGroup.chapterContent}
+          ></iframe>
+        </div>
       )}
       {chapter.chapterType === "assessment" && (
         <div>{/* Blah blah, assessment */}This is an assessment chapter</div>
