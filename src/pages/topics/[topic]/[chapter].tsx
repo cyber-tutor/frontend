@@ -2,6 +2,9 @@ import { BaseLayout } from "../../layouts/baseLayout";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { getDatabase, ref, get } from "firebase/database";
+import { Survey } from "survey-react-ui";
+import { Model } from "survey-core";
+import "survey-core/defaultV2.min.css";
 
 type Topic = {
   topicId: string;
@@ -102,6 +105,26 @@ export default function ChapterPage() {
       </BaseLayout>
     );
 
+  // This function renders the survey using the SurveyJS library.
+  // https://surveyjs.io/form-library/documentation/get-started-react
+  function App() {
+    if (
+      !chapter ||
+      chapter.chapterType !== "assessment" ||
+      !chapter.controlGroup.chapterContent
+    ) {
+      return <div>uh oh, no survey 😱</div>;
+    }
+
+    const surveyJson = chapter.controlGroup.chapterContent;
+    const survey = new Model(surveyJson);
+    survey.onComplete.add((sender) => {
+      console.log("Survey results: ", sender.data);
+    });
+
+    return <Survey model={survey} />;
+  }
+
   return (
     <BaseLayout>
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
@@ -121,9 +144,7 @@ export default function ChapterPage() {
           ></iframe>
         </div>
       )}
-      {chapter.chapterType === "assessment" && (
-        <div>{/* Blah blah, assessment */}This is an assessment chapter</div>
-      )}
+      {chapter.chapterType === "assessment" && App()}
     </BaseLayout>
   );
 }
