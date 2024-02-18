@@ -71,20 +71,28 @@ export const BaseLayout = ({ children }: LayoutProps) => {
     }
   }, [isSubMenuOpen]);
 
+  // This now uses the Firebase Function to fetch the topics from the Realtime Database. instead of fetching from Firebase Realtime Database directly.
   useEffect(() => {
-    const topicsRef = ref(db, "/topics");
-    // This fetches the topics from the database and sets the state variable.
-    get(topicsRef)
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          setTopics(data);
-        } else {
-          console.log("No data available");
+    // I put URL in .env.local. If you visit that link, you can view the topics in the database with no authentication required. So keep it in .env.local or we're cooked.
+    const url = process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS;
+    if (!url) {
+      console.error("uh oh, URL not recognized 🦧");
+      return;
+    }
+
+    // This fetches the topics from the Realtime Database. It's the same as before, but now we're using the Firebase Function.
+    fetch(url)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("uh oh, HTTP response failed 🦧");
         }
+        return res.json();
+      })
+      .then((data) => {
+        setTopics(data);
       })
       .catch((error) => {
-        console.error("Failed to fetch data: ", error);
+        console.error("uh oh, fetch failed 🦧:", error);
       });
   }, []);
 
@@ -109,7 +117,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
       await auth.signOut();
       router.push("/users/sign-in");
     } catch (error) {
-      console.error("Logout Error:", error);
+      console.error("uh oh, logout error 🦧::", error);
     }
   };
 
