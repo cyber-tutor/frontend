@@ -141,11 +141,10 @@ export default function ChapterPage() {
         <div>{chapter.controlGroup.chapterContent}</div>
       )}
       {chapter.chapterType === "video" && (
-        <div>
+        <div className="flex aspect-[16/9] flex-grow">
           <iframe
             title="YouTube video player"
-            width="560"
-            height="315"
+            className="h-full w-full"
             allowFullScreen
             src={chapter.controlGroup.chapterContent}
           ></iframe>
