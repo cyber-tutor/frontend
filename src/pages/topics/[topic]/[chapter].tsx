@@ -138,7 +138,9 @@ export default function ChapterPage() {
       <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
       {/* Later on, AFTER we set up user profiles, we want to implement conditional logic to determine what content we want to display based on what group they are assigned after either signing up/completing initial assessment */}
       {chapter.chapterType === "text" && (
-        <div>{chapter.controlGroup.chapterContent}</div>
+        <div className="m-4 rounded border p-4 shadow">
+          {chapter.controlGroup.chapterContent}
+        </div>
       )}
       {chapter.chapterType === "video" && (
         <div className="flex aspect-[16/9] flex-grow">
