@@ -43,21 +43,29 @@ export default function TopicPage() {
   const { topic: topicTitle } = router.query;
 
   useEffect(() => {
-    if (topicTitle) {
-      const db = getDatabase();
-      const topicsRef = ref(db, "/topics");
+    // I put URL in .env.local. If you visit that link, you can view the topics in the database with no authentication required. So keep it in .env.local or we're cooked.
+    const url = process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS;
+    if (!url) {
+      console.error("uh oh, URL not recognized 🦧");
+      return;
+    }
 
-      get(topicsRef)
-        .then((snapshot) => {
-          if (snapshot.exists()) {
-            const topics: Topic[] = Object.values(snapshot.val());
-            const foundTopic = topics.find(
-              (t) => t.topicTitle === decodeURIComponent(topicTitle as string),
-            );
-            setTopic(foundTopic || null);
-          } else {
-            setError("No topics available");
+    // Self-explanatory. This fetches the topics from the Realtime Database with some error handling for
+    if (topicTitle) {
+      fetch(url)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("uh oh, HTTP response failed 🦧");
           }
+          return response.json();
+        })
+        // This sets the topic state variable to the topic with the matching title from the URL. Initially thought of refactoring to this use topicId instead of topicTitle, but that's dumb.
+        .then((topics) => {
+          const foundTopic = topics.find(
+            (t: Topic) =>
+              t.topicTitle === decodeURIComponent(topicTitle as string),
+          );
+          setTopic(foundTopic || null);
           setLoading(false);
         })
         .catch((error) => {
@@ -71,19 +79,19 @@ export default function TopicPage() {
   if (loading)
     return (
       <BaseLayout>
-        <div>Loading...</div>
+        <div>please wait, loading... 🦧</div>
       </BaseLayout>
     );
   if (error)
     return (
       <BaseLayout>
-        <div>Error: {error}</div>
+        <div>uh oh, error 🦧: {error}</div>
       </BaseLayout>
     );
   if (!topic)
     return (
       <BaseLayout>
-        <div>Topic not found</div>
+        <div>uh oh, topic not found 🦧</div>
       </BaseLayout>
     );
 
