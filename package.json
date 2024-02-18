@@ -24,6 +24,7 @@
     "react-icons": "^5.0.1",
     "react-pro-sidebar": "^1.1.0-alpha.2",
     "superjson": "^2.2.1",
+    "survey-react-ui": "^1.9.130",
     "zod": "^3.22.4"
   },
   "devDependencies": {
