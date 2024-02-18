@@ -40,3 +40,8 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# firebase
+firebase-debug.log*
+firebase-debug.*.log*
+.firebase/
