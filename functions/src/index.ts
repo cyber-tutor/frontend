@@ -40,7 +40,15 @@ export const getTopics = functions.https.onRequest(
         .ref("/topics")
         .once("value");
       const topics = topicsSnapshot.val();
-      response.json(topics);
+
+      const topicsArray = topics
+        ? Object.keys(topics).map((key) => ({
+            id: key,
+            ...topics[key],
+          }))
+        : [];
+
+      response.json(topicsArray);
     } catch (error) {
       console.error("uh oh, fetch failed 🦧:", error);
       response.status(500).send(error);
