@@ -5,7 +5,7 @@ import { getDatabase, ref, get } from "firebase/database";
 import Link from "next/link";
 
 type Topic = {
-  topicId: string;
+  id: string;
   topicTitle: string;
   topicDescription: string;
   chapters: Chapter[];
@@ -40,40 +40,24 @@ export default function TopicPage() {
   const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
-  const { topic: topicTitle } = router.query;
+  const { topic: topicId } = router.query;
 
   useEffect(() => {
-    // I put URL in .env.local. If you visit that link, you can view the topics in the database with no authentication required. So keep it in .env.local or we're cooked.
-    const url = process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS;
-    if (!url) {
-      console.error("uh oh, URL not recognized 🦧");
-      return;
-    }
-
-    // Self-explanatory. This fetches the topics from the Realtime Database with some error handling for
-    if (topicTitle) {
+    if (topicId) {
+      const url = `${process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS}?topicId=${encodeURIComponent(topicId as string)}`;
       fetch(url)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("uh oh, HTTP response failed 🦧");
-          }
-          return response.json();
-        })
-        // This sets the topic state variable to the topic with the matching title from the URL. Initially thought of refactoring to this use topicId instead of topicTitle, but that's dumb.
-        .then((topics) => {
-          const foundTopic = topics.find(
-            (t: Topic) =>
-              t.topicTitle === decodeURIComponent(topicTitle as string),
-          );
-          setTopic(foundTopic || null);
+        .then((res) => res.json())
+        .then((data) => {
+          const foundTopic = data.find((t: Topic) => t.id === topicId);
+          setTopic(foundTopic);
           setLoading(false);
         })
         .catch((error) => {
-          setError(error.message);
+          console.error(error);
           setLoading(false);
         });
     }
-  }, [topicTitle]);
+  }, [topicId]);
 
   // The following 3 conditionals are just to handle the different states of the page.
   if (loading)

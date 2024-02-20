@@ -54,39 +54,35 @@ export default function ChapterPage() {
 
   useEffect(() => {
     // I put URL in .env.local. If you visit that link, you can view the topics in the database with no authentication required. So keep it in .env.local or we're cooked.
-    const url = process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS;
-    if (!url) {
-      console.error("uh oh, URL not recognized 🦧");
-      return;
-    }
-
     if (topicTitle && chapterTitle) {
+      const url = `${process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS}?topicTitle=${encodeURIComponent(topicTitle as string)}&chapterTitle=${encodeURIComponent(chapterTitle as string)}`;
       fetch(url)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("uh oh, HTTP response failed 🦧");
-          }
-          return response.json();
-        })
-        // This sets the topic and chapter state variables from the fetched topics based on the URL parameters with some error handling.
-        .then((topics) => {
-          const foundTopic = topics.find(
+        .then((res) => res.json())
+        .then((data) => {
+          const foundTopic = data.find(
             (t: Topic) =>
               t.topicTitle === decodeURIComponent(topicTitle as string),
           );
           if (foundTopic) {
-            const foundChapter = foundTopic.chapters.find(
+            const foundChapterIndex = foundTopic.chapters.findIndex(
               (c: Chapter) =>
                 c.chapterTitle === decodeURIComponent(chapterTitle as string),
             );
-            setChapter(foundChapter || null);
-          } else {
-            setError("uh oh, topic not found 🦧");
+            if (foundChapterIndex !== -1) {
+              const foundChapter = {
+                ...foundTopic.chapters[foundChapterIndex],
+                controlGroup: foundTopic.controlGroup[foundChapterIndex],
+              };
+              setChapter(foundChapter);
+            } else {
+              setChapter(null);
+            }
           }
           setLoading(false);
         })
         .catch((error) => {
-          setError(error.message);
+          console.error(error);
+          setError("Failed to fetch chapter data");
           setLoading(false);
         });
     }
@@ -132,6 +128,7 @@ export default function ChapterPage() {
     return <Survey model={survey} />;
   }
 
+  // I will refactor tis later. This is somewhat garbage at the moment, the way it's set up.
   return (
     <BaseLayout>
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
