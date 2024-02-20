@@ -27,7 +27,7 @@ admin.initializeApp();
 // Self-explanatory. This function fetches the topics from the Realtime Database.
 // Why this, instead of setting rules to have read = true? Because we don't want those annoying reminder emails, and more importantly, we don't want to expose our database to the public. Now we can have strict rules and still fetch the data.
 export const getTopics = functions.https.onRequest(
-  async (request, response) => {
+  async (request: functions.Request, response: functions.Response) => {
     // This is a CORS header that allows the function to be called from any domain.
     response.set("Access-Control-Allow-Origin", "*");
     // This is a CORS header that allows the function to be called with the GET method.
@@ -41,6 +41,28 @@ export const getTopics = functions.https.onRequest(
         .once("value");
       const topics = topicsSnapshot.val();
       response.json(topics);
+    } catch (error) {
+      console.error("uh oh, fetch failed 🦧:", error);
+      response.status(500).send(error);
+    }
+  },
+);
+
+export const getQuestions = functions.https.onRequest(
+  async (request: functions.Request, response: functions.Response) => {
+    // This is a CORS header that allows the function to be called from any domain.
+    response.set("Access-Control-Allow-Origin", "*");
+    // This is a CORS header that allows the function to be called with the GET method.
+    response.set("Access-Control-Allow-Methods", "GET");
+
+    try {
+      // This fetches the questions from the Realtime Database.
+      const questionsSnapshot = await admin
+        .database()
+        .ref("/questions/quizQuestions/static")
+        .once("value");
+      const questions = questionsSnapshot.val();
+      response.json(questions);
     } catch (error) {
       console.error("uh oh, fetch failed 🦧:", error);
       response.status(500).send(error);
