@@ -8,7 +8,7 @@ export default function Home() {
   const hello = api.post.hello.useQuery({ text: "from tRPC" });
 
   return (
-    <>
+    <> 
       <Head>
         <title>Cyber Tutor</title>
         <meta name="description" content="Cyber Tutor" />
