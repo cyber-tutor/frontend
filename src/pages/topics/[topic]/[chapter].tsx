@@ -129,6 +129,7 @@ export default function ChapterPage() {
   //   return <Survey model={survey} />;
   // }
 
+  // I will refactor this later. This is somewhat garbage at the moment, the way it's set up. I'm thinking either an if or switch statement to determine what to render based on the chapterType. I will refactor this later.
   return (
     <BaseLayout>
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
