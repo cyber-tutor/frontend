@@ -108,27 +108,27 @@ export default function ChapterPage() {
       </BaseLayout>
     );
 
+  // Currently commented out because I removed the JSON from the database. I will refactor this later. But we probably don't even want that in the database, and instead, dynamically generate the survey based on questions in the database as we have discussed. In other words, we have the empty template here, and we just fill in the questions from the database.
   // This function renders the survey using the SurveyJS library.
   // https://surveyjs.io/form-library/documentation/get-started-react
-  function App() {
-    if (
-      !chapter ||
-      chapter.chapterType !== "assessment" ||
-      !chapter.controlGroup.chapterContent
-    ) {
-      return <div>uh oh, no survey found 🦧</div>;
-    }
+  // function App() {
+  //   if (
+  //     !chapter ||
+  //     chapter.chapterType !== "assessment" ||
+  //     !chapter.controlGroup.chapterContent
+  //   ) {
+  //     return <div>uh oh, no survey found 🦧</div>;
+  //   }
 
-    const surveyJson = chapter.controlGroup.chapterContent;
-    const survey = new Model(surveyJson);
-    survey.onComplete.add((sender) => {
-      console.log("Survey results: ", sender.data);
-    });
+  //   const surveyJson = chapter.controlGroup.chapterContent;
+  //   const survey = new Model(surveyJson);
+  //   survey.onComplete.add((sender) => {
+  //     console.log("Survey results: ", sender.data);
+  //   });
 
-    return <Survey model={survey} />;
-  }
+  //   return <Survey model={survey} />;
+  // }
 
-  // I will refactor tis later. This is somewhat garbage at the moment, the way it's set up.
   return (
     <BaseLayout>
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
@@ -149,7 +149,7 @@ export default function ChapterPage() {
           ></iframe>
         </div>
       )}
-      {chapter.chapterType === "assessment" && App()}
+      {/* {chapter.chapterType === "assessment" && App()} */}
     </BaseLayout>
   );
 }
