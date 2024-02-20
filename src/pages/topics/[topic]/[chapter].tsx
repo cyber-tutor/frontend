@@ -29,12 +29,25 @@ type Chapter = {
   };
 };
 
+// Old Question 
+
+// type Question = {
+//   questionId: string;
+//   questionTitle: string;
+//   questionDifficulty: string;
+//   options: Option[];
+// };
+
+// New Question
+
 type Question = {
   questionId: string;
   questionTitle: string;
   questionDifficulty: string;
   options: Option[];
 };
+
+
 
 type Option = {
   optionId: string;
@@ -54,6 +67,14 @@ export default function ChapterPage() {
 
   useEffect(() => {
     // I put URL in .env.local. If you visit that link, you can view the topics in the database with no authentication required. So keep it in .env.local or we're cooked.
+
+    const url = process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS;
+    const quizUrl = process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_QUSTIONS;
+    if (!url) {
+      console.error("uh oh, URL not recognized 🦧");
+      return;
+    }
+
     if (topicTitle && chapterTitle) {
       const url = `${process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS}?topicTitle=${encodeURIComponent(topicTitle as string)}&chapterTitle=${encodeURIComponent(chapterTitle as string)}`;
       fetch(url)
