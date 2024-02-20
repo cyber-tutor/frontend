@@ -8,7 +8,7 @@ import { auth, db } from "../firebase/config";
 import { ref, get } from "firebase/database";
 
 type Topic = {
-  topicId: string;
+  id: string;
   topicTitle: string;
   topicDescription: string;
   chapters: Chapter[];
@@ -104,7 +104,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
   // This sets the selected topic and navigates to its corresponding page.
   const handleTopicClick = (topic: Topic) => {
     setSelectedTopic(topic);
-    router.push(`/topics/${encodeURIComponent(topic.topicTitle)}`);
+    router.push(`/topics/${encodeURIComponent(topic.id)}`);
   };
 
   // This toggles the open state of the submenu.
@@ -169,10 +169,10 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                 open={isSubMenuOpen}
                 onOpenChange={toggleSubMenu}
               >
-                {topics.map((topic, index) => (
+                {topics.map((topic) => (
                   <MenuItem
-                    // Topics now have a unique id, so we can use that as the key.
-                    key={topic.topicId}
+                    // Simply just gets the assigned key for the topic from the datbase now isntead of using an assigned ID inside of a list.
+                    key={topic.id}
                     onClick={() => handleTopicClick(topic)}
                   >
                     {topic.topicTitle}
