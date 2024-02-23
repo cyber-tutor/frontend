@@ -64,6 +64,10 @@ export const getTopics = functions.https.onRequest(
               topic.controlGroup && topic.controlGroup[chapterKey]
                 ? topic.controlGroup[chapterKey].chapterContent
                 : null;
+            const chapterPrompt = 
+              topic.experimentalGroup && topic.experimentalGroup[chapterKey]
+                ? topic.experimentalGroup[chapterKey].chapterPrompt
+                : null;
             const experimentalContent =
               topic.experimentalGroup && topic.experimentalGroup[chapterKey]
                 ? topic.experimentalGroup[chapterKey].chapterContent
@@ -76,6 +80,7 @@ export const getTopics = functions.https.onRequest(
               chapterDescription: chapter.chapterDescription,
               chapterType: chapter.chapterType,
               controlGroupContent: controlContent,
+              chapterPrompt: chapterPrompt,
               experimentalGroupContent: experimentalContent,
             };
           },
