@@ -13,23 +13,17 @@ type Topic = {
   chapters: Chapter[];
 };
 
+// I redefined the types again because of the data transformation that happens through the Firebase Cloud Function and rearranged to match the structure of fetched data.
 type Chapter = {
   chapterId: string;
-  chapterType: string;
   chapterTitle: string;
   chapterDescription: string;
-  chapterPrompt: string;
-  chapterQuestions?: Question[];
-  chapterContent?: string;
-  controlGroup: {
-    chapterContent: string;
-  };
-  experimentalGroup: {
-    chapterContent: string;
-  };
+  chapterType: string;
+  controlGroupContent: string;
+  experimentalGroupContent: string;
 };
 
-// Old Question 
+// Old Question
 
 // type Question = {
 //   questionId: string;
@@ -46,8 +40,6 @@ type Question = {
   questionDifficulty: string;
   options: Option[];
 };
-
-
 
 type Option = {
   optionId: string;
@@ -66,44 +58,26 @@ export default function ChapterPage() {
   const { topic: topicTitle, chapter: chapterTitle } = router.query;
 
   useEffect(() => {
-    // I put URL in .env.local. If you visit that link, you can view the topics in the database with no authentication required. So keep it in .env.local or we're cooked.
-
-    const url = process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS;
-    const quizUrl = process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_QUSTIONS;
-    if (!url) {
-      console.error("uh oh, URL not recognized 🦧");
-      return;
-    }
-
     if (topicTitle && chapterTitle) {
-      const url = `${process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS}?topicTitle=${encodeURIComponent(topicTitle as string)}&chapterTitle=${encodeURIComponent(chapterTitle as string)}`;
+      const url = `${process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS}?topicTitle=${encodeURIComponent(String(topicTitle))}&chapterTitle=${encodeURIComponent(String(chapterTitle))}`;
+
       fetch(url)
-        .then((res) => res.json())
+        .then((res) =>
+          res.ok ? res.json() : Promise.reject(new Error(res.statusText)),
+        )
         .then((data) => {
           const foundTopic = data.find(
-            (t: Topic) =>
-              t.topicTitle === decodeURIComponent(topicTitle as string),
+            (t: Topic) => t.topicTitle === topicTitle,
           );
-          if (foundTopic) {
-            const foundChapterIndex = foundTopic.chapters.findIndex(
-              (c: Chapter) =>
-                c.chapterTitle === decodeURIComponent(chapterTitle as string),
-            );
-            if (foundChapterIndex !== -1) {
-              const foundChapter = {
-                ...foundTopic.chapters[foundChapterIndex],
-                controlGroup: foundTopic.controlGroup[foundChapterIndex],
-              };
-              setChapter(foundChapter);
-            } else {
-              setChapter(null);
-            }
-          }
+          const foundChapter = foundTopic?.chapters.find(
+            (c: Chapter) => c.chapterTitle === chapterTitle,
+          );
+          setChapter(foundChapter || null);
           setLoading(false);
         })
         .catch((error) => {
-          console.error(error);
-          setError("Failed to fetch chapter data");
+          console.error("Fetch error:", error);
+          setError("Chapter fetch failed");
           setLoading(false);
         });
     }
@@ -158,7 +132,7 @@ export default function ChapterPage() {
       {/* Later on, AFTER we set up user profiles, we want to implement conditional logic to determine what content we want to display based on what group they are assigned after either signing up/completing initial assessment */}
       {chapter.chapterType === "text" && (
         <div className="m-4 rounded border p-4 shadow">
-          {chapter.controlGroup.chapterContent}
+          {chapter.controlGroupContent}
         </div>
       )}
       {chapter.chapterType === "video" && (
@@ -167,7 +141,7 @@ export default function ChapterPage() {
             title="YouTube video player"
             className="h-full w-full"
             allowFullScreen
-            src={chapter.controlGroup.chapterContent}
+            src={chapter.controlGroupContent}
           ></iframe>
         </div>
       )}

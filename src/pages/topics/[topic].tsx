@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import { getDatabase, ref, get } from "firebase/database";
 import Link from "next/link";
 
+// I redefined the types again because of the data transformation that happens through the Firebase Cloud Function.
 type Topic = {
-  id: string;
+  topicId: string;
   topicTitle: string;
   topicDescription: string;
   chapters: Chapter[];
@@ -44,16 +45,18 @@ export default function TopicPage() {
 
   useEffect(() => {
     if (topicId) {
-      const url = `${process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS}?topicId=${encodeURIComponent(topicId as string)}`;
+      // I put URL in .env.local. If you visit that link, you can view the topics in the database with no authentication required. So keep it in .env.local or we're cooked.
+      const url = `${process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS}`;
       fetch(url)
         .then((res) => res.json())
         .then((data) => {
-          const foundTopic = data.find((t: Topic) => t.id === topicId);
+          const foundTopic = data.find((t: Topic) => t.topicId === topicId);
           setTopic(foundTopic);
           setLoading(false);
         })
         .catch((error) => {
           console.error(error);
+          // Forgot to add this previously, but we need to setLoading to false or else it gets stuck in an infinite loop.
           setLoading(false);
         });
     }

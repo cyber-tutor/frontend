@@ -7,8 +7,9 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../firebase/config";
 import { ref, get } from "firebase/database";
 
+// I redefined the types again because of the data transformation that happens through the Firebase Cloud Function.
 type Topic = {
-  id: string;
+  topicId: string;
   topicTitle: string;
   topicDescription: string;
   chapters: Chapter[];
@@ -104,7 +105,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
   // This sets the selected topic and navigates to its corresponding page.
   const handleTopicClick = (topic: Topic) => {
     setSelectedTopic(topic);
-    router.push(`/topics/${encodeURIComponent(topic.id)}`);
+    router.push(`/topics/${encodeURIComponent(topic.topicId)}`);
   };
 
   // This toggles the open state of the submenu.
@@ -172,7 +173,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                 {topics.map((topic) => (
                   <MenuItem
                     // Simply just gets the assigned key for the topic from the datbase now isntead of using an assigned ID inside of a list.
-                    key={topic.id}
+                    key={topic.topicId}
                     onClick={() => handleTopicClick(topic)}
                   >
                     {topic.topicTitle}
