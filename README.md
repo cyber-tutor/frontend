@@ -1,12 +1,6 @@
-# Create T3 App
+# Cyber Tutor
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
-
-## What's next? How do I make an app with this?
-
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
-
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+### This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
 - [Next.js](https://nextjs.org)
 - [NextAuth.js](https://next-auth.js.org)
@@ -14,15 +8,25 @@ If you are not familiar with the different technologies used in this project, pl
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
 
-## Learn More
+### Installation:
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+1. Clone the GitHub repository
+2. Create your .env
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+```dotenv
+# DEFAULT STUFF
+NEXT_PUBLIC_FIREBASE_API_KEY=uh oh, stinky 🦧
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=uh oh, stinky 🦧
+NEXT_PUBLIC_FIREBASE_DATABASE_URL=uh oh, stinky 🦧
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=uh oh, stinky 🦧
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=uh oh, stinky 🦧
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=uh oh, stinky 🦧
+NEXT_PUBLIC_FIREBASE_APP_ID=uh oh, stinky 🦧
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+# DATA FETCHING
+NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS=uh oh, stinky 🦧
+NEXT_PUBLIC_FIREBASE_FUNCTION_GET_QUESTIONS=uh oh, stinky 🦧
+```
 
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+3. Install dependencies: `npm i`
+4. Run the developement server: `npm run dev`
