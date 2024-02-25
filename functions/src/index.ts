@@ -33,71 +33,62 @@ export const getTopics = functions.https.onRequest(
     response.set("Access-Control-Allow-Methods", "GET");
 
     try {
-      // This fetches the "topics" document from the "cyber-tutor" collection.
-      const topicsDocSnapshot = await admin
+      // This fetches the "topics" collection.
+      const topicsCollection = await admin
         .firestore()
-        .collection("cyber-tutor")
-        .doc("topics")
+        .collection("topics")
         .get();
 
-      if (!topicsDocSnapshot.exists) {
-        response
-          .status(404)
-          .send("uh oh, the topics document was not found 🦧");
-        return;
+      const topicsArray = [];
+
+      for (const topicDoc of topicsCollection.docs) {
+        const topicData = topicDoc.data();
+        const topicId = topicDoc.id;
+
+        // This fetches the "chapters" collection for each topic within the "topics" collection.
+        const chaptersCollection = await admin
+          .firestore()
+          .collection("topics")
+          .doc(topicId)
+          .collection("chapters")
+          .get();
+
+        const chaptersArray: { [key: string]: any }[] = [];
+
+        chaptersCollection.docs.forEach((chapterDoc) => {
+          const chapterData = chapterDoc.data();
+          const chapterId = chapterDoc.id;
+
+          //  This is the structure of the chapters array that will be sent in the JSON response.
+          chaptersArray.push({
+            chapterId: chapterId,
+            chapterTitle: chapterData.chapterTitle,
+            chapterDescription: chapterData.chapterDescription,
+            chapterType: chapterData.chapterType,
+            controlGroupContent: chapterData.controlGroupContent,
+            experimentalGroupContent: chapterData.experimentalGroupContent,
+            controlGroupImageURLs: chapterData.controlGroupImageURLs || [],
+            experimentalGroupImageURLs:
+              chapterData.experimentalGroupImageURLs || [],
+          });
+        });
+
+        // This is the structure of the topics array that will be sent in the JSON response.
+        topicsArray.push({
+          topicId: topicId,
+          topicTitle: topicData.topicTitle,
+          topicDescription: topicData.topicDescription,
+          chapters: chaptersArray,
+        });
       }
 
-      const topicsData = topicsDocSnapshot.data();
-
-      // This transforms the topics data into a format that we can use on our frontend.
-      const topicsArray = Object.keys(topicsData || {}).map((topicKey) => {
-        const topic = topicsData?.[topicKey];
-
-        // More complex transformations are needed for controlGroup and experimentalGroup chapterContent.
-        // Why? Because the way we had it before was that we originally structured our data using keys for each chapter (dictionary), and we were mapping this in parallel to the chapters array.
-        // So basically, we are taking the parallel structure of controlGroup and experimentalGroup, including it's nested contents, and transforming it into the chapters array.
-        const chaptersArray = Object.keys(topic.chapters || {}).map(
-          (chapterKey) => {
-            const chapter = topic.chapters[chapterKey];
-            const controlContent =
-              topic.controlGroup && topic.controlGroup[chapterKey]
-                ? topic.controlGroup[chapterKey].chapterContent
-                : null;
-            const chapterPrompt =
-              topic.experimentalGroup && topic.experimentalGroup[chapterKey]
-                ? topic.experimentalGroup[chapterKey].chapterPrompt
-                : null;
-            const experimentalContent =
-              topic.experimentalGroup && topic.experimentalGroup[chapterKey]
-                ? topic.experimentalGroup[chapterKey].chapterContent
-                : null;
-
-            // This is the structure of the chapters array that will be sent to our frontend.
-            return {
-              chapterId: chapterKey,
-              chapterTitle: chapter.chapterTitle,
-              chapterDescription: chapter.chapterDescription,
-              chapterType: chapter.chapterType,
-              controlGroupContent: controlContent,
-              chapterPrompt: chapterPrompt,
-              experimentalGroupContent: experimentalContent,
-            };
-          },
-        );
-
-        // This is the structure of the topics array that will be sent to our frontend.
-        return {
-          topicId: topicKey,
-          topicTitle: topic.topicTitle,
-          topicDescription: topic.topicDescription,
-          chapters: chaptersArray,
-        };
-      });
+      // I added this because the topics were not being sorted by topicId and were being sent depending on the order they were fetched from Firestore.
+      topicsArray.sort((a, b) => a.topicId.localeCompare(b.topicId));
 
       response.json(topicsArray);
     } catch (error) {
-      console.error("uh oh, fetch failed 🦧:", error);
-      response.status(500).send(error);
+      console.error("Error fetching topics:", error);
+      response.status(500).send("Error fetching topics");
     }
   },
 );
