@@ -13,7 +13,6 @@ type Topic = {
   chapters: Chapter[];
 };
 
-// I redefined the types again because of the data transformation that happens through the Firebase Cloud Function and rearranged to match the structure of fetched data.
 type Chapter = {
   chapterId: string;
   chapterTitle: string;
@@ -21,6 +20,8 @@ type Chapter = {
   chapterType: string;
   controlGroupContent: string;
   experimentalGroupContent: string;
+  controlGroupImageURLs: string[]; // Add image URLs
+  experimentalGroupImageURLs: string[]; // Add image URLs
 };
 
 // Old Question
@@ -129,23 +130,33 @@ export default function ChapterPage() {
     <BaseLayout>
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
       <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
-      {/* Later on, AFTER we set up user profiles, we want to implement conditional logic to determine what content we want to display based on what group they are assigned after either signing up/completing initial assessment */}
-      {chapter.chapterType === "text" && (
-        <div className="m-4 rounded border p-4 shadow">
-          {chapter.controlGroupContent}
-        </div>
-      )}
-      {chapter.chapterType === "video" && (
-        <div className="flex aspect-[16/9] flex-grow">
-          <iframe
-            title="YouTube video player"
-            className="h-full w-full"
-            allowFullScreen
-            src={chapter.controlGroupContent}
-          ></iframe>
-        </div>
-      )}
-      {/* {chapter.chapterType === "assessment" && App()} */}
+      <div className="max-h-screen overflow-y-auto">
+        {/* Later on, AFTER we set up user profiles, we want to implement conditional logic to determine what content we want to display based on what group they are assigned after either signing up/completing initial assessment */}
+        {chapter.chapterType === "text" && (
+          <div className="m-4 rounded border p-4 shadow">
+            {chapter.controlGroupContent}
+            {chapter.controlGroupImageURLs[0] && (
+              <img
+                className=""
+                src={chapter.controlGroupImageURLs[0]}
+                alt={chapterTitle ? String(chapterTitle) : undefined}
+                title={chapterTitle ? String(chapterTitle) : undefined}
+              />
+            )}
+          </div>
+        )}
+        {chapter.chapterType === "video" && (
+          <div className="flex aspect-[16/9] flex-grow">
+            <iframe
+              title="YouTube video player"
+              className="h-full w-full"
+              allowFullScreen
+              src={chapter.controlGroupContent}
+            ></iframe>
+          </div>
+        )}
+        {/* {chapter.chapterType === "assessment" && App()} */}
+      </div>
     </BaseLayout>
   );
 }
