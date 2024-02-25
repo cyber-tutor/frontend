@@ -40,7 +40,6 @@ export const getTopics = functions.https.onRequest(
         .doc("topics")
         .get();
 
-      // This is some error handling.
       if (!topicsDocSnapshot.exists) {
         response
           .status(404)
@@ -64,6 +63,10 @@ export const getTopics = functions.https.onRequest(
               topic.controlGroup && topic.controlGroup[chapterKey]
                 ? topic.controlGroup[chapterKey].chapterContent
                 : null;
+            const chapterPrompt =
+              topic.experimentalGroup && topic.experimentalGroup[chapterKey]
+                ? topic.experimentalGroup[chapterKey].chapterPrompt
+                : null;
             const experimentalContent =
               topic.experimentalGroup && topic.experimentalGroup[chapterKey]
                 ? topic.experimentalGroup[chapterKey].chapterContent
@@ -76,6 +79,7 @@ export const getTopics = functions.https.onRequest(
               chapterDescription: chapter.chapterDescription,
               chapterType: chapter.chapterType,
               controlGroupContent: controlContent,
+              chapterPrompt: chapterPrompt,
               experimentalGroupContent: experimentalContent,
             };
           },
@@ -98,25 +102,106 @@ export const getTopics = functions.https.onRequest(
   },
 );
 
-// Going to uncomment this after getting the topics to work with Firestore.
-// export const getQuestions = functions.https.onRequest(
-//   async (request: functions.Request, response: functions.Response) => {
-//     // This is a CORS header that allows the function to be called from any domain.
-//     response.set("Access-Control-Allow-Origin", "*");
-//     // This is a CORS header that allows the function to be called with the GET method.
-//     response.set("Access-Control-Allow-Methods", "GET");
+export const getQuestions = functions.https.onRequest(
+  async (request, response) => {
+    response.set("Access-Control-Allow-Methods", "GET");
+    response.set("Access-Control-Allow-Headers", "Content-Type");
 
-//     try {
-//       // This fetches the questions from the Realtime Database.
-//       const questionsSnapshot = await admin
-//         .database()
-//         .ref("/questions/quizQuestions/static")
-//         .once("value");
-//       const questions = questionsSnapshot.val();
-//       response.json(questions);
-//     } catch (error) {
-//       console.error("uh oh, fetch failed 🦧:", error);
-//       response.status(500).send(error);
-//     }
-//   },
-// );
+    try {
+      // This fetches the "questions" document from the "cyber-tutor" collection.
+      const questionsDocSnapshot = await admin
+        .firestore()
+        .collection("cyber-tutor")
+        .doc("questions")
+        .get();
+
+      if (!questionsDocSnapshot.exists) {
+        response
+          .status(404)
+          .send("uh oh, the questions document was not found 🦧");
+        return;
+      }
+
+      const questionsData = questionsDocSnapshot.data();
+      if (!questionsData) {
+        response.status(500).send("uh oh, questions data is missing 🦧");
+        return;
+      }
+
+      const { quizQuestions } = questionsData;
+      if (!quizQuestions) {
+        response.status(500).send("uh oh, quizQuestions data is missing 🦧");
+        return;
+      }
+
+      const staticContent = quizQuestions.static || {};
+      const experimentalContent = quizQuestions.experimental || {};
+
+      const staticQuestionsArray = Object.keys(staticContent).map((topicId) => {
+        const topicQuestions = staticContent[topicId];
+        const chapters = Object.keys(topicQuestions).map((chapterId) => {
+          const questions = Object.keys(topicQuestions[chapterId]).map(
+            (questionId) => {
+              const { correctAnswer, options, question } =
+                topicQuestions[chapterId][questionId];
+              return {
+                questionId,
+                correctAnswer,
+                options,
+                question,
+              };
+            },
+          );
+
+          return {
+            chapterId,
+            questions,
+          };
+        });
+
+        return {
+          topicId,
+          chapters,
+        };
+      });
+
+      const experimentalQuestionsArray = Object.keys(experimentalContent).map(
+        (topicId) => {
+          const topicQuestions = experimentalContent[topicId];
+          const chapters = Object.keys(topicQuestions).map((chapterId) => {
+            const questions = Object.keys(topicQuestions[chapterId]).map(
+              (questionId) => {
+                const { correctAnswer, options, question } =
+                  topicQuestions[chapterId][questionId];
+                return {
+                  questionId,
+                  correctAnswer,
+                  options,
+                  question,
+                };
+              },
+            );
+
+            return {
+              chapterId,
+              questions,
+            };
+          });
+
+          return {
+            topicId,
+            chapters,
+          };
+        },
+      );
+
+      response.json({
+        static: staticQuestionsArray,
+        experimental: experimentalQuestionsArray,
+      });
+    } catch (error) {
+      console.error("uh oh, fetch failed 🦧:", error);
+      response.status(500).send("uh oh, fetch failed 🦧");
+    }
+  },
+);
