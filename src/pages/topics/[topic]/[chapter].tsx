@@ -137,7 +137,7 @@ export default function ChapterPage() {
             {chapter.controlGroupContent}
             {chapter.controlGroupImageURLs[0] && (
               <img
-                className=""
+                className="mt-5 mx-auto shadow-lg w-1/3"
                 src={chapter.controlGroupImageURLs[0]}
                 alt={chapterTitle ? String(chapterTitle) : undefined}
                 title={chapterTitle ? String(chapterTitle) : undefined}
