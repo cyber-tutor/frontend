@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
+import { getFirestore } from "firebase/firestore";
 
 // STORE THE VALUES FOR THESE IN .env.local. Ngl, it doesn't really matter for Firebase though, but still.
 const firebaseConfig = {
@@ -17,6 +18,6 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 const auth = getAuth(app);
-const db = getDatabase(app);
+const db = getFirestore(app);
 
 export { app, auth, db };
