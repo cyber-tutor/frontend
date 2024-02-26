@@ -19,12 +19,16 @@ const SignUpForm = () => {
     // This is the try-catch block that will handle the actual sign-up process. If it succeeds, they will be redirected to the sign-in page. If it fails, well, nothing really at the moment on the front end, YET. It logs the error to the console though.
     try {
       const res = await createUserWithEmailAndPassword(email, password);
+
+      const isExperimental = Math.random() < 0.5;
+
+      const group = isExperimental ? 'experimental' : 'control';
   
       // If the user was successfully created, add a document to the 'users' collection
       if (res?.user) {
         const docRef = await addDoc(collection(db, "users"), {
           userId: res.user.uid,
-          group: "control",
+          group: group,
         });
         console.log("Document written with ID: ", docRef.id);
       }
