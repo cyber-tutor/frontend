@@ -5,6 +5,8 @@ import { getDatabase, ref, get } from "firebase/database";
 import { Survey } from "survey-react-ui";
 import { Model } from "survey-core";
 import "survey-core/defaultV2.min.css";
+import ReactPlayer from 'react-player'
+import getVideoDuration from "~/components/youtube_data";
 
 type Topic = {
   topicId: string;
@@ -53,6 +55,8 @@ export default function ChapterPage() {
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [played, setPlayed] = useState(0);
+  const [duration, setDuration] = useState("");
 
   const router = useRouter();
   // This gets the topic and chapter parameters from the URL.
@@ -104,6 +108,28 @@ export default function ChapterPage() {
       </BaseLayout>
     );
 
+
+
+    if (chapter && chapter.chapterType === "video") {
+      getVideoDuration(chapter.controlGroupContent)
+        .then((duration) => {
+          console.log("Video duration:", duration);
+
+        })
+        .catch((error) => {
+          console.error("Error getting video duration:", error);
+        });
+    }
+ 
+
+
+
+
+
+
+    
+
+
   // Currently commented out because I removed the JSON from the database. I will refactor this later. But we probably don't even want that in the database, and instead, dynamically generate the survey based on questions in the database as we have discussed. In other words, we have the empty template here, and we just fill in the questions from the database.
   // This function renders the survey using the SurveyJS library.
   // https://surveyjs.io/form-library/documentation/get-started-react
@@ -147,14 +173,25 @@ export default function ChapterPage() {
         )}
         {chapter.chapterType === "video" && (
           <div className="flex aspect-[16/9] flex-grow">
-            <iframe
+            {/* <iframe
               title="YouTube video player"
               className="h-full w-full"
               allowFullScreen
               src={chapter.controlGroupContent}
-            ></iframe>
+            ></iframe> */}
+            <ReactPlayer 
+            url={chapter.controlGroupContent}
+            onProgress={(progress) => {
+              setPlayed(progress.playedSeconds);
+            }}
+            className="h-full w-full"
+            allowFullScreen
+            />
           </div>
         )}
+        <br />
+        progress: {Math.floor(played / 60)}:{String(Math.floor(played % 60)).padStart(2, '0')}
+
         {/* {chapter.chapterType === "assessment" && App()} */}
       </div>
     </BaseLayout>
