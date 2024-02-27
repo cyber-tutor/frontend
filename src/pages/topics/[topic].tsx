@@ -113,7 +113,7 @@ export default function TopicPage() {
                   {/* Same here, boolean stuff */}
                   <div className="flex justify-end">
                     <span className="decoration-5 rounded-full border border-solid border-black bg-slate-200 p-1.5 text-xs font-bold">
-                      ❌{/* Complete ✅ */}
+                      🔒{/* Complete ✅ */}
                     </span>
                   </div>
                 </div>
