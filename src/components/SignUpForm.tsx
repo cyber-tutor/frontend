@@ -12,7 +12,6 @@ const SignUpForm = () => {
     useCreateUserWithEmailAndPassword(auth);
   const router = useRouter();
 
-
   const handleSignUp = async (event: React.FormEvent) => {
     // This prevents the default behavior of a form submission is to reload the page. We don't want that because of async behavior.
     event.preventDefault();
@@ -22,20 +21,25 @@ const SignUpForm = () => {
 
       const isExperimental = Math.random() < 0.5;
 
-      const group = isExperimental ? 'experimental' : 'control';
-  
+      const group = isExperimental ? "experimental" : "control";
+
       // If the user was successfully created, add a document to the 'users' collection
+      // Progress will be inserted on completion of sections so currently 
+      // just empty map. Length can me modified by how many section are in each chapter
       if (res?.user) {
         const docRef = await addDoc(collection(db, "users"), {
           userId: res.user.uid,
           group: group,
+          progress: {0: {0: '', 1:'', 2:'', 3:'', 4:'', 5:''}, 1:{0: '', 1:'', 2:'', 3:'', 4:'', 5:''}, 2:{0: '', 1:'', 2:'', 3:'', 4:'', 5:''}, 3:{0: '', 1:'', 2:'', 3:'', 4:'', 5:''}, 4:{0: '', 1:'', 2:'', 3:'', 4:'', 5:''}, 5:{0: '', 1:'', 2:'', 3:'', 4:'', 5:''}},
+          proficiency: {0: '', 1:'', 2:'', 3:'', 4:'', 5:''},
+          scoresQuiz: {0: '', 1:'', 2:'', 3:'', 4:'', 5:''},
+          scoresTest: {0: '', 1:'', 2:'', 3:'', 4:'', 5:''}
         });
-        console.log("Document written with ID: ", docRef.id);
       }
-  
+
       setEmail("");
       setPassword("");
-  
+
       router.push("/users/sign-in");
     } catch (e) {
       console.error(e);
@@ -54,7 +58,7 @@ const SignUpForm = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="flex w-full justify-center rounded p-1 border-2"
+          className="flex w-full justify-center rounded border-2 p-1"
         />
       </div>
       <div>
@@ -67,7 +71,7 @@ const SignUpForm = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="flex w-full justify-center rounded p-1 border-2"
+          className="flex w-full justify-center rounded border-2 p-1"
         />
       </div>
       <button
