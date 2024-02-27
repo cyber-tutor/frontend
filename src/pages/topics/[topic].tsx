@@ -92,7 +92,7 @@ export default function TopicPage() {
                   </h1>
                   <div className="flex justify-end">
                     {/* We want to have it so this is a boolean later on */}
-                    <span className="decoration-5 flex rounded-full border -solid border-black bg-slate-200 p-1.5 text-xs font-bold ">
+                    <span className="decoration-5 flex rounded-full border -solid border-black  p-1.5 text-xs font-bold ">
                       <CircularWithValueLabel />
                     </span>
                   </div>
