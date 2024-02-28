@@ -63,6 +63,7 @@ export default function ChapterPage() {
   const { topic: topicTitle, chapter: chapterTitle } = router.query;
 
   useEffect(() => {
+
     if (topicTitle && chapterTitle) {
       const url = `${process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS}?topicTitle=${encodeURIComponent(String(topicTitle))}&chapterTitle=${encodeURIComponent(String(chapterTitle))}`;
 
@@ -79,12 +80,34 @@ export default function ChapterPage() {
           );
           setChapter(foundChapter || null);
           setLoading(false);
+
+          
         })
-        .catch((error) => {
+        try {
+          fetch(url)
+            .then((res) =>
+              res.ok ? res.json() : Promise.reject(new Error(res.statusText)),
+            )
+            .then((data) => {
+              const foundTopic = data.find(
+                (t: Topic) => t.topicTitle === topicTitle,
+              );
+              const foundChapter = foundTopic?.chapters.find(
+                (c: Chapter) => c.chapterTitle === chapterTitle,
+              );
+              setChapter(foundChapter || null);
+              setLoading(false);
+            })
+            .catch((error) => {
+              console.error("Fetch error:", error);
+              setError("Chapter fetch failed");
+              setLoading(false);
+            });
+        } catch (error) {
           console.error("Fetch error:", error);
           setError("Chapter fetch failed");
           setLoading(false);
-        });
+        }
     }
   }, [topicTitle, chapterTitle]);
 
@@ -108,27 +131,8 @@ export default function ChapterPage() {
       </BaseLayout>
     );
 
-
-
-    if (chapter && chapter.chapterType === "video") {
-      getVideoDuration(chapter.controlGroupContent)
-        .then((duration) => {
-          console.log("Video duration:", duration);
-
-        })
-        .catch((error) => {
-          console.error("Error getting video duration:", error);
-        });
-    }
- 
-
-
-
-
-
-
     
-
+     
 
   // Currently commented out because I removed the JSON from the database. I will refactor this later. But we probably don't even want that in the database, and instead, dynamically generate the survey based on questions in the database as we have discussed. In other words, we have the empty template here, and we just fill in the questions from the database.
   // This function renders the survey using the SurveyJS library.
@@ -152,6 +156,45 @@ export default function ChapterPage() {
   // }
 
   // I will refactor this later. This is somewhat garbage at the moment, the way it's set up. I'm thinking either an if or switch statement to determine what to render based on the chapterType. I will refactor this later.
+
+
+
+
+function formatDuration(duration: string): string {
+
+  const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
+  const matches = duration.match(regex);
+
+
+  const hours = matches && matches[1] ? parseInt(matches[1]) : 0;
+  const minutes = matches && matches[2] ? parseInt(matches[2]) : 0;
+  const seconds = matches && matches[3] ? parseInt(matches[3]) : 0;
+
+
+  let formattedDuration = '';
+  if (hours > 0) {
+    formattedDuration += `${hours}:`;
+  }
+  formattedDuration += `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+  return formattedDuration;
+}
+
+
+async function fetchVideoDuration() {
+  const videoUrl = 'https://www.youtube.com/watch?v=8BoovULyJeg';
+  try {
+    const duration = await getVideoDuration(videoUrl); 
+    const formattedDuration = formatDuration(duration); 
+    console.log('Video Duration:', formattedDuration);
+  } catch (error) {
+    console.error('Failed to fetch video duration', error);
+  }
+}
+
+fetchVideoDuration();
+
+
   return (
     <BaseLayout>
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
@@ -179,19 +222,27 @@ export default function ChapterPage() {
               allowFullScreen
               src={chapter.controlGroupContent}
             ></iframe> */}
+            
+
             <ReactPlayer 
-            url={chapter.controlGroupContent}
-            onProgress={(progress) => {
-              setPlayed(progress.playedSeconds);
-            }}
-            className="h-full w-full"
-            allowFullScreen
+              url={chapter.controlGroupContent}
+              onProgress={(progress) => {
+                setPlayed(progress.playedSeconds);
+              }}
+              className="h-full w-full"
+              allowFullScreen
+              controls={false} 
+              // playing 
+              // progressInterval={1000} 
+              seekTo={20} 
             />
           </div>
         )}
         <br />
-        progress: {Math.floor(played / 60)}:{String(Math.floor(played % 60)).padStart(2, '0')}
 
+        {/* Converts seconds to minutes and removes the decimal point */}
+        progress: {Math.floor(played / 60)}:{String(Math.floor(played % 60)).padStart(2, '0')}
+    
         {/* {chapter.chapterType === "assessment" && App()} */}
       </div>
     </BaseLayout>
