@@ -48,11 +48,7 @@ export async function handleVideoEnd(played: number, userDocumentId: string): Pr
       videoCompleted: true
     });
 
-    // Push progress to Firestore
-    const progressCollectionRef = collection(db, `users/${userDocumentId}/progress`);
-    await addDoc(progressCollectionRef, {
-      progress: played
-    });
+
   } catch (error) {
     console.error("Error updating video progress:", error);
   }
