@@ -1,12 +1,19 @@
 import { BaseLayout } from "../../layouts/baseLayout";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { getDatabase, ref, get } from "firebase/database";
+import { getDatabase, ref, get, set } from "firebase/database";
 import { Survey } from "survey-react-ui";
 import { Model } from "survey-core";
 import "survey-core/defaultV2.min.css";
 import ReactPlayer from 'react-player'
 import getVideoDuration from "~/components/youtube_data";
+import { db, auth } from "~/pages/firebase/config";
+import firebase from 'firebase/app';
+import queryUserDocument from "~/pages/firebase/firebase_functions";
+import { DocumentData } from 'firebase/firestore';
+import { handleVideoEnd, isWatched } from "~/pages/firebase/firebase_functions";
+import TimerComponent from "~/components/Timer";
+
 
 type Topic = {
   topicId: string;
@@ -55,8 +62,12 @@ export default function ChapterPage() {
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Youtube states
   const [played, setPlayed] = useState(0);
   const [duration, setDuration] = useState("");
+  const [userDocument, setUserDocument] = useState<DocumentData | null>(null);
+  const [isVideoWatched, setIsVideoWatched] = useState(false);
 
   const router = useRouter();
   // This gets the topic and chapter parameters from the URL.
@@ -160,40 +171,68 @@ export default function ChapterPage() {
 
 
 
-function formatDuration(duration: string): string {
+// Function that console.logs the length of the video, can be changed to return other information too, it stopped working, will fix later
+// function formatDuration(duration: string): string {
 
-  const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
-  const matches = duration.match(regex);
-
-
-  const hours = matches && matches[1] ? parseInt(matches[1]) : 0;
-  const minutes = matches && matches[2] ? parseInt(matches[2]) : 0;
-  const seconds = matches && matches[3] ? parseInt(matches[3]) : 0;
+//   const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
+//   const matches = duration.match(regex);
 
 
-  let formattedDuration = '';
-  if (hours > 0) {
-    formattedDuration += `${hours}:`;
-  }
-  formattedDuration += `${minutes}:${seconds.toString().padStart(2, '0')}`;
+//   const hours = matches && matches[1] ? parseInt(matches[1]) : 0;
+//   const minutes = matches && matches[2] ? parseInt(matches[2]) : 0;
+//   const seconds = matches && matches[3] ? parseInt(matches[3]) : 0;
 
-  return formattedDuration;
+
+//   let formattedDuration = '';
+//   if (hours > 0) {
+//     formattedDuration += `${hours}:`;
+//   }
+//   formattedDuration += `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+//   return formattedDuration;
+// }
+
+// // Will be made dynamic later
+// async function fetchVideoDuration() {
+//   const videoUrl = 'https://www.youtube.com/watch?v=8BoovULyJeg';
+//   try {
+//     const duration = await getVideoDuration(videoUrl); 
+//     const formattedDuration = formatDuration(duration); 
+//     console.log('Video Duration:', formattedDuration);
+//   } catch (error) {
+//     console.error('Failed to fetch video duration', error);
+//   }
+// }
+// fetchVideoDuration();
+
+
+
+// Retreive the id of the user logged in and print it
+const user = auth.currentUser; const uid = user ? user.uid : null;
+console.log('User:', uid);
+
+
+
+// If user is logged in, query and retreive the reference to their document in the users collection in firestore
+if(uid) {
+  queryUserDocument(uid).then((userDocument) => {
+    console.log('User Document:', userDocument);
+
+    setUserDocument(userDocument);
+  });
+
 }
+console.log('User Document ID:' , userDocument?.id);
 
 
-async function fetchVideoDuration() {
-  const videoUrl = 'https://www.youtube.com/watch?v=8BoovULyJeg';
-  try {
-    const duration = await getVideoDuration(videoUrl); 
-    const formattedDuration = formatDuration(duration); 
-    console.log('Video Duration:', formattedDuration);
-  } catch (error) {
-    console.error('Failed to fetch video duration', error);
+
+
+// Check if the isWatched key value pair is set to true in the user's document in firestore to decide if the next button should be visible
+(async () => {
+  if(await isWatched(userDocument?.id)) {
+    setIsVideoWatched(true);
   }
-}
-
-fetchVideoDuration();
-
+})();
 
   return (
     <BaseLayout>
@@ -232,16 +271,32 @@ fetchVideoDuration();
               className="h-full w-full"
               allowFullScreen
               controls={false} 
+              onEnded={() => {
+                const playedMinutes = Math.floor(played / 60);
+
+                console.log('video ended');
+           
+                // console.log('User Document ID:' , userDocument?.id);
+                handleVideoEnd(playedMinutes, userDocument?.id);
+                setIsVideoWatched(true); 
+              }}
               // playing 
               // progressInterval={1000} 
               seekTo={20} 
             />
           </div>
         )}
+        {isVideoWatched && <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition ease-in-out duration-150">Next</button>}
+
         <br />
 
         {/* Converts seconds to minutes and removes the decimal point */}
-        progress: {Math.floor(played / 60)}:{String(Math.floor(played % 60)).padStart(2, '0')}
+        video progress: {Math.floor(played / 60)}:{String(Math.floor(played % 60)).padStart(2, '0')}
+
+        {/* Record how long a user spends on the chapter currently open */}
+        <br />
+        <p>User's time spent on this chapter:</p>
+        <TimerComponent />
     
         {/* {chapter.chapterType === "assessment" && App()} */}
       </div>
