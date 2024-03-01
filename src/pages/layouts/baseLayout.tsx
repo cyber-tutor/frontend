@@ -5,7 +5,7 @@ import { FiMenu } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../firebase/config";
-import { ref, get } from "firebase/database";
+import { collection, getDocs, query } from "firebase/firestore";
 
 // I redefined the types again because of the data transformation that happens through the Firebase Cloud Function.
 type Topic = {
@@ -72,29 +72,38 @@ export const BaseLayout = ({ children }: LayoutProps) => {
     }
   }, [isSubMenuOpen]);
 
-  // This now uses the Firebase Function to fetch the topics from the Realtime Database. instead of fetching from Firebase Realtime Database directly.
+  // This now directly fetches the topics collection from Firestore using queries, instead of using a transformed JSON resulting from a Cloud Function.
   useEffect(() => {
-    // I put URL in .env.local. If you visit that link, you can view the topics in the database with no authentication required. So keep it in .env.local or we're cooked.
-    const url = process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS;
-    if (!url) {
-      console.error("uh oh, URL not recognized 🦧");
-      return;
-    }
+    const fetchTopics = async () => {
+      const topicsCollectionRef = collection(db, "topics");
+      const topicsArray: Topic[] = [];
 
-    // This fetches the topics from the Realtime Database. It's the same as before, but now we're using the Firebase Function.
-    fetch(url)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("uh oh, HTTP response failed 🦧");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setTopics(data);
-      })
-      .catch((error) => {
-        console.error("uh oh, fetch failed 🦧:", error);
-      });
+      try {
+        const topicsSnapshot = await getDocs(topicsCollectionRef);
+        topicsSnapshot.forEach((topicDoc) => {
+          const topicData = topicDoc.data();
+          const topicId = topicDoc.id;
+
+          const newTopic = {
+            topicId: topicId,
+            topicTitle: topicData.topicTitle,
+            topicDescription: topicData.topicDescription,
+            chapters: [],
+          };
+
+          topicsArray.push(newTopic);
+        });
+
+        // Though I haven't encountered the problem that I have encountered with the Cloud Function, I think it would still be better to leave this in to guaruntee that the topics are sorted. Chapters never seemed to have that problem, so I'm not adding this code, but should we see that happen, we can add it to the chapters as well.
+        topicsArray.sort((a, b) => a.topicId.localeCompare(b.topicId));
+
+        setTopics(topicsArray);
+      } catch (error) {
+        console.error("uh oh, error fetching topics 🦧:", error);
+      }
+    };
+
+    fetchTopics();
   }, []);
 
   // This navigates to the home page.

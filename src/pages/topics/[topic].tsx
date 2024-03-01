@@ -1,7 +1,8 @@
 import { BaseLayout } from "../layouts/baseLayout";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { getDatabase, ref, get } from "firebase/database";
+import { db } from "../firebase/config";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import Link from "next/link";
 import CircularWithValueLabel from "~/components/ProgressCircle";
 
@@ -45,22 +46,56 @@ export default function TopicPage() {
   const { topic: topicId } = router.query;
 
   useEffect(() => {
-    if (topicId) {
-      // I put URL in .env.local. If you visit that link, you can view the topics in the database with no authentication required. So keep it in .env.local or we're cooked.
-      const url = `${process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS}`;
-      fetch(url)
-        .then((res) => res.json())
-        .then((data) => {
-          const foundTopic = data.find((t: Topic) => t.topicId === topicId);
-          setTopic(foundTopic);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error(error);
-          // Forgot to add this previously, but we need to setLoading to false or else it gets stuck in an infinite loop.
-          setLoading(false);
-        });
-    }
+    const fetchTopic = async () => {
+      if (!topicId || Array.isArray(topicId)) return;
+
+      setLoading(true);
+      try {
+        const topicRef = doc(db, "topics", topicId);
+
+        const topicSnapshot = await getDoc(topicRef);
+
+        if (topicSnapshot.exists()) {
+          const topicData = topicSnapshot.data();
+
+          const chaptersCollectionRef = collection(
+            db,
+            `topics/${topicId}/chapters`,
+          );
+
+          const chaptersSnapshot = await getDocs(chaptersCollectionRef);
+
+          const chapters = chaptersSnapshot.docs.map((doc) => {
+            const chapterData = doc.data();
+            return {
+              chapterId: doc.id,
+              chapterType: chapterData.chapterType,
+              chapterTitle: chapterData.chapterTitle,
+              chapterDescription: chapterData.chapterDescription,
+              chapterPrompt: chapterData.chapterPrompt,
+              chapterQuestions: chapterData.chapterQuestions || [],
+            };
+          });
+
+          setTopic({
+            topicId: topicSnapshot.id,
+            topicTitle: topicData.topicTitle,
+            topicDescription: topicData.topicDescription,
+            chapters,
+          });
+        } else {
+          console.error("uh oh, topic not found 🦧");
+          setError("uh oh, topic not found 🦧");
+        }
+      } catch (err) {
+        console.error("uh oh, error fetching topic 🦧:", err);
+        setError("uh oh, error fetching topic 🦧");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTopic();
   }, [topicId]);
 
   // The following 3 conditionals are just to handle the different states of the page.
@@ -86,23 +121,23 @@ export default function TopicPage() {
   return (
     <BaseLayout>
       <div className="rounded-lg border-2 border-solid text-center lg:w-7/12 lg:p-10">
-                <div className="grid grid-cols-6 items-center">
-                  <h1 className="col-span-5 flex justify-start text-3xl font-bold">
-                    {topic.topicTitle}
-                  </h1>
-                  <div className="flex justify-end">
-                    {/* We want to have it so this is a boolean later on */}
-                    <span className="decoration-5 flex rounded-full border -solid border-black  p-1.5 text-xs font-bold ">
-                      <CircularWithValueLabel />
-                    </span>
-                  </div>
-                </div>
+        <div className="grid grid-cols-6 items-center">
+          <h1 className="col-span-5 flex justify-start text-3xl font-bold">
+            {topic.topicTitle}
+          </h1>
+          <div className="flex justify-end">
+            {/* We want to have it so this is a boolean later on */}
+            <span className="decoration-5 flex rounded-full border-solid border-black  p-1.5 text-xs font-bold ">
+              <CircularWithValueLabel />
+            </span>
+          </div>
+        </div>
         <p className="border-b-4 py-3">{topic.topicDescription}</p>
         <div className="flex flex-col text-start">
-          {topic.chapters.map((chapter, index) => (
+          {topic.chapters.map((chapter) => (
             <Link
-              key={index}
-              href={`/topics/${encodeURIComponent(topic.topicTitle)}/${encodeURIComponent(chapter.chapterTitle)}`}
+              key={chapter.chapterId}
+              href={`/topics/${encodeURIComponent(topic.topicId)}/chapters/${encodeURIComponent(chapter.chapterId)}`}
               className="px-3 pt-3 hover:bg-slate-200"
             >
               <div>
