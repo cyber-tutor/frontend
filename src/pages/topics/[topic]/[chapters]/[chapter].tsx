@@ -1,4 +1,4 @@
-import { BaseLayout } from "../../layouts/baseLayout";
+import { BaseLayout } from "../../../layouts/baseLayout";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { getDatabase, ref, get, set } from "firebase/database";
@@ -10,7 +10,7 @@ import getVideoDuration from "~/components/youtube_data";
 import { db, auth } from "~/pages/firebase/config";
 import firebase from 'firebase/app';
 import queryUserDocument from "~/pages/firebase/firebase_functions";
-import { DocumentData } from 'firebase/firestore';
+import { DocumentData, doc, getDoc } from "firebase/firestore";
 import { handleVideoEnd, isWatched } from "~/pages/firebase/firebase_functions";
 import TimerComponent from "~/components/Timer";
 
@@ -71,56 +71,49 @@ export default function ChapterPage() {
 
   const router = useRouter();
   // This gets the topic and chapter parameters from the URL.
-  const { topic: topicTitle, chapter: chapterTitle } = router.query;
+  const { topic: topicId, chapter: chapterId } = router.query; // Assuming chapterId is available in the query
 
   useEffect(() => {
+    const fetchChapter = async () => {
+      if (
+        !topicId ||
+        !chapterId ||
+        Array.isArray(topicId) ||
+        Array.isArray(chapterId)
+      )
+        return;
 
-    if (topicTitle && chapterTitle) {
-      const url = `${process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_GET_TOPICS}?topicTitle=${encodeURIComponent(String(topicTitle))}&chapterTitle=${encodeURIComponent(String(chapterTitle))}`;
+      setLoading(true);
+      try {
+        // Assuming chapters are subcollections under topics
+        const chapterRef = doc(
+          db,
+          "topics",
+          String(topicId),
+          "chapters",
+          String(chapterId),
+        );
+        const chapterSnapshot = await getDoc(chapterRef);
 
-      fetch(url)
-        .then((res) =>
-          res.ok ? res.json() : Promise.reject(new Error(res.statusText)),
-        )
-        .then((data) => {
-          const foundTopic = data.find(
-            (t: Topic) => t.topicTitle === topicTitle,
-          );
-          const foundChapter = foundTopic?.chapters.find(
-            (c: Chapter) => c.chapterTitle === chapterTitle,
-          );
-          setChapter(foundChapter || null);
-          setLoading(false);
-
-          
-        })
-        try {
-          fetch(url)
-            .then((res) =>
-              res.ok ? res.json() : Promise.reject(new Error(res.statusText)),
-            )
-            .then((data) => {
-              const foundTopic = data.find(
-                (t: Topic) => t.topicTitle === topicTitle,
-              );
-              const foundChapter = foundTopic?.chapters.find(
-                (c: Chapter) => c.chapterTitle === chapterTitle,
-              );
-              setChapter(foundChapter || null);
-              setLoading(false);
-            })
-            .catch((error) => {
-              console.error("Fetch error:", error);
-              setError("Chapter fetch failed");
-              setLoading(false);
-            });
-        } catch (error) {
-          console.error("Fetch error:", error);
-          setError("Chapter fetch failed");
-          setLoading(false);
+        if (chapterSnapshot.exists()) {
+          setChapter({
+            chapterId: chapterSnapshot.id,
+            ...chapterSnapshot.data(),
+          } as Chapter);
+        } else {
+          console.error("No such chapter!");
+          setError("Chapter not found");
         }
-    }
-  }, [topicTitle, chapterTitle]);
+      } catch (err) {
+        console.error("Error fetching chapter:", err);
+        setError("Failed to fetch chapter");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchChapter();
+  }, [topicId, chapterId]);
 
   // The following 3 conditionals are just to handle the different states of the page.
   if (loading)
@@ -142,7 +135,7 @@ export default function ChapterPage() {
       </BaseLayout>
     );
 
-    
+
      
 
   // Currently commented out because I removed the JSON from the database. I will refactor this later. But we probably don't even want that in the database, and instead, dynamically generate the survey based on questions in the database as we have discussed. In other words, we have the empty template here, and we just fill in the questions from the database.
@@ -171,68 +164,68 @@ export default function ChapterPage() {
 
 
 
-// Function that console.logs the length of the video, can be changed to return other information too, it stopped working, will fix later
-// function formatDuration(duration: string): string {
+  // Function that console.logs the length of the video, can be changed to return other information too, it stopped working, will fix later
+  // function formatDuration(duration: string): string {
 
-//   const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
-//   const matches = duration.match(regex);
-
-
-//   const hours = matches && matches[1] ? parseInt(matches[1]) : 0;
-//   const minutes = matches && matches[2] ? parseInt(matches[2]) : 0;
-//   const seconds = matches && matches[3] ? parseInt(matches[3]) : 0;
+  //   const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
+  //   const matches = duration.match(regex);
 
 
-//   let formattedDuration = '';
-//   if (hours > 0) {
-//     formattedDuration += `${hours}:`;
-//   }
-//   formattedDuration += `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-//   return formattedDuration;
-// }
-
-// // Will be made dynamic later
-// async function fetchVideoDuration() {
-//   const videoUrl = 'https://www.youtube.com/watch?v=8BoovULyJeg';
-//   try {
-//     const duration = await getVideoDuration(videoUrl); 
-//     const formattedDuration = formatDuration(duration); 
-//     console.log('Video Duration:', formattedDuration);
-//   } catch (error) {
-//     console.error('Failed to fetch video duration', error);
-//   }
-// }
-// fetchVideoDuration();
+  //   const hours = matches && matches[1] ? parseInt(matches[1]) : 0;
+  //   const minutes = matches && matches[2] ? parseInt(matches[2]) : 0;
+  //   const seconds = matches && matches[3] ? parseInt(matches[3]) : 0;
 
 
+  //   let formattedDuration = '';
+  //   if (hours > 0) {
+  //     formattedDuration += `${hours}:`;
+  //   }
+  //   formattedDuration += `${minutes}:${seconds.toString().padStart(2, '0')}`;
 
-// Retreive the id of the user logged in and print it
-const user = auth.currentUser; const uid = user ? user.uid : null;
-console.log('User:', uid);
+  //   return formattedDuration;
+  // }
+
+  // // Will be made dynamic later
+  // async function fetchVideoDuration() {
+  //   const videoUrl = 'https://www.youtube.com/watch?v=8BoovULyJeg';
+  //   try {
+  //     const duration = await getVideoDuration(videoUrl);
+  //     const formattedDuration = formatDuration(duration);
+  //     console.log('Video Duration:', formattedDuration);
+  //   } catch (error) {
+  //     console.error('Failed to fetch video duration', error);
+  //   }
+  // }
+  // fetchVideoDuration();
 
 
 
-// If user is logged in, query and retreive the reference to their document in the users collection in firestore
-if(uid) {
-  queryUserDocument(uid).then((userDocument) => {
-    console.log('User Document:', userDocument);
-
-    setUserDocument(userDocument);
-  });
-
-}
-console.log('User Document ID:' , userDocument?.id);
+  // Retreive the id of the user logged in and print it
+  const user = auth.currentUser; const uid = user ? user.uid : null;
+  console.log('User:', uid);
 
 
 
+  // If user is logged in, query and retreive the reference to their document in the users collection in firestore
+  if(uid) {
+    queryUserDocument(uid).then((userDocument) => {
+      console.log('User Document:', userDocument);
 
-// Check if the isWatched key value pair is set to true in the user's document in firestore to decide if the next button should be visible
-(async () => {
-  if(await isWatched(userDocument?.id)) {
-    setIsVideoWatched(true);
+      setUserDocument(userDocument);
+    });
+
   }
-})();
+  console.log('User Document ID:' , userDocument?.id);
+
+
+
+
+  // Check if the isWatched key value pair is set to true in the user's document in firestore to decide if the next button should be visible
+  (async () => {
+    if(await isWatched(userDocument?.id)) {
+      setIsVideoWatched(true);
+    }
+  })();
 
   return (
     <BaseLayout>
@@ -247,8 +240,8 @@ console.log('User Document ID:' , userDocument?.id);
               <img
                 className="mt-5 mx-auto shadow-lg w-1/3"
                 src={chapter.controlGroupImageURLs[0]}
-                alt={chapterTitle ? String(chapterTitle) : undefined}
-                title={chapterTitle ? String(chapterTitle) : undefined}
+                alt={chapter.chapterTitle ? String(chapter.chapterTitle) : undefined}
+                title={chapter.chapterTitle ? String(chapter.chapterTitle) : undefined}
               />
             )}
           </div>
@@ -261,28 +254,28 @@ console.log('User Document ID:' , userDocument?.id);
               allowFullScreen
               src={chapter.controlGroupContent}
             ></iframe> */}
-            
 
-            <ReactPlayer 
+
+            <ReactPlayer
               url={chapter.controlGroupContent}
               onProgress={(progress) => {
                 setPlayed(progress.playedSeconds);
               }}
               className="h-full w-full"
               allowFullScreen
-              controls={false} 
+              controls={false}
               onEnded={() => {
                 const playedMinutes = Math.floor(played / 60);
 
                 console.log('video ended');
-           
+
                 // console.log('User Document ID:' , userDocument?.id);
                 handleVideoEnd(playedMinutes, userDocument?.id);
-                setIsVideoWatched(true); 
+                setIsVideoWatched(true);
               }}
-              // playing 
-              // progressInterval={1000} 
-              seekTo={20} 
+              // playing
+              // progressInterval={1000}
+              seekTo={20}
             />
           </div>
         )}
@@ -297,7 +290,7 @@ console.log('User Document ID:' , userDocument?.id);
         <br />
         <p>User's time spent on this chapter:</p>
         <TimerComponent />
-    
+
         {/* {chapter.chapterType === "assessment" && App()} */}
       </div>
     </BaseLayout>
