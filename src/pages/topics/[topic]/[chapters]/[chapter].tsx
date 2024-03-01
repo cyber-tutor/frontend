@@ -1,4 +1,4 @@
-import { BaseLayout } from "../../layouts/baseLayout";
+import { BaseLayout } from "../../../layouts/baseLayout";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { getDatabase, ref, get, set } from "firebase/database";
