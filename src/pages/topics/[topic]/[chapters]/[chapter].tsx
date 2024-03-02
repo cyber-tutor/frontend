@@ -5,15 +5,14 @@ import { getDatabase, ref, get, set } from "firebase/database";
 import { Survey } from "survey-react-ui";
 import { Model } from "survey-core";
 import "survey-core/defaultV2.min.css";
-import ReactPlayer from 'react-player'
+import ReactPlayer from "react-player";
 import getVideoDuration from "~/components/youtube_data";
 import { db, auth } from "~/pages/firebase/config";
-import firebase from 'firebase/app';
+import firebase from "firebase/app";
 import queryUserDocument from "~/pages/firebase/firebase_functions";
 import { DocumentData, doc, getDoc } from "firebase/firestore";
 import { handleVideoEnd, isWatched } from "~/pages/firebase/firebase_functions";
 import TimerComponent from "~/components/Timer";
-
 
 type Topic = {
   topicId: string;
@@ -29,8 +28,8 @@ type Chapter = {
   chapterType: string;
   controlGroupContent: string;
   experimentalGroupContent: string;
-  controlGroupImageURLs: string[]; // Add image URLs
-  experimentalGroupImageURLs: string[]; // Add image URLs
+  controlGroupImageURLs: string[];
+  experimentalGroupImageURLs: string[];
 };
 
 // Old Question
@@ -70,8 +69,7 @@ export default function ChapterPage() {
   const [isVideoWatched, setIsVideoWatched] = useState(false);
 
   const router = useRouter();
-  // This gets the topic and chapter parameters from the URL.
-  const { topic: topicId, chapter: chapterId } = router.query; // Assuming chapterId is available in the query
+  const { topic: topicId, chapter: chapterId } = router.query;
 
   useEffect(() => {
     const fetchChapter = async () => {
@@ -85,7 +83,6 @@ export default function ChapterPage() {
 
       setLoading(true);
       try {
-        // Assuming chapters are subcollections under topics
         const chapterRef = doc(
           db,
           "topics",
@@ -115,7 +112,6 @@ export default function ChapterPage() {
     fetchChapter();
   }, [topicId, chapterId]);
 
-  // The following 3 conditionals are just to handle the different states of the page.
   if (loading)
     return (
       <BaseLayout>
@@ -134,9 +130,6 @@ export default function ChapterPage() {
         <div>uh oh, chapter not found 🦧</div>
       </BaseLayout>
     );
-
-
-     
 
   // Currently commented out because I removed the JSON from the database. I will refactor this later. But we probably don't even want that in the database, and instead, dynamically generate the survey based on questions in the database as we have discussed. In other words, we have the empty template here, and we just fill in the questions from the database.
   // This function renders the survey using the SurveyJS library.
@@ -161,20 +154,15 @@ export default function ChapterPage() {
 
   // I will refactor this later. This is somewhat garbage at the moment, the way it's set up. I'm thinking either an if or switch statement to determine what to render based on the chapterType. I will refactor this later.
 
-
-
-
   // Function that console.logs the length of the video, can be changed to return other information too, it stopped working, will fix later
   // function formatDuration(duration: string): string {
 
   //   const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
   //   const matches = duration.match(regex);
 
-
   //   const hours = matches && matches[1] ? parseInt(matches[1]) : 0;
   //   const minutes = matches && matches[2] ? parseInt(matches[2]) : 0;
   //   const seconds = matches && matches[3] ? parseInt(matches[3]) : 0;
-
 
   //   let formattedDuration = '';
   //   if (hours > 0) {
@@ -198,31 +186,24 @@ export default function ChapterPage() {
   // }
   // fetchVideoDuration();
 
-
-
   // Retreive the id of the user logged in and print it
-  const user = auth.currentUser; const uid = user ? user.uid : null;
-  console.log('User:', uid);
-
-
+  const user = auth.currentUser;
+  const uid = user ? user.uid : null;
+  console.log("User:", uid);
 
   // If user is logged in, query and retreive the reference to their document in the users collection in firestore
-  if(uid) {
+  if (uid) {
     queryUserDocument(uid).then((userDocument) => {
-      console.log('User Document:', userDocument);
+      console.log("User Document:", userDocument);
 
       setUserDocument(userDocument);
     });
-
   }
-  console.log('User Document ID:' , userDocument?.id);
-
-
-
+  console.log("User Document ID:", userDocument?.id);
 
   // Check if the isWatched key value pair is set to true in the user's document in firestore to decide if the next button should be visible
   (async () => {
-    if(await isWatched(userDocument?.id)) {
+    if (await isWatched(userDocument?.id)) {
       setIsVideoWatched(true);
     }
   })();
@@ -238,10 +219,18 @@ export default function ChapterPage() {
             {chapter.controlGroupContent}
             {chapter.controlGroupImageURLs[0] && (
               <img
-                className="mt-5 mx-auto shadow-lg w-1/3"
+                className="mx-auto mt-5 w-1/3 shadow-lg"
                 src={chapter.controlGroupImageURLs[0]}
-                alt={chapter.chapterTitle ? String(chapter.chapterTitle) : undefined}
-                title={chapter.chapterTitle ? String(chapter.chapterTitle) : undefined}
+                alt={
+                  chapter.chapterTitle
+                    ? String(chapter.chapterTitle)
+                    : undefined
+                }
+                title={
+                  chapter.chapterTitle
+                    ? String(chapter.chapterTitle)
+                    : undefined
+                }
               />
             )}
           </div>
@@ -255,7 +244,6 @@ export default function ChapterPage() {
               src={chapter.controlGroupContent}
             ></iframe> */}
 
-
             <ReactPlayer
               url={chapter.controlGroupContent}
               onProgress={(progress) => {
@@ -267,7 +255,7 @@ export default function ChapterPage() {
               onEnded={() => {
                 const playedMinutes = Math.floor(played / 60);
 
-                console.log('video ended');
+                console.log("video ended");
 
                 // console.log('User Document ID:' , userDocument?.id);
                 handleVideoEnd(playedMinutes, userDocument?.id);
@@ -279,18 +267,19 @@ export default function ChapterPage() {
             />
           </div>
         )}
-        {isVideoWatched && <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition ease-in-out duration-150">Next</button>}
-
+        {isVideoWatched && (
+          <button className="rounded bg-blue-500 px-4 py-2 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-700">
+            Next
+          </button>
+        )}
         <br />
-
         {/* Converts seconds to minutes and removes the decimal point */}
-        video progress: {Math.floor(played / 60)}:{String(Math.floor(played % 60)).padStart(2, '0')}
-
+        video progress: {Math.floor(played / 60)}:
+        {String(Math.floor(played % 60)).padStart(2, "0")}
         {/* Record how long a user spends on the chapter currently open */}
         <br />
         <p>User's time spent on this chapter:</p>
         <TimerComponent />
-
         {/* {chapter.chapterType === "assessment" && App()} */}
       </div>
     </BaseLayout>

@@ -6,7 +6,6 @@ import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import Link from "next/link";
 import CircularWithValueLabel from "~/components/ProgressCircle";
 
-// I redefined the types again because of the data transformation that happens through the Firebase Cloud Function.
 type Topic = {
   topicId: string;
   topicTitle: string;
@@ -98,7 +97,6 @@ export default function TopicPage() {
     fetchTopic();
   }, [topicId]);
 
-  // The following 3 conditionals are just to handle the different states of the page.
   if (loading)
     return (
       <BaseLayout>
@@ -126,7 +124,6 @@ export default function TopicPage() {
             {topic.topicTitle}
           </h1>
           <div className="flex justify-end">
-            {/* We want to have it so this is a boolean later on */}
             <span className="decoration-5 flex rounded-full border-solid border-black  p-1.5 text-xs font-bold ">
               <CircularWithValueLabel />
             </span>

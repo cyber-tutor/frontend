@@ -1,4 +1,3 @@
-// index.tsx
 import Head from "next/head";
 import { BaseLayout } from "./layouts/baseLayout";
 

@@ -43,7 +43,6 @@ type LayoutProps = {
 };
 
 export const BaseLayout = ({ children }: LayoutProps) => {
-  // This is for the topics fetched from firebase.
   const [topics, setTopics] = useState<Topic[]>([]);
 
   // This sets a state variable for the currently selected topic. We intent to use this to highlight the selected topic in the sidebar.
@@ -72,7 +71,6 @@ export const BaseLayout = ({ children }: LayoutProps) => {
     }
   }, [isSubMenuOpen]);
 
-  // This now directly fetches the topics collection from Firestore using queries, instead of using a transformed JSON resulting from a Cloud Function.
   useEffect(() => {
     const fetchTopics = async () => {
       const topicsCollectionRef = collection(db, "topics");
@@ -106,18 +104,15 @@ export const BaseLayout = ({ children }: LayoutProps) => {
     fetchTopics();
   }, []);
 
-  // This navigates to the home page.
   const handleLogoClick = () => {
     router.push("/");
   };
 
-  // This sets the selected topic and navigates to its corresponding page.
   const handleTopicClick = (topic: Topic) => {
     setSelectedTopic(topic);
     router.push(`/topics/${encodeURIComponent(topic.topicId)}`);
   };
 
-  // This toggles the open state of the submenu.
   const toggleSubMenu = () => {
     setSubMenuOpen(!isSubMenuOpen);
   };
@@ -181,7 +176,6 @@ export const BaseLayout = ({ children }: LayoutProps) => {
               >
                 {topics.map((topic) => (
                   <MenuItem
-                    // Simply just gets the assigned key for the topic from the datbase now isntead of using an assigned ID inside of a list.
                     key={topic.topicId}
                     onClick={() => handleTopicClick(topic)}
                   >
