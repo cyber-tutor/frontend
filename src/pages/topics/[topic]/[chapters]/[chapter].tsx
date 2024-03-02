@@ -14,13 +14,6 @@ import { DocumentData, doc, getDoc } from "firebase/firestore";
 import { handleVideoEnd, isWatched } from "~/pages/firebase/firebase_functions";
 import TimerComponent from "~/components/Timer";
 
-type Topic = {
-  topicId: string;
-  topicTitle: string;
-  topicDescription: string;
-  chapters: Chapter[];
-};
-
 type Chapter = {
   chapterId: string;
   chapterTitle: string;
