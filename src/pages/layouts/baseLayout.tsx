@@ -5,13 +5,14 @@ import { FiMenu } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../firebase/config";
-import { collection, getDocs, query } from "firebase/firestore";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 
 // I redefined the types again because of the data transformation that happens through the Firebase Cloud Function.
 type Topic = {
   topicId: string;
   topicTitle: string;
   topicDescription: string;
+  order: number;
   chapters: Chapter[];
 };
 
@@ -20,8 +21,11 @@ type Chapter = {
   chapterType: string;
   chapterTitle: string;
   chapterDescription: string;
-  chapterPrompt: string;
-  chapterQuestions?: Question[];
+  controlGroupContent: string;
+  experimentalGroupContent: string;
+  controlGroupImageURLs: string[];
+  experimentalGroupImageURLs: string[];
+  order: number;
 };
 
 type Question = {
@@ -77,7 +81,9 @@ export const BaseLayout = ({ children }: LayoutProps) => {
       const topicsArray: Topic[] = [];
 
       try {
-        const topicsSnapshot = await getDocs(topicsCollectionRef);
+        const topicsSnapshot = await getDocs(
+          query(topicsCollectionRef, orderBy("order")),
+        );
         topicsSnapshot.forEach((topicDoc) => {
           const topicData = topicDoc.data();
           const topicId = topicDoc.id;
@@ -86,14 +92,12 @@ export const BaseLayout = ({ children }: LayoutProps) => {
             topicId: topicId,
             topicTitle: topicData.topicTitle,
             topicDescription: topicData.topicDescription,
+            order: topicData.order,
             chapters: [],
           };
 
           topicsArray.push(newTopic);
         });
-
-        // Though I haven't encountered the problem that I have encountered with the Cloud Function, I think it would still be better to leave this in to guaruntee that the topics are sorted. Chapters never seemed to have that problem, so I'm not adding this code, but should we see that happen, we can add it to the chapters as well.
-        topicsArray.sort((a, b) => a.topicId.localeCompare(b.topicId));
 
         setTopics(topicsArray);
       } catch (error) {
