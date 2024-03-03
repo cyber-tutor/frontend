@@ -73,30 +73,51 @@ export default function AdminPanel() {
           />
         )}
         {!editingId && <QuestionForm onSubmit={createQuestion} />}
-        <table>
-          <thead>
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
             <tr>
-              <th>Text</th>
-              <th>Options</th>
-              <th>Topic ID</th>
-              <th>Chapter ID</th>
-              <th>Difficulty</th>
-              <th>Explanation</th>
-              <th>Tags</th>
-              <th>Actions</th>
+              {[
+                "Text",
+                "Options",
+                "Topic ID",
+                "Chapter ID",
+                "Difficulty",
+                "Explanation",
+                "Tags",
+                "Actions",
+              ].map((header) => (
+                <th
+                  key={header}
+                  className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                >
+                  {header}
+                </th>
+              ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-200 bg-white">
             {questions.map((question) => (
               <tr key={question.id}>
-                <td>{question.text}</td>
-                <td>{question.options.join(", ")}</td>
-                <td>{question.topicId}</td>
-                <td>{question.chapterId}</td>
-                <td>{question.difficulty}</td>
-                <td>{question.explanation}</td>
-                <td>{question.tags.join(", ")}</td>
-                <td>
+                <td className="whitespace-nowrap px-6 py-4">{question.text}</td>
+                <td className="whitespace-nowrap px-6 py-4">
+                  {question.options.join(", ")}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4">
+                  {question.topicId}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4">
+                  {question.chapterId}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4">
+                  {question.difficulty}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4">
+                  {question.explanation}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4">
+                  {question.tags.join(", ")}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4">
                   <button onClick={() => deleteQuestion(question.id!)}>
                     Delete
                   </button>
