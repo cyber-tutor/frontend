@@ -11,6 +11,19 @@ import {
 import Head from "next/head";
 import { BaseLayout } from "../layouts/baseLayout";
 import QuestionForm, { Question } from "../../components/QuestionForm";
+import StickyHeadTable from "../../components/StickyHeadTable"; // Import the StickyHeadTable component
+
+interface TableRowData {
+  id?: string;
+  text: string;
+  options: string;
+  topicId: string;
+  chapterId: string;
+  difficulty: string;
+  explanation: string;
+  tags: string;
+  actions: JSX.Element;
+}
 
 export default function AdminPanel() {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -63,9 +76,31 @@ export default function AdminPanel() {
     stopEditing();
   };
 
+  const transformedRows: TableRowData[] = questions.map((question) => ({
+    id: question.id,
+    text: question.text,
+    options: question.options.join(", "),
+    topicId: question.topicId,
+    chapterId: question.chapterId,
+    difficulty: question.difficulty,
+    explanation: question.explanation,
+    tags: question.tags.join(", "),
+    actions: (
+      <div>
+        <button onClick={() => deleteQuestion(question.id!)}>Delete</button>
+        {editingId === question.id ? (
+          <button onClick={stopEditing}>Cancel</button>
+        ) : (
+          <button onClick={() => startEditing(question)}>Edit</button>
+        )}
+      </div>
+    ),
+  }));
+
   return (
     <BaseLayout>
-      <div className="max-h-screen overflow-y-auto">
+      <h1 className="text-3xl font-bold">Admin Interface: Question CRUD</h1>
+      <div className="sticky top-0 z-10 bg-white">
         {editingId && (
           <QuestionForm
             question={editedQuestion ?? undefined}
@@ -73,64 +108,21 @@ export default function AdminPanel() {
           />
         )}
         {!editingId && <QuestionForm onSubmit={createQuestion} />}
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              {[
-                "Text",
-                "Options",
-                "Topic ID",
-                "Chapter ID",
-                "Difficulty",
-                "Explanation",
-                "Tags",
-                "Actions",
-              ].map((header) => (
-                <th
-                  key={header}
-                  className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                >
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
-            {questions.map((question) => (
-              <tr key={question.id}>
-                <td className="whitespace-nowrap px-6 py-4">{question.text}</td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  {question.options.join(", ")}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  {question.topicId}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  {question.chapterId}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  {question.difficulty}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  {question.explanation}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  {question.tags.join(", ")}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  <button onClick={() => deleteQuestion(question.id!)}>
-                    Delete
-                  </button>
-                  {editingId === question.id ? (
-                    <button onClick={stopEditing}>Cancel</button>
-                  ) : (
-                    <button onClick={() => startEditing(question)}>Edit</button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      </div>
+      <div className="overflow-y-auto">
+        <StickyHeadTable
+          columns={[
+            { id: "text", label: "Text", minWidth: 150 },
+            { id: "options", label: "Options", minWidth: 100 },
+            { id: "topicId", label: "Topic ID", minWidth: 40 },
+            { id: "chapterId", label: "Chapter ID", minWidth: 40 },
+            { id: "difficulty", label: "Difficulty", minWidth: 40 },
+            { id: "explanation", label: "Explanation", minWidth: 150 },
+            { id: "tags", label: "Tags", minWidth: 150 },
+            { id: "actions", label: "Actions", minWidth: 170 },
+          ]}
+          rows={transformedRows}
+        />
       </div>
     </BaseLayout>
   );
