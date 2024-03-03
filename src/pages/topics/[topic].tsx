@@ -18,8 +18,11 @@ type Chapter = {
   chapterType: string;
   chapterTitle: string;
   chapterDescription: string;
-  chapterPrompt: string;
-  chapterQuestions?: Question[];
+  controlGroupContent: string;
+  experimentalGroupContent: string;
+  controlGroupImageURLs: string[];
+  experimentalGroupImageURLs: string[];
+  order: number;
 };
 
 type Question = {
@@ -71,8 +74,12 @@ export default function TopicPage() {
               chapterType: chapterData.chapterType,
               chapterTitle: chapterData.chapterTitle,
               chapterDescription: chapterData.chapterDescription,
-              chapterPrompt: chapterData.chapterPrompt,
-              chapterQuestions: chapterData.chapterQuestions || [],
+              controlGroupContent: chapterData.controlGroupContent,
+              experimentalGroupContent: chapterData.experimentalGroupContent,
+              controlGroupImageURLs: chapterData.controlGroupImageURLs,
+              experimentalGroupImageURLs:
+                chapterData.experimentalGroupImageURLs,
+              order: chapterData.order,
             };
           });
 
@@ -134,7 +141,9 @@ export default function TopicPage() {
           {topic.chapters.map((chapter) => (
             <Link
               key={chapter.chapterId}
-              href={`/topics/${encodeURIComponent(topic.topicId)}/chapters/${encodeURIComponent(chapter.chapterId)}`}
+              href={`/topics/${encodeURIComponent(
+                topic.topicId,
+              )}/chapters/${encodeURIComponent(chapter.chapterId)}`}
               className="px-3 pt-3 hover:bg-slate-200"
             >
               <div>
