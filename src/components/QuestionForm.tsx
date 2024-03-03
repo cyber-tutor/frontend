@@ -71,7 +71,9 @@ const QuestionForm: React.FC<{
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    const arrayValue = value ? value.split(",").map((item) => item.trim()) : [];
+    const arrayValue = value
+      ? Array.from(new Set(value.split(",").map((item) => item.trim())))
+      : [];
     setEditedQuestion((prevQuestion) => ({
       ...prevQuestion,
       [name]: arrayValue,
@@ -82,7 +84,7 @@ const QuestionForm: React.FC<{
     e.preventDefault();
 
     if (!editedQuestion.options.includes(editedQuestion.correctAnswer)) {
-      alert("uh oh, stinky 🦧: Correct answer not in options!");
+      alert("uh oh, 🦧: that correct answer is not in the list of options!");
       return;
     }
 
@@ -101,7 +103,10 @@ const QuestionForm: React.FC<{
 
   return (
     <div className="p-5">
-      <form onSubmit={handleSubmit} className="grid md:grid-cols-3 sm:grid-cols-1 gap-4">
+      <form
+        onSubmit={handleSubmit}
+        className="grid gap-4 sm:grid-cols-1 md:grid-cols-3"
+      >
         <InputField
           name="text"
           value={editedQuestion.text}
