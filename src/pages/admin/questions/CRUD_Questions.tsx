@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { db } from "../../pages/firebase/config";
+import { db } from "../../firebase/config";
 import {
   collection,
   addDoc,
@@ -9,9 +9,9 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import Head from "next/head";
-import { BaseLayout } from "../layouts/baseLayout";
-import QuestionForm, { Question } from "../../components/QuestionForm";
-import StickyHeadTable from "../../components/StickyHeadTable"; // Import the StickyHeadTable component
+import { BaseLayout } from "../../layouts/baseLayout";
+import QuestionForm, { Question } from "../../../components/QuestionForm";
+import StickyHeadTable from "../../../components/StickyHeadTable";
 
 interface TableRowData {
   id?: string;
@@ -25,7 +25,7 @@ interface TableRowData {
   actions: JSX.Element;
 }
 
-export default function AdminPanel() {
+export default function CRUD_Questions() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedQuestion, setEditedQuestion] = useState<Question | null>(null);
