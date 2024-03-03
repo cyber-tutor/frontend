@@ -54,51 +54,56 @@ const QuestionForm: React.FC<{
     }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  const validateQuestion = (
+    question: Question,
+  ): Partial<Record<keyof Question, string>> => {
+    const errors: Partial<Record<keyof Question, string>> = {};
 
-    const newErrors: Partial<Record<keyof Question, string>> = {};
-
-    if (!editedQuestion.text) {
-      newErrors.text = "uh oh 🦧, you need a question.";
+    if (!question.text) {
+      errors.text = "uh oh 🦧, you need a question.";
     }
 
-    if (editedQuestion.options.length < 2) {
-      newErrors.options = "uh oh 🦧, you need at least 2 options.";
+    if (question.options.length < 2) {
+      errors.options = "uh oh 🦧, you need at least 2 options.";
     }
 
-    if (!editedQuestion.correctAnswer) {
-      newErrors.correctAnswer = "uh oh 🦧, you need a correct answer.";
+    if (!question.correctAnswer) {
+      errors.correctAnswer = "uh oh 🦧, you need a correct answer.";
     }
 
-    if (!editedQuestion.options.includes(editedQuestion.correctAnswer)) {
-      newErrors.correctAnswer =
+    if (!question.options.includes(question.correctAnswer)) {
+      errors.correctAnswer =
         "uh oh 🦧, the correct answer should be one of the options.";
     }
 
-    if (!editedQuestion.explanation) {
-      newErrors.explanation = "uh oh 🦧, you need an explanation.";
+    if (!question.explanation) {
+      errors.explanation = "uh oh 🦧, you need an explanation.";
     }
 
-    if (!editedQuestion.topicId) {
-      newErrors.topicId = "uh oh 🦧, you need a topic ID.";
+    if (!question.topicId) {
+      errors.topicId = "uh oh 🦧, you need a topic ID.";
     }
 
-    if (
-      editedQuestion.proficiencyLevel < 1 ||
-      editedQuestion.proficiencyLevel > 5
-    ) {
-      newErrors.proficiencyLevel =
+    if (question.proficiencyLevel < 1 || question.proficiencyLevel > 5) {
+      errors.proficiencyLevel =
         "uh oh 🦧, the proficiency level should be between 1 and 5.";
     }
 
-    if (!editedQuestion.chapterId) {
-      newErrors.chapterId = "uh oh 🦧, you need a chapter ID.";
+    if (!question.chapterId) {
+      errors.chapterId = "uh oh 🦧, you need a chapter ID.";
     }
 
-    if (editedQuestion.tags.length < 1) {
-      newErrors.tags = "uh oh 🦧, you need at least 1 tag.";
+    if (question.tags.length < 1) {
+      errors.tags = "uh oh 🦧, you need at least 1 tag.";
     }
+
+    return errors;
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    const newErrors = validateQuestion(editedQuestion);
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
