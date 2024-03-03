@@ -7,6 +7,7 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import { DocumentData } from "firebase/firestore";
 import Head from "next/head";
@@ -21,16 +22,23 @@ export default function AdminPanel() {
   const [editText, setEditText] = useState("");
 
   useEffect(() => {
-    const fetchQuestions = async () => {
-      const querySnapshot = await getDocs(collection(db, "questions"));
-      const fetchedQuestions: { id: string; [key: string]: any }[] = [];
-      querySnapshot.forEach((doc) => {
-        fetchedQuestions.push({ id: doc.id, ...(doc.data() as DocumentData) });
-      });
-      setQuestions(fetchedQuestions);
-    };
+    // This uses onSnapshot, which allows for real-time updates to the questions array.
+    const unsubscribe = onSnapshot(
+      collection(db, "questions"),
+      (querySnapshot) => {
+        const fetchedQuestions: { id: string; [key: string]: any }[] = [];
+        querySnapshot.forEach((doc) => {
+          fetchedQuestions.push({
+            id: doc.id,
+            ...(doc.data() as DocumentData),
+          });
+        });
+        setQuestions(fetchedQuestions);
+      },
+    );
 
-    fetchQuestions();
+    // This returns the unsubscribe function to stop listening for updates when the component finishes rendering.
+    return () => unsubscribe();
   }, []);
 
   const createQuestion = async (e: FormEvent) => {
