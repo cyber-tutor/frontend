@@ -80,8 +80,13 @@ const QuestionForm: React.FC<{
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+
+    if (!editedQuestion.options.includes(editedQuestion.correctAnswer)) {
+      alert("uh oh, stinky 🦧: Correct answer not in options!");
+      return;
+    }
+
     onSubmit(editedQuestion);
-    // Clear the form after submission
     setEditedQuestion({
       text: "",
       options: [],
