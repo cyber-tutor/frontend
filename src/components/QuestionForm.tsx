@@ -157,7 +157,10 @@ const QuestionForm: React.FC<{
           onChange={handleArrayChange}
           placeholder="Tags (comma-separated)"
         />
-        <button type="submit" className="col-span-2">
+        <button
+          type="submit"
+          className="col-span-3 mx-1 rounded bg-green-600 p-1 font-mono"
+        >
           Submit
         </button>
       </form>

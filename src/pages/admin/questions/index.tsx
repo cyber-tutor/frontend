@@ -89,13 +89,28 @@ export default function CRUD_Questions() {
     tags: question.tags.join(", "),
     actions: (
       <div>
-<button onClick={() => deleteQuestion(question.id!)}>Delete</button>
         {editingId === question.id ? (
-          <button onClick={stopEditing}>Cancel</button>
+          <button
+            className="mx-1 rounded bg-yellow-300 p-1 font-mono"
+            onClick={stopEditing}
+          >
+            Cancel
+          </button>
         ) : (
-          <button onClick={() => startEditing(question)}>Edit</button>
+          <button
+            className="mx-1 rounded bg-yellow-300 p-1 font-mono"
+            onClick={() => startEditing(question)}
+          >
+            Edit
+          </button>
         )}
-              </div>
+        <button
+          className="mx-1 rounded bg-red-700 p-1 font-mono text-white"
+          onClick={() => deleteQuestion(question.id!)}
+        >
+          Delete
+        </button>
+      </div>
     ),
   }));
 
