@@ -6,7 +6,7 @@ export interface Question {
   options: string[];
   topicId: string;
   chapterId: string;
-  difficulty: string;
+  proficiencyLevel: string;
   explanation: string;
   tags: string[];
 }
@@ -52,7 +52,7 @@ const QuestionForm: React.FC<{
       options: [],
       topicId: "",
       chapterId: "",
-      difficulty: "",
+      proficiencyLevel: "",
       explanation: "",
       tags: [],
     },
@@ -85,7 +85,7 @@ const QuestionForm: React.FC<{
       options: [],
       topicId: "",
       chapterId: "",
-      difficulty: "",
+      proficiencyLevel: "",
       explanation: "",
       tags: [],
     });
@@ -124,10 +124,10 @@ const QuestionForm: React.FC<{
           />
         </div>
         <InputField
-          name="difficulty"
-          value={editedQuestion.difficulty}
+          name="proficiencyLevel"
+          value={editedQuestion.proficiencyLevel}
           onChange={handleChange}
-          placeholder="Difficulty"
+          placeholder="Proficiency Level"
         />
         <InputField
           name="explanation"
