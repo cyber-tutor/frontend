@@ -46,7 +46,6 @@ const QuestionForm: React.FC<{
   question?: Question;
   onSubmit: (updatedQuestion: Question) => void;
 }> = ({ question, onSubmit }) => {
-  const [editMode, setEditMode] = useState<boolean>(!question || !question.id);
   const [editedQuestion, setEditedQuestion] = useState<Question>(
     question || {
       text: "",
@@ -58,21 +57,6 @@ const QuestionForm: React.FC<{
       tags: [],
     },
   );
-
-  const handleEditToggle = () => {
-    setEditedQuestion(
-      question || {
-        text: "",
-        options: [],
-        topicId: "",
-        chapterId: "",
-        difficulty: "",
-        explanation: "",
-        tags: [],
-      },
-    );
-    setEditMode(!editMode);
-  };
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -95,19 +79,16 @@ const QuestionForm: React.FC<{
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     onSubmit(editedQuestion);
-    if (question && question.id) {
-      setEditMode(false);
-    } else {
-      setEditedQuestion({
-        text: "",
-        options: [],
-        topicId: "",
-        chapterId: "",
-        difficulty: "",
-        explanation: "",
-        tags: [],
-      });
-    }
+    // Clear the form after submission
+    setEditedQuestion({
+      text: "",
+      options: [],
+      topicId: "",
+      chapterId: "",
+      difficulty: "",
+      explanation: "",
+      tags: [],
+    });
   };
 
   return (
