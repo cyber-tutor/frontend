@@ -45,30 +45,21 @@ export default function AdminPanel() {
   };
 
   return (
-    <>
-      <Head>
-        <title>Admin - Cyber Tutor</title>
-        <meta name="description" content="Cyber Tutor" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <BaseLayout>
-        <div>
-          {questions.map((question) => (
-            <div key={question.id}>
-              <QuestionForm
-                question={question}
-                onSubmit={(updatedQuestion) =>
-                  editQuestion(question.id!, updatedQuestion)
-                }
-              />
-              <button onClick={() => deleteQuestion(question.id!)}>
-                Delete
-              </button>
-            </div>
-          ))}
-          <QuestionForm onSubmit={createQuestion} />
-        </div>
-      </BaseLayout>
-    </>
+    <BaseLayout>
+      <div className="max-h-screen overflow-y-auto">
+        {questions.map((question) => (
+          <div key={question.id}>
+            <QuestionForm
+              question={question}
+              onSubmit={(updatedQuestion) =>
+                editQuestion(question.id!, updatedQuestion)
+              }
+            />
+            <button onClick={() => deleteQuestion(question.id!)}>Delete</button>
+          </div>
+        ))}
+        <QuestionForm onSubmit={createQuestion} />
+      </div>
+    </BaseLayout>
   );
 }
