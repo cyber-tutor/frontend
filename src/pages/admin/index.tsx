@@ -14,6 +14,8 @@ import QuestionForm, { Question } from "../../components/QuestionForm";
 
 export default function AdminPanel() {
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editedQuestion, setEditedQuestion] = useState<Question | null>(null);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -44,10 +46,33 @@ export default function AdminPanel() {
     await deleteDoc(questionDoc);
   };
 
+  const startEditing = (question: Question) => {
+    setEditingId(question.id ?? null);
+    setEditedQuestion(question);
+  };
+
+  const stopEditing = () => {
+    setEditingId(null);
+    setEditedQuestion(null);
+  };
+
+  const handleEditSubmit = async (updatedQuestion: Question) => {
+    if (editingId) {
+      await editQuestion(editingId, updatedQuestion);
+    }
+    stopEditing();
+  };
+
   return (
     <BaseLayout>
       <div className="max-h-screen overflow-y-auto">
-        <QuestionForm onSubmit={createQuestion} />
+        {editingId && (
+          <QuestionForm
+            question={editedQuestion ?? undefined}
+            onSubmit={handleEditSubmit}
+          />
+        )}
+        {!editingId && <QuestionForm onSubmit={createQuestion} />}
         <table>
           <thead>
             <tr>
@@ -75,9 +100,11 @@ export default function AdminPanel() {
                   <button onClick={() => deleteQuestion(question.id!)}>
                     Delete
                   </button>
-                  <button onClick={() => editQuestion(question.id!, question)}>
-                    Edit
-                  </button>
+                  {editingId === question.id ? (
+                    <button onClick={stopEditing}>Cancel</button>
+                  ) : (
+                    <button onClick={() => startEditing(question)}>Edit</button>
+                  )}
                 </td>
               </tr>
             ))}
