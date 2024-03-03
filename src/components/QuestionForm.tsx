@@ -101,10 +101,7 @@ const QuestionForm: React.FC<{
 
   return (
     <div className="p-5">
-      <form
-        onSubmit={handleSubmit}
-        className="grid grid-cols-1 gap-4 md:grid-cols-3"
-      >
+      <form onSubmit={handleSubmit} className="grid md:grid-cols-3 sm:grid-cols-1 gap-4">
         <InputField
           name="text"
           value={editedQuestion.text}
@@ -123,20 +120,18 @@ const QuestionForm: React.FC<{
           onChange={handleChange}
           placeholder="Correct Answer"
         />
-        <div className="md:flex md:gap-4">
-          <InputField
-            name="topicId"
-            value={editedQuestion.topicId}
-            onChange={handleChange}
-            placeholder="Topic ID"
-          />
-          <InputField
-            name="chapterId"
-            value={editedQuestion.chapterId}
-            onChange={handleChange}
-            placeholder="Chapter ID"
-          />
-        </div>
+        <InputField
+          name="topicId"
+          value={editedQuestion.topicId}
+          onChange={handleChange}
+          placeholder="Topic ID"
+        />
+        <InputField
+          name="chapterId"
+          value={editedQuestion.chapterId}
+          onChange={handleChange}
+          placeholder="Chapter ID"
+        />
         <InputField
           name="proficiencyLevel"
           value={editedQuestion.proficiencyLevel.toString()}
@@ -159,7 +154,7 @@ const QuestionForm: React.FC<{
         />
         <button
           type="submit"
-          className="col-span-3 mx-1 rounded bg-green-600 p-1 font-mono"
+          className="col-span-full rounded bg-green-600 p-2 font-mono text-white"
         >
           Submit
         </button>

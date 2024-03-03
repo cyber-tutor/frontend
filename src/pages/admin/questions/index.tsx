@@ -114,6 +114,47 @@ export default function CRUD_Questions() {
     ),
   }));
 
+  const [windowWidth, setWindowWidth] = useState<number>(0);
+
+  useEffect(() => {
+    setWindowWidth(window.innerWidth);
+
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const columns = [
+    { id: "text", label: "Text", minWidth: 150 },
+    { id: "actions", label: "Actions", minWidth: 170 },
+  ];
+
+  if (windowWidth > 1200) {
+    columns.splice(
+      1,
+      0,
+      { id: "correctAnswer", label: "Correct Answer", minWidth: 40 },
+      { id: "topicId", label: "Topic ID", minWidth: 40 },
+      { id: "chapterId", label: "Chapter ID", minWidth: 40 },
+      { id: "proficiencyLevel", label: "Proficiency Level", minWidth: 40 },
+      { id: "tags", label: "Tags", minWidth: 150 },
+    );
+  } else if (windowWidth > 768) {
+    columns.splice(
+      1,
+      0,
+      { id: "correctAnswer", label: "Correct Answer", minWidth: 40 },
+      { id: "topicId", label: "Topic ID", minWidth: 40 },
+      { id: "chapterId", label: "Chapter ID", minWidth: 40 },
+    );
+  }
+
   return (
     <BaseLayout>
       <h1 className="text-3xl font-bold">Admin Interface: Question CRUD</h1>
@@ -127,24 +168,7 @@ export default function CRUD_Questions() {
         {!editingId && <QuestionForm onSubmit={createQuestion} />}
       </div>
       <div className="overflow-y-auto">
-        <StickyHeadTable
-          columns={[
-            { id: "text", label: "Text", minWidth: 150 },
-            // { id: "options", label: "Options", minWidth: 100 },
-            { id: "correctAnswer", label: "Correct Answer", minWidth: 40 },
-            { id: "topicId", label: "Topic ID", minWidth: 40 },
-            { id: "chapterId", label: "Chapter ID", minWidth: 40 },
-            {
-              id: "proficiencyLevel",
-              label: "Proficiency Level",
-              minWidth: 40,
-            },
-            // { id: "explanation", label: "Explanation", minWidth: 150 },
-            { id: "tags", label: "Tags", minWidth: 150 },
-            { id: "actions", label: "Actions", minWidth: 170 },
-          ]}
-          rows={transformedRows}
-        />
+        <StickyHeadTable columns={columns} rows={transformedRows} />
       </div>
     </BaseLayout>
   );
