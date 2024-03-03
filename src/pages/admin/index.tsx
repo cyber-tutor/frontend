@@ -34,8 +34,9 @@ export default function AdminPanel() {
   };
 
   const editQuestion = async (id: string, updatedQuestion: Question) => {
+    const { id: _, ...questionData } = updatedQuestion;
     const questionDoc = doc(db, "questions", id);
-    await updateDoc(questionDoc, { ...updatedQuestion });
+    await updateDoc(questionDoc, questionData);
   };
 
   const deleteQuestion = async (id: string) => {
