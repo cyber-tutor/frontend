@@ -47,6 +47,7 @@ export default function AdminPanel() {
   return (
     <BaseLayout>
       <div className="max-h-screen overflow-y-auto">
+        <QuestionForm onSubmit={createQuestion} />
         {questions.map((question) => (
           <div key={question.id}>
             <QuestionForm
@@ -58,7 +59,6 @@ export default function AdminPanel() {
             <button onClick={() => deleteQuestion(question.id!)}>Delete</button>
           </div>
         ))}
-        <QuestionForm onSubmit={createQuestion} />
       </div>
     </BaseLayout>
   );
