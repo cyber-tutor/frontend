@@ -105,58 +105,99 @@ const QuestionForm: React.FC<{
     <div className="p-5">
       <form
         onSubmit={handleSubmit}
-        className="grid gap-4 sm:grid-cols-1 md:grid-cols-3"
+        className="grid gap-4 md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1"
       >
-        <InputField
-          name="text"
-          value={editedQuestion.text}
-          onChange={handleChange}
-          placeholder="Question"
-        />
-        <InputField
-          name="options"
-          value={editedQuestion.options.join(", ")}
-          onChange={handleArrayChange}
-          placeholder="Options (comma-separated)"
-        />
-        <InputField
-          name="correctAnswer"
-          value={editedQuestion.correctAnswer}
-          onChange={handleChange}
-          placeholder="Correct Answer"
-        />
-        <InputField
-          name="topicId"
-          value={editedQuestion.topicId}
-          onChange={handleChange}
-          placeholder="Topic ID"
-        />
-        <InputField
-          name="chapterId"
-          value={editedQuestion.chapterId}
-          onChange={handleChange}
-          placeholder="Chapter ID"
-        />
-        <InputField
-          name="proficiencyLevel"
-          value={editedQuestion.proficiencyLevel.toString()}
-          onChange={handleChange}
-          placeholder="Proficiency Level"
-          type="number"
-        />
-        <InputField
-          name="explanation"
-          value={editedQuestion.explanation}
-          onChange={handleChange}
-          placeholder="Explanation"
-          isTextArea
-        />
-        <InputField
-          name="tags"
-          value={editedQuestion.tags.join(", ")}
-          onChange={handleArrayChange}
-          placeholder="Tags (comma-separated)"
-        />
+        <div className="flex flex-col">
+          <label htmlFor="text" className="mb-1 font-bold">
+            Question
+          </label>
+          <InputField
+            name="text"
+            value={editedQuestion.text}
+            onChange={handleChange}
+            placeholder="Question"
+            isTextArea
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="options" className="mb-1 font-bold">
+            Options
+          </label>
+          <InputField
+            name="options"
+            value={editedQuestion.options.join(", ")}
+            onChange={handleArrayChange}
+            placeholder="Options (comma-separated)"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="correctAnswer" className="mb-1 font-bold">
+            Correct Answer
+          </label>
+          <InputField
+            name="correctAnswer"
+            value={editedQuestion.correctAnswer}
+            onChange={handleChange}
+            placeholder="Correct Answer"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="explanation" className="mb-1 font-bold">
+            Explanation
+          </label>
+          <InputField
+            name="explanation"
+            value={editedQuestion.explanation}
+            onChange={handleChange}
+            placeholder="Explanation"
+            isTextArea
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="topicId" className="mb-1 font-bold">
+            Topic ID
+          </label>
+          <InputField
+            name="topicId"
+            value={editedQuestion.topicId}
+            onChange={handleChange}
+            placeholder="Topic ID (Needs to be a dropdown later)"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="proficiencyLevel" className="mb-1 font-bold">
+            Proficiency Level
+          </label>
+          <InputField
+            name="proficiencyLevel"
+            value={editedQuestion.proficiencyLevel.toString()}
+            onChange={handleChange}
+            placeholder="Proficiency Level"
+            type="number"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="chapterId" className="mb-1 font-bold">
+            Chapter ID
+          </label>
+          <InputField
+            name="chapterId"
+            value={editedQuestion.chapterId}
+            onChange={handleChange}
+            placeholder="Chapter ID (Needs to be disabled if topicId is not selected, and a dropdown later)"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="tags" className="mb-1 font-bold">
+            Tags
+          </label>
+          <InputField
+            name="tags"
+            value={editedQuestion.tags.join(", ")}
+            onChange={handleArrayChange}
+            placeholder="Tags (comma-separated)"
+          />
+        </div>
         <button
           type="submit"
           className="col-span-full rounded bg-green-600 p-2 font-mono text-white"

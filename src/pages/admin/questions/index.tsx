@@ -158,13 +158,16 @@ export default function CRUD_Questions() {
   return (
     <BaseLayout>
       <h1 className="text-3xl font-bold">Admin Interface: Question CRUD</h1>
+      <div className="overflow-auto sm:overflow-scroll h-full h-100">
       <div className="sticky top-0 z-10 bg-white">
-        {editingId && (
-          <QuestionForm
-            question={editedQuestion ?? undefined}
-            onSubmit={handleEditSubmit}
-          />
-        )}
+        
+          {editingId && (
+            <QuestionForm
+              question={editedQuestion ?? undefined}
+              onSubmit={handleEditSubmit}
+            />
+          )}
+        </div>
         {!editingId && <QuestionForm onSubmit={createQuestion} />}
       </div>
       <div className="overflow-y-auto">
