@@ -17,9 +17,10 @@ interface TableRowData {
   id?: string;
   text: string;
   options: string;
+  correctAnswer: string;
   topicId: string;
   chapterId: string;
-  proficiencyLevel: string;
+  proficiencyLevel: number;
   explanation: string;
   tags: string;
   actions: JSX.Element;
@@ -80,6 +81,7 @@ export default function CRUD_Questions() {
     id: question.id,
     text: question.text,
     options: question.options.join(", "),
+    correctAnswer: question.correctAnswer,
     topicId: question.topicId,
     chapterId: question.chapterId,
     proficiencyLevel: question.proficiencyLevel,
@@ -87,13 +89,13 @@ export default function CRUD_Questions() {
     tags: question.tags.join(", "),
     actions: (
       <div>
-        <button onClick={() => deleteQuestion(question.id!)}>Delete</button>
+<button onClick={() => deleteQuestion(question.id!)}>Delete</button>
         {editingId === question.id ? (
           <button onClick={stopEditing}>Cancel</button>
         ) : (
           <button onClick={() => startEditing(question)}>Edit</button>
         )}
-      </div>
+              </div>
     ),
   }));
 
@@ -113,11 +115,16 @@ export default function CRUD_Questions() {
         <StickyHeadTable
           columns={[
             { id: "text", label: "Text", minWidth: 150 },
-            { id: "options", label: "Options", minWidth: 100 },
+            // { id: "options", label: "Options", minWidth: 100 },
+            { id: "correctAnswer", label: "Correct Answer", minWidth: 40 },
             { id: "topicId", label: "Topic ID", minWidth: 40 },
             { id: "chapterId", label: "Chapter ID", minWidth: 40 },
-            { id: "difficulty", label: "Difficulty", minWidth: 40 },
-            { id: "explanation", label: "Explanation", minWidth: 150 },
+            {
+              id: "proficiencyLevel",
+              label: "Proficiency Level",
+              minWidth: 40,
+            },
+            // { id: "explanation", label: "Explanation", minWidth: 150 },
             { id: "tags", label: "Tags", minWidth: 150 },
             { id: "actions", label: "Actions", minWidth: 170 },
           ]}
