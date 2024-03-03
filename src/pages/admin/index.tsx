@@ -48,17 +48,41 @@ export default function AdminPanel() {
     <BaseLayout>
       <div className="max-h-screen overflow-y-auto">
         <QuestionForm onSubmit={createQuestion} />
-        {questions.map((question) => (
-          <div key={question.id}>
-            <QuestionForm
-              question={question}
-              onSubmit={(updatedQuestion) =>
-                editQuestion(question.id!, updatedQuestion)
-              }
-            />
-            <button onClick={() => deleteQuestion(question.id!)}>Delete</button>
-          </div>
-        ))}
+        <table>
+          <thead>
+            <tr>
+              <th>Text</th>
+              <th>Options</th>
+              <th>Topic ID</th>
+              <th>Chapter ID</th>
+              <th>Difficulty</th>
+              <th>Explanation</th>
+              <th>Tags</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {questions.map((question) => (
+              <tr key={question.id}>
+                <td>{question.text}</td>
+                <td>{question.options.join(", ")}</td>
+                <td>{question.topicId}</td>
+                <td>{question.chapterId}</td>
+                <td>{question.difficulty}</td>
+                <td>{question.explanation}</td>
+                <td>{question.tags.join(", ")}</td>
+                <td>
+                  <button onClick={() => deleteQuestion(question.id!)}>
+                    Delete
+                  </button>
+                  <button onClick={() => editQuestion(question.id!, question)}>
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </BaseLayout>
   );

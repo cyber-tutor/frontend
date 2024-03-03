@@ -112,65 +112,52 @@ const QuestionForm: React.FC<{
 
   return (
     <div className="p-5">
-      {editMode ? (
-        <form onSubmit={handleSubmit}>
-          <InputField
-            name="text"
-            value={editedQuestion.text}
-            onChange={handleChange}
-            placeholder="Question"
-          />
-          <InputField
-            name="options"
-            value={editedQuestion.options.join(", ")}
-            onChange={handleArrayChange}
-            placeholder="Options (comma-separated)"
-          />
-          <InputField
-            name="topicId"
-            value={editedQuestion.topicId}
-            onChange={handleChange}
-            placeholder="Topic ID"
-          />
-          <InputField
-            name="chapterId"
-            value={editedQuestion.chapterId}
-            onChange={handleChange}
-            placeholder="Chapter ID"
-          />
-          <InputField
-            name="difficulty"
-            value={editedQuestion.difficulty}
-            onChange={handleChange}
-            placeholder="Difficulty"
-          />
-          <InputField
-            name="explanation"
-            value={editedQuestion.explanation}
-            onChange={handleChange}
-            placeholder="Explanation"
-            isTextArea
-          />
-          <InputField
-            name="tags"
-            value={editedQuestion.tags.join(", ")}
-            onChange={handleArrayChange}
-            placeholder="Tags (comma-separated)"
-          />
-          <button type="submit">Submit</button>
-        </form>
-      ) : (
-        <>
-          <p>{question?.text}</p>
-          <p>Options: {question?.options.join(", ")}</p>
-          <p>Topic ID: {question?.topicId}</p>
-          <p>Chapter ID: {question?.chapterId}</p>
-          <p>Difficulty: {question?.difficulty}</p>
-          <p>Explanation: {question?.explanation}</p>
-          <p>Tags: {question?.tags.join(", ")}</p>
-          <button onClick={handleEditToggle}>Edit</button>
-        </>
-      )}
+      <form onSubmit={handleSubmit}>
+        <InputField
+          name="text"
+          value={editedQuestion.text}
+          onChange={handleChange}
+          placeholder="Question"
+        />
+        <InputField
+          name="options"
+          value={editedQuestion.options.join(", ")}
+          onChange={handleArrayChange}
+          placeholder="Options (comma-separated)"
+        />
+        <InputField
+          name="topicId"
+          value={editedQuestion.topicId}
+          onChange={handleChange}
+          placeholder="Topic ID"
+        />
+        <InputField
+          name="chapterId"
+          value={editedQuestion.chapterId}
+          onChange={handleChange}
+          placeholder="Chapter ID"
+        />
+        <InputField
+          name="difficulty"
+          value={editedQuestion.difficulty}
+          onChange={handleChange}
+          placeholder="Difficulty"
+        />
+        <InputField
+          name="explanation"
+          value={editedQuestion.explanation}
+          onChange={handleChange}
+          placeholder="Explanation"
+          isTextArea
+        />
+        <InputField
+          name="tags"
+          value={editedQuestion.tags.join(", ")}
+          onChange={handleArrayChange}
+          placeholder="Tags (comma-separated)"
+        />
+        <button type="submit">Submit</button>
+      </form>
     </div>
   );
 };
