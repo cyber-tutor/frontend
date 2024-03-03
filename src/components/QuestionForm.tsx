@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, ChangeEvent } from "react";
 
 export interface Question {
   id?: string;
@@ -11,12 +11,41 @@ export interface Question {
   tags: string[];
 }
 
-interface QuestionFormProps {
-  question?: Question;
-  onSubmit: (updatedQuestion: Question) => void;
+interface InputProps {
+  name: string;
+  value: string | string[];
+  onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  placeholder: string;
+  type?: string;
+  isTextArea?: boolean;
 }
 
-const QuestionForm: React.FC<QuestionFormProps> = ({ question, onSubmit }) => {
+const InputField: React.FC<InputProps> = ({
+  name,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+  isTextArea = false,
+}) => {
+  const InputComponent = isTextArea ? "textarea" : "input";
+
+  return (
+    <InputComponent
+      type={type}
+      name={name}
+      value={value as string}
+      onChange={onChange}
+      placeholder={placeholder}
+      className="mb-4 w-full rounded border p-2"
+    />
+  );
+};
+
+const QuestionForm: React.FC<{
+  question?: Question;
+  onSubmit: (updatedQuestion: Question) => void;
+}> = ({ question, onSubmit }) => {
   const [editMode, setEditMode] = useState<boolean>(!question);
   const [editedQuestion, setEditedQuestion] = useState<Question>(
     question || {
@@ -46,20 +75,20 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ question, onSubmit }) => {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    setEditedQuestion((prevQuestion) => ({
-      ...prevQuestion,
-      [name]: value,
-    }));
+    setEditedQuestion((prevQuestion) => ({ ...prevQuestion, [name]: value }));
   };
 
-  const handleOptionsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const options = e.target.value.split(",").map((option) => option.trim());
+  const handleArrayChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    const arrayValue = value ? value.split(",").map((item) => item.trim()) : [];
     setEditedQuestion((prevQuestion) => ({
       ...prevQuestion,
-      options,
+      [name]: arrayValue,
     }));
   };
 
@@ -70,81 +99,67 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ question, onSubmit }) => {
   };
 
   return (
-    <>
-      <div className="p-5">
-        {editMode ? (
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="text"
-              value={editedQuestion.text}
-              onChange={handleChange}
-              placeholder="Question"
-              className="mb-4 w-full rounded border p-2"
-            />
-            <input
-              type="text"
-              name="options"
-              value={editedQuestion.options.join(",")}
-              onChange={handleOptionsChange}
-              placeholder="Options (comma-separated)"
-              className="mb-4 w-full rounded border p-2"
-            />
-            <input
-              type="text"
-              name="topicId"
-              value={editedQuestion.topicId}
-              onChange={handleChange}
-              placeholder="Topic ID"
-              className="mb-4 w-full rounded border p-2"
-            />
-            <input
-              type="text"
-              name="chapterId"
-              value={editedQuestion.chapterId}
-              onChange={handleChange}
-              placeholder="Chapter ID"
-              className="mb-4 w-full rounded border p-2"
-            />
-            <input
-              type="text"
-              name="difficulty"
-              value={editedQuestion.difficulty}
-              onChange={handleChange}
-              placeholder="Difficulty"
-              className="mb-4 w-full rounded border p-2"
-            />
-            <textarea
-              name="explanation"
-              value={editedQuestion.explanation}
-              onChange={handleChange}
-              placeholder="Explanation"
-              className="mb-4 w-full rounded border p-2"
-            />
-            <input
-              type="text"
-              name="tags"
-              value={editedQuestion.tags.join(", ")}
-              onChange={handleChange}
-              placeholder="Tags (comma-separated)"
-              className="mb-4 w-full rounded border p-2"
-            />
-            <button type="submit">Submit</button>
-          </form>
-        ) : (
-          <>
-            <p>{question?.text}</p>
-            <p>Options: {question?.options.join(", ")}</p>
-            <p>Topic ID: {question?.topicId}</p>
-            <p>Chapter ID: {question?.chapterId}</p>
-            <p>Difficulty: {question?.difficulty}</p>
-            <p>Explanation: {question?.explanation}</p>
-            <p>Tags: {question?.tags.join(", ")}</p>
-            <button onClick={handleEditToggle}>Edit</button>
-          </>
-        )}
-      </div>
-    </>
+    <div className="p-5">
+      {editMode ? (
+        <form onSubmit={handleSubmit}>
+          <InputField
+            name="text"
+            value={editedQuestion.text}
+            onChange={handleChange}
+            placeholder="Question"
+          />
+          <InputField
+            name="options"
+            value={editedQuestion.options.join(", ")}
+            onChange={handleArrayChange}
+            placeholder="Options (comma-separated)"
+          />
+          <InputField
+            name="topicId"
+            value={editedQuestion.topicId}
+            onChange={handleChange}
+            placeholder="Topic ID"
+          />
+          <InputField
+            name="chapterId"
+            value={editedQuestion.chapterId}
+            onChange={handleChange}
+            placeholder="Chapter ID"
+          />
+          <InputField
+            name="difficulty"
+            value={editedQuestion.difficulty}
+            onChange={handleChange}
+            placeholder="Difficulty"
+          />
+          <InputField
+            name="explanation"
+            value={editedQuestion.explanation}
+            onChange={handleChange}
+            placeholder="Explanation"
+            isTextArea
+          />
+          <InputField
+            name="tags"
+            value={editedQuestion.tags.join(", ")}
+            onChange={handleArrayChange}
+            placeholder="Tags (comma-separated)"
+          />
+          <button type="submit">Submit</button>
+        </form>
+      ) : (
+        <>
+          <p>{question?.text}</p>
+          <p>Options: {question?.options.join(", ")}</p>
+          <p>Topic ID: {question?.topicId}</p>
+          <p>Chapter ID: {question?.chapterId}</p>
+          <p>Difficulty: {question?.difficulty}</p>
+          <p>Explanation: {question?.explanation}</p>
+          <p>Tags: {question?.tags.join(", ")}</p>
+          <button onClick={handleEditToggle}>Edit</button>
+        </>
+      )}
+    </div>
   );
 };
 
