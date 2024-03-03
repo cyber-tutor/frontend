@@ -2,7 +2,14 @@ import { BaseLayout } from "../layouts/baseLayout";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { db } from "../firebase/config";
-import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import Link from "next/link";
 import CircularWithValueLabel from "~/components/ProgressCircle";
 
@@ -65,7 +72,8 @@ export default function TopicPage() {
             `topics/${topicId}/chapters`,
           );
 
-          const chaptersSnapshot = await getDocs(chaptersCollectionRef);
+          const chaptersQuery = query(chaptersCollectionRef, orderBy("order"));
+          const chaptersSnapshot = await getDocs(chaptersQuery);
 
           const chapters = chaptersSnapshot.docs.map((doc) => {
             const chapterData = doc.data();
