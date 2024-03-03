@@ -1,4 +1,5 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
+import InputField from "../components/InputField";
 
 export interface Question {
   id?: string;
@@ -11,41 +12,6 @@ export interface Question {
   explanation: string;
   tags: string[];
 }
-
-interface InputProps {
-  name: string;
-  value: string | string[];
-  onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  placeholder: string;
-  type?: string;
-  isTextArea?: boolean;
-}
-
-const InputField: React.FC<InputProps & { error?: string }> = ({
-  name,
-  value,
-  onChange,
-  placeholder,
-  type = "text",
-  isTextArea = false,
-  error,
-}) => {
-  const InputComponent = isTextArea ? "textarea" : "input";
-
-  return (
-    <div className="flex flex-col">
-      <InputComponent
-        type={type}
-        name={name}
-        value={value as string}
-        onChange={onChange}
-        placeholder={placeholder}
-        className={`mb-4 w-full rounded border p-2 ${error ? "border-red-500" : ""}`}
-      />
-      {error && <div className="text-red-500">{error}</div>}
-    </div>
-  );
-};
 
 const QuestionForm: React.FC<{
   question?: Question;
