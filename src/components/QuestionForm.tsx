@@ -4,9 +4,10 @@ export interface Question {
   id?: string;
   text: string;
   options: string[];
+  correctAnswer: string;
   topicId: string;
   chapterId: string;
-  proficiencyLevel: string;
+  proficiencyLevel: number;
   explanation: string;
   tags: string[];
 }
@@ -50,9 +51,10 @@ const QuestionForm: React.FC<{
     question || {
       text: "",
       options: [],
+      correctAnswer: "",
       topicId: "",
       chapterId: "",
-      proficiencyLevel: "",
+      proficiencyLevel: 0,
       explanation: "",
       tags: [],
     },
@@ -83,9 +85,10 @@ const QuestionForm: React.FC<{
     setEditedQuestion({
       text: "",
       options: [],
+      correctAnswer: "",
       topicId: "",
       chapterId: "",
-      proficiencyLevel: "",
+      proficiencyLevel: 0,
       explanation: "",
       tags: [],
     });
@@ -95,7 +98,7 @@ const QuestionForm: React.FC<{
     <div className="p-5">
       <form
         onSubmit={handleSubmit}
-        className="grid grid-cols-1 gap-4 md:grid-cols-2"
+        className="grid grid-cols-1 gap-4 md:grid-cols-3"
       >
         <InputField
           name="text"
@@ -108,6 +111,12 @@ const QuestionForm: React.FC<{
           value={editedQuestion.options.join(", ")}
           onChange={handleArrayChange}
           placeholder="Options (comma-separated)"
+        />
+        <InputField
+          name="correctAnswer"
+          value={editedQuestion.correctAnswer}
+          onChange={handleChange}
+          placeholder="Correct Answer"
         />
         <div className="md:flex md:gap-4">
           <InputField
@@ -125,9 +134,10 @@ const QuestionForm: React.FC<{
         </div>
         <InputField
           name="proficiencyLevel"
-          value={editedQuestion.proficiencyLevel}
+          value={editedQuestion.proficiencyLevel.toString()}
           onChange={handleChange}
           placeholder="Proficiency Level"
+          type="number"
         />
         <InputField
           name="explanation"
