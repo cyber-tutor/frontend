@@ -1,5 +1,5 @@
 import { BaseLayout } from "../layouts/baseLayout";
-import SignUpForm from "../../components/SignUpForm";
+import SignUpForm from "../../components/authentication/SignUpForm";
 
 const SignUpPage = () => {
   return (

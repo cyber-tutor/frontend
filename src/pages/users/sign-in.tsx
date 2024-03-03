@@ -1,6 +1,6 @@
 import React from "react";
 import { BaseLayout } from "../layouts/baseLayout";
-import SignInForm from "../../components/SignInForm";
+import SignInForm from "../../components/authentication/SignInForm";
 
 const SignInPage = () => {
   return (

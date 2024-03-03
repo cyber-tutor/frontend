@@ -237,7 +237,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
           </Sidebar>
         </div>
       </div>
-      <div className="container flex h-screen flex-col items-center gap-4  lg:py-16">
+      <div className="container flex h-screen flex-col items-center gap-4 lg:py-16">
         {children}
       </div>
     </div>

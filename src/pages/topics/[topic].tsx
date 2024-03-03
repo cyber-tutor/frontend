@@ -133,7 +133,7 @@ export default function TopicPage() {
 
   return (
     <BaseLayout>
-      <div className="rounded-lg border-2 border-solid text-center lg:w-7/12 lg:p-10">
+      <div className="rounded-lg border-2 border-solid text-center lg:w-7/12 lg:p-10 overflow-y-auto">
         <div className="grid grid-cols-6 items-center">
           <h1 className="col-span-5 flex justify-start text-3xl font-bold">
             {topic.topicTitle}
