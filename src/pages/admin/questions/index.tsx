@@ -19,7 +19,7 @@ interface TableRowData {
   options: string;
   topicId: string;
   chapterId: string;
-  difficulty: string;
+  proficiencyLevel: string;
   explanation: string;
   tags: string;
   actions: JSX.Element;
@@ -82,7 +82,7 @@ export default function CRUD_Questions() {
     options: question.options.join(", "),
     topicId: question.topicId,
     chapterId: question.chapterId,
-    difficulty: question.difficulty,
+    proficiencyLevel: question.proficiencyLevel,
     explanation: question.explanation,
     tags: question.tags.join(", "),
     actions: (
