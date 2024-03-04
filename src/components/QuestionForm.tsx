@@ -8,7 +8,7 @@ export interface Question {
   answer: string;
   topicId: string;
   chapterId: string;
-  proficiencyLevel: number;
+  difficulty: string;
   explanation: string;
   topics: string[];
 }
@@ -24,7 +24,7 @@ const QuestionForm: React.FC<{
       answer: "",
       topicId: "",
       chapterId: "",
-      proficiencyLevel: 0,
+      difficulty: "",
       explanation: "",
       topics: [],
     },
@@ -34,11 +34,14 @@ const QuestionForm: React.FC<{
   );
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
-    setEditedQuestion((prevQuestion) => ({ ...prevQuestion, [name]: value }));
+    setEditedQuestion((prevQuestion) => ({
+      ...prevQuestion,
+      [name]: value, // Change this line
+    }));
   };
 
   const handleArrayChange = (
@@ -84,11 +87,6 @@ const QuestionForm: React.FC<{
       errors.topicId = "uh oh 🦧, you need a topic ID.";
     }
 
-    if (question.proficiencyLevel < 1 || question.proficiencyLevel > 5) {
-      errors.proficiencyLevel =
-        "uh oh 🦧, the proficiency level should be between 1 and 5.";
-    }
-
     if (!question.chapterId) {
       errors.chapterId = "uh oh 🦧, you need a chapter ID.";
     }
@@ -117,7 +115,7 @@ const QuestionForm: React.FC<{
       answer: "",
       topicId: "",
       chapterId: "",
-      proficiencyLevel: 0,
+      difficulty: "",
       explanation: "",
       topics: [],
     });
@@ -192,17 +190,22 @@ const QuestionForm: React.FC<{
           />
         </div>
         <div className="flex flex-col">
-          <label htmlFor="proficiencyLevel" className="mb-1 font-bold">
-            Proficiency Level
+          <label htmlFor="difficulty" className="mb-1 font-bold">
+            Difficulty
           </label>
-          <InputField
-            name="proficiencyLevel"
-            value={editedQuestion.proficiencyLevel.toString()}
+          <select
+            name="difficulty"
+            value={editedQuestion.difficulty}
             onChange={handleChange}
-            placeholder="Proficiency Level"
-            type="number"
-            error={errors.proficiencyLevel}
-          />
+            className="your-classname-for-styling"
+          >
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Hard">Hard</option>
+          </select>
+          {errors.difficulty && (
+            <p className="error-message">{errors.difficulty}</p>
+          )}
         </div>
         <div className="flex flex-col">
           <label htmlFor="chapterId" className="mb-1 font-bold">

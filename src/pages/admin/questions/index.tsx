@@ -20,7 +20,7 @@ interface TableRowData {
   answer: string;
   topicId: string;
   chapterId: string;
-  proficiencyLevel: number;
+  difficulty: string;
   explanation: string;
   topics: string;
   actions: JSX.Element;
@@ -84,7 +84,7 @@ export default function CRUD_Questions() {
     answer: question.answer,
     topicId: question.topicId,
     chapterId: question.chapterId,
-    proficiencyLevel: question.proficiencyLevel,
+    difficulty: question.difficulty,
     explanation: question.explanation,
     topics: Array.isArray(question.topics) ? question.topics.join(", ") : "",
     actions: (
@@ -142,7 +142,7 @@ export default function CRUD_Questions() {
       { id: "answer", label: "Answer", minWidth: 40 },
       { id: "topicId", label: "Topic ID", minWidth: 40 },
       { id: "chapterId", label: "Chapter ID", minWidth: 40 },
-      { id: "proficiencyLevel", label: "Proficiency Level", minWidth: 40 },
+      { id: "difficulty", label: "Difficulty", minWidth: 40 },
       { id: "topics", label: "Topics", minWidth: 150 },
     );
   } else if (windowWidth > 768) {
