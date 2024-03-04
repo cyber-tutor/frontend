@@ -178,14 +178,48 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                 open={isSubMenuOpen}
                 onOpenChange={toggleSubMenu}
               >
-                {topics.map((topic) => (
-                  <MenuItem
-                    key={topic.topicId}
-                    onClick={() => handleTopicClick(topic)}
-                  >
-                    {topic.topicTitle}
-                  </MenuItem>
-                ))}
+                {
+                  user ? (
+                    <SubMenu
+                      label="Topics"
+                      open={isSubMenuOpen}
+                      onOpenChange={toggleSubMenu}
+                    >
+                      {topics.map((topic) => (
+                        <MenuItem
+                          key={topic.topicId}
+                          onClick={() => handleTopicClick(topic)}
+                        >
+                          {topic.topicTitle}
+                        </MenuItem>
+                      ))}
+                    </SubMenu>
+                  ) : (
+                    <div className="relative">
+                      <div className="blur-sm pointer-events-none select-none">
+                        <SubMenu
+                          label="Topics"
+                          open={isSubMenuOpen}
+                          // These events are ignored because of pointer-events-none
+                          onOpenChange={() => {}}
+                        >
+                          {topics.map((topic) => (
+                            <MenuItem
+                              key={topic.topicId}
+                              // onClick event is ignored because of pointer-events-none
+                              onClick={() => {}}
+                            >
+                              {topic.topicTitle}
+                            </MenuItem>
+                          ))}
+                        </SubMenu>
+                      </div>
+                      <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center bg-white bg-opacity-75">
+                        <span>Sign in to unlock</span>
+                      </div>
+                    </div>
+                    )
+                  }
               </SubMenu>
             </Menu>
 
