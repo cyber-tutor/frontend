@@ -269,8 +269,10 @@ export default function ChapterPage() {
           onClick={async () => {
             // Pushes time user was on the page for to firestore
             const userDocRef = doc(db, 'users', userDocument?.id);
+            const minutes = Math.floor(secondsElapsed / 60);
+            const seconds = secondsElapsed % 60;
             await updateDoc(userDocRef, {
-              timeWatched: secondsElapsed
+              timeOnPage: `${minutes}:${String(seconds).padStart(2, '0')}`
             });
             console.log('User time watched pushed successfully to firestore:', secondsElapsed);
           }}
