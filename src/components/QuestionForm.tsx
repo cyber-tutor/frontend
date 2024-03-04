@@ -3,14 +3,14 @@ import InputField from "../components/InputField";
 
 export interface Question {
   id?: string;
-  text: string;
-  options: string[];
-  correctAnswer: string;
+  question: string;
+  choices: { [key: string]: string };
+  answer: string;
   topicId: string;
   chapterId: string;
   proficiencyLevel: number;
   explanation: string;
-  tags: string[];
+  topics: string[];
 }
 
 const QuestionForm: React.FC<{
@@ -19,14 +19,14 @@ const QuestionForm: React.FC<{
 }> = ({ question, onSubmit }) => {
   const [editedQuestion, setEditedQuestion] = useState<Question>(
     question || {
-      text: "",
-      options: [],
-      correctAnswer: "",
+      question: "",
+      choices: {},
+      answer: "",
       topicId: "",
       chapterId: "",
       proficiencyLevel: 0,
       explanation: "",
-      tags: [],
+      topics: [],
     },
   );
   const [errors, setErrors] = useState<Partial<Record<keyof Question, string>>>(
@@ -59,21 +59,21 @@ const QuestionForm: React.FC<{
   ): Partial<Record<keyof Question, string>> => {
     const errors: Partial<Record<keyof Question, string>> = {};
 
-    if (!question.text) {
-      errors.text = "uh oh 🦧, you need a question.";
+    if (!question.question) {
+      errors.question = "uh oh 🦧, you need a question.";
     }
 
-    if (question.options.length < 2) {
-      errors.options = "uh oh 🦧, you need at least 2 options.";
+    if (Object.keys(question.choices).length < 2) {
+      errors.choices = "uh oh 🦧, you need at least 2 choices.";
     }
 
-    if (!question.correctAnswer) {
-      errors.correctAnswer = "uh oh 🦧, you need a correct answer.";
+    if (!question.answer) {
+      errors.answer = "uh oh 🦧, you need a correct answer.";
     }
 
-    if (!question.options.includes(question.correctAnswer)) {
-      errors.correctAnswer =
-        "uh oh 🦧, the correct answer should be one of the options.";
+    if (!Object.values(question.choices).includes(question.answer)) {
+      errors.answer =
+        "uh oh 🦧, the correct answer should be one of the choices.";
     }
 
     if (!question.explanation) {
@@ -93,8 +93,8 @@ const QuestionForm: React.FC<{
       errors.chapterId = "uh oh 🦧, you need a chapter ID.";
     }
 
-    if (question.tags.length < 1) {
-      errors.tags = "uh oh 🦧, you need at least 1 tag.";
+    if (question.topics.length < 1) {
+      errors.topics = "uh oh 🦧, you need at least 1 tag.";
     }
 
     return errors;
@@ -112,14 +112,14 @@ const QuestionForm: React.FC<{
 
     onSubmit(editedQuestion);
     setEditedQuestion({
-      text: "",
-      options: [],
-      correctAnswer: "",
+      question: "",
+      choices: {},
+      answer: "",
       topicId: "",
       chapterId: "",
       proficiencyLevel: 0,
       explanation: "",
-      tags: [],
+      topics: [],
     });
   };
 
@@ -130,40 +130,40 @@ const QuestionForm: React.FC<{
         className="xs:grid-cols-1 grid gap-4 sm:grid-cols-2 md:grid-cols-4"
       >
         <div className="flex flex-col">
-          <label htmlFor="text" className="mb-1 font-bold">
+          <label htmlFor="question" className="mb-1 font-bold">
             Question
           </label>
           <InputField
-            name="text"
-            value={editedQuestion.text}
+            name="question"
+            value={editedQuestion.question}
             onChange={handleChange}
             placeholder="Question"
             isTextArea
-            error={errors.text}
+            error={errors.question}
           />
         </div>
         <div className="flex flex-col">
-          <label htmlFor="options" className="mb-1 font-bold">
-            Options
+          <label htmlFor="choices" className="mb-1 font-bold">
+            Choices
           </label>
           <InputField
-            name="options"
-            value={editedQuestion.options.join(", ")}
+            name="choices"
+            value={Object.values(editedQuestion.choices).join(", ")}
             onChange={handleArrayChange}
             placeholder="Options (comma-separated)"
-            error={errors.options}
+            error={errors.choices}
           />
         </div>
         <div className="flex flex-col">
-          <label htmlFor="correctAnswer" className="mb-1 font-bold">
-            Correct Answer
+          <label htmlFor="answer" className="mb-1 font-bold">
+            Answer
           </label>
           <InputField
-            name="correctAnswer"
-            value={editedQuestion.correctAnswer}
+            name="answer"
+            value={editedQuestion.answer}
             onChange={handleChange}
             placeholder="Correct Answer"
-            error={errors.correctAnswer}
+            error={errors.answer}
           />
         </div>
         <div className="flex flex-col">
@@ -217,20 +217,20 @@ const QuestionForm: React.FC<{
           />
         </div>
         <div className="flex flex-col">
-          <label htmlFor="tags" className="mb-1 font-bold">
-            Tags
+          <label htmlFor="topics" className="mb-1 font-bold">
+            Topics
           </label>
           <InputField
-            name="tags"
-            value={editedQuestion.tags.join(", ")}
+            name="topics"
+            value={editedQuestion.topics.join(", ")}
             onChange={handleArrayChange}
             placeholder="Tags (comma-separated)"
-            error={errors.tags}
+            error={errors.topics}
           />
         </div>
         <button
           type="submit"
-          className="col-span-full rounded bg-green-600 p-2 font-mono text-white"
+          className="question-white col-span-full rounded bg-green-600 p-2 font-mono"
         >
           Submit
         </button>

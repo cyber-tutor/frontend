@@ -15,14 +15,14 @@ import StickyHeadTable from "../../../components/StickyHeadTable";
 
 interface TableRowData {
   id?: string;
-  text: string;
-  options: string;
-  correctAnswer: string;
+  question: string;
+  choices: string;
+  answer: string;
   topicId: string;
   chapterId: string;
   proficiencyLevel: number;
   explanation: string;
-  tags: string;
+  topics: string;
   actions: JSX.Element;
 }
 
@@ -61,7 +61,7 @@ export default function CRUD_Questions() {
   };
 
   const startEditing = (question: Question) => {
-    setEditingId(question.id ?? null);
+    setEditingId(question.id || null);
     setEditedQuestion(question);
   };
 
@@ -79,14 +79,14 @@ export default function CRUD_Questions() {
 
   const transformedRows: TableRowData[] = questions.map((question) => ({
     id: question.id,
-    text: question.text,
-    options: question.options.join(", "),
-    correctAnswer: question.correctAnswer,
+    question: question.question,
+    choices: Array.isArray(question.choices) ? question.choices.join(", ") : "",
+    answer: question.answer,
     topicId: question.topicId,
     chapterId: question.chapterId,
     proficiencyLevel: question.proficiencyLevel,
     explanation: question.explanation,
-    tags: question.tags.join(", "),
+    topics: Array.isArray(question.topics) ? question.topics.join(", ") : "",
     actions: (
       <div>
         {editingId === question.id ? (
@@ -131,7 +131,7 @@ export default function CRUD_Questions() {
   }, []);
 
   const columns = [
-    { id: "text", label: "Text", minWidth: 150 },
+    { id: "question", label: "Question", minWidth: 150 },
     { id: "actions", label: "Actions", minWidth: 170 },
   ];
 
@@ -139,17 +139,17 @@ export default function CRUD_Questions() {
     columns.splice(
       1,
       0,
-      { id: "correctAnswer", label: "Correct Answer", minWidth: 40 },
+      { id: "answer", label: "Answer", minWidth: 40 },
       { id: "topicId", label: "Topic ID", minWidth: 40 },
       { id: "chapterId", label: "Chapter ID", minWidth: 40 },
       { id: "proficiencyLevel", label: "Proficiency Level", minWidth: 40 },
-      { id: "tags", label: "Tags", minWidth: 150 },
+      { id: "topics", label: "Topics", minWidth: 150 },
     );
   } else if (windowWidth > 768) {
     columns.splice(
       1,
       0,
-      { id: "correctAnswer", label: "Correct Answer", minWidth: 40 },
+      { id: "answer", label: "Answer", minWidth: 40 },
       { id: "topicId", label: "Topic ID", minWidth: 40 },
       { id: "chapterId", label: "Chapter ID", minWidth: 40 },
     );
@@ -157,13 +157,12 @@ export default function CRUD_Questions() {
 
   return (
     <BaseLayout>
-      <h1 className="text-3xl font-bold">Admin Interface: Question CRUD</h1>
-      <div className="overflow-auto sm:overflow-scroll h-full h-100">
-      <div className="sticky top-0 z-10 bg-white">
-        
+      <h1 className="question-3xl font-bold">Admin Interface: Question CRUD</h1>
+      <div className="h-100 h-full overflow-auto sm:overflow-scroll">
+        <div className="sticky top-0 z-10 bg-white">
           {editingId && (
             <QuestionForm
-              question={editedQuestion ?? undefined}
+              question={editedQuestion || undefined}
               onSubmit={handleEditSubmit}
             />
           )}
