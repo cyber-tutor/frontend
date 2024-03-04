@@ -22,7 +22,7 @@ const TimerComponent: React.FC<TimerProps> = ({ secondsElapsed, setSecondsElapse
       // updateDoc(userDocRef, {
       //   secondsElapsed: secondsElapsed 
       // });
-      // clearInterval(timer);
+      clearInterval(timer);
     }
   }, [secondsElapsed, setSecondsElapsed]);
 
