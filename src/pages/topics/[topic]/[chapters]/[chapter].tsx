@@ -10,7 +10,7 @@ import getVideoDuration from "~/components/youtube_data";
 import { db, auth } from "~/pages/firebase/config";
 import firebase from "firebase/app";
 import queryUserDocument from "~/pages/firebase/firebase_functions";
-import { DocumentData, doc, getDoc } from "firebase/firestore";
+import { DocumentData, doc, getDoc, updateDoc } from "firebase/firestore";
 import { handleVideoEnd, isWatched } from "~/pages/firebase/firebase_functions";
 import TimerComponent from "~/components/Timer";
 
@@ -60,6 +60,9 @@ export default function ChapterPage() {
   const [duration, setDuration] = useState("");
   const [userDocument, setUserDocument] = useState<DocumentData | null>(null);
   const [isVideoWatched, setIsVideoWatched] = useState(false);
+
+  // For tracking user time spent on current page
+  const [secondsElapsed, setSecondsElapsed] = useState(0);
 
   const router = useRouter();
   const { topic: topicId, chapter: chapterId } = router.query;
@@ -261,9 +264,19 @@ export default function ChapterPage() {
           </div>
         )}
         {isVideoWatched && (
-          <button className="rounded bg-blue-500 px-4 py-2 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-700">
-            Next
-          </button>
+          <button 
+          className="rounded bg-blue-500 px-4 py-2 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-700"
+          onClick={async () => {
+            // Pushes time user was on the page for to firestore
+            const userDocRef = doc(db, 'users', userDocument?.id);
+            await updateDoc(userDocRef, {
+              timeWatched: secondsElapsed
+            });
+            console.log('User time watched pushed successfully to firestore:', secondsElapsed);
+          }}
+        >
+          Next
+        </button>
         )}
         <br />
         {/* Converts seconds to minutes and removes the decimal point */}
@@ -272,7 +285,7 @@ export default function ChapterPage() {
         {/* Record how long a user spends on the chapter currently open */}
         <br />
         <p>User's time spent on this chapter:</p>
-        <TimerComponent />
+        <TimerComponent secondsElapsed={secondsElapsed} setSecondsElapsed={setSecondsElapsed} />
         {/* {chapter.chapterType === "assessment" && App()} */}
       </div>
     </BaseLayout>
