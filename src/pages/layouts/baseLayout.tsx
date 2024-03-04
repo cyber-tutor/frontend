@@ -5,14 +5,13 @@ import { FiMenu } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../firebase/config";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 
 // I redefined the types again because of the data transformation that happens through the Firebase Cloud Function.
 type Topic = {
   topicId: string;
   topicTitle: string;
   topicDescription: string;
-  order: number;
   chapters: Chapter[];
 };
 
@@ -25,7 +24,6 @@ type Chapter = {
   experimentalGroupContent: string;
   controlGroupImageURLs: string[];
   experimentalGroupImageURLs: string[];
-  order: number;
 };
 
 type Question = {
@@ -81,9 +79,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
       const topicsArray: Topic[] = [];
 
       try {
-        const topicsSnapshot = await getDocs(
-          query(topicsCollectionRef, orderBy("order")),
-        );
+        const topicsSnapshot = await getDocs(topicsCollectionRef);
         topicsSnapshot.forEach((topicDoc) => {
           const topicData = topicDoc.data();
           const topicId = topicDoc.id;
@@ -178,48 +174,46 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                 open={isSubMenuOpen}
                 onOpenChange={toggleSubMenu}
               >
-                {
-                  user ? (
-                    <SubMenu
-                      label="Topics"
-                      open={isSubMenuOpen}
-                      onOpenChange={toggleSubMenu}
-                    >
-                      {topics.map((topic) => (
-                        <MenuItem
-                          key={topic.topicId}
-                          onClick={() => handleTopicClick(topic)}
-                        >
-                          {topic.topicTitle}
-                        </MenuItem>
-                      ))}
-                    </SubMenu>
-                  ) : (
-                    <div className="relative">
-                      <div className="blur-sm pointer-events-none select-none">
-                        <SubMenu
-                          label="Topics"
-                          open={isSubMenuOpen}
-                          // These events are ignored because of pointer-events-none
-                          onOpenChange={() => {}}
-                        >
-                          {topics.map((topic) => (
-                            <MenuItem
-                              key={topic.topicId}
-                              // onClick event is ignored because of pointer-events-none
-                              onClick={() => {}}
-                            >
-                              {topic.topicTitle}
-                            </MenuItem>
-                          ))}
-                        </SubMenu>
-                      </div>
-                      <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center bg-white bg-opacity-75">
-                        <span>Sign in to unlock</span>
-                      </div>
+                {user ? (
+                  <SubMenu
+                    label="Topics"
+                    open={isSubMenuOpen}
+                    onOpenChange={toggleSubMenu}
+                  >
+                    {topics.map((topic) => (
+                      <MenuItem
+                        key={topic.topicId}
+                        onClick={() => handleTopicClick(topic)}
+                      >
+                        {topic.topicTitle}
+                      </MenuItem>
+                    ))}
+                  </SubMenu>
+                ) : (
+                  <div className="relative">
+                    <div className="pointer-events-none select-none blur-sm">
+                      <SubMenu
+                        label="Topics"
+                        open={isSubMenuOpen}
+                        // These events are ignored because of pointer-events-none
+                        onOpenChange={() => {}}
+                      >
+                        {topics.map((topic) => (
+                          <MenuItem
+                            key={topic.topicId}
+                            // onClick event is ignored because of pointer-events-none
+                            onClick={() => {}}
+                          >
+                            {topic.topicTitle}
+                          </MenuItem>
+                        ))}
+                      </SubMenu>
                     </div>
-                    )
-                  }
+                    <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center bg-white bg-opacity-75">
+                      <span>Sign in to unlock</span>
+                    </div>
+                  </div>
+                )}
               </SubMenu>
             </Menu>
 
