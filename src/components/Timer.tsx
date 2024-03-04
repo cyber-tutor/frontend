@@ -1,34 +1,30 @@
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import React, { useState, useEffect } from 'react';
+import { doc, updateDoc } from 'firebase/firestore';
+import React, { useEffect } from 'react';
 import { db } from '~/pages/firebase/config';
 
-const TimerComponent: React.FC = () => {
-  const [secondsElapsed, setSecondsElapsed] = useState<number>(0);
-  
+interface TimerProps {
+  secondsElapsed: number;
+  setSecondsElapsed: React.Dispatch<React.SetStateAction<number>>;
+}
 
-  
-
+const TimerComponent: React.FC<TimerProps> = ({ secondsElapsed, setSecondsElapsed }) => {
   useEffect(() => {
-
-    let secondsElapsed = 0; 
-
     const timer = setInterval(() => {
-      setSecondsElapsed(prevSeconds => {
-        secondsElapsed = prevSeconds + 1; 
-        return secondsElapsed; 
-      });
-    }, 1000); 
+      setSecondsElapsed(prevSeconds => prevSeconds + 1);
+    }, 1000);
 
     return () => {
+
+      // Old method of pushing the time the user spent on the page to firestore
+
       // Hardcoded user id for now, for testing purposes
-      const userDocRef = doc(db, 'users', 'i84Tn9EtSxbm01wuhaGG');
-      updateDoc(userDocRef, {
-        secondsElapsed: secondsElapsed 
-      });
-      clearInterval(timer);
+      // const userDocRef = doc(db, 'users', 'i84Tn9EtSxbm01wuhaGG');
+      // updateDoc(userDocRef, {
+      //   secondsElapsed: secondsElapsed 
+      // });
+      // clearInterval(timer);
     }
-    
-  }, []);
+  }, [secondsElapsed, setSecondsElapsed]);
 
   const formatTime = (totalSeconds: number): string => {
     const minutes = Math.floor(totalSeconds / 60);
