@@ -170,51 +170,39 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                 </button>
               </MenuItem>
               <SubMenu
-                label="Topics"
-                open={isSubMenuOpen}
-                onOpenChange={toggleSubMenu}
-              >
-                {user ? (
-                  <SubMenu
-                    label="Topics"
-                    open={isSubMenuOpen}
-                    onOpenChange={toggleSubMenu}
-                  >
-                    {topics.map((topic) => (
-                      <MenuItem
-                        key={topic.topicId}
-                        onClick={() => handleTopicClick(topic)}
-                      >
-                        {topic.topicTitle}
-                      </MenuItem>
-                    ))}
-                  </SubMenu>
-                ) : (
-                  <div className="relative">
-                    <div className="pointer-events-none select-none blur-sm">
-                      <SubMenu
-                        label="Topics"
-                        open={isSubMenuOpen}
-                        // These events are ignored because of pointer-events-none
-                        onOpenChange={() => {}}
-                      >
-                        {topics.map((topic) => (
-                          <MenuItem
-                            key={topic.topicId}
-                            // onClick event is ignored because of pointer-events-none
-                            onClick={() => {}}
-                          >
-                            {topic.topicTitle}
-                          </MenuItem>
-                        ))}
-                      </SubMenu>
-                    </div>
-                    <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center bg-white bg-opacity-75">
-                      <span>Sign in to unlock</span>
-                    </div>
-                  </div>
-                )}
-              </SubMenu>
+  label="Topics"
+  open={isSubMenuOpen}
+  onOpenChange={toggleSubMenu}
+>
+  {user ? (
+    topics.map((topic) => (
+      <MenuItem
+        key={topic.topicId}
+        onClick={() => handleTopicClick(topic)}
+      >
+        {topic.topicTitle}
+      </MenuItem>
+    ))
+  ) : (
+    <div className="relative">
+      <div className="pointer-events-none select-none blur-sm">
+
+        {topics.map((topic) => (
+          <MenuItem
+            key={topic.topicId}
+
+          >
+            {topic.topicTitle}
+          </MenuItem>
+        ))}
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center bg-white bg-opacity-75">
+        <span>Sign in to unlock</span>
+      </div>
+    </div>
+  )}
+</SubMenu>
+
             </Menu>
 
             <div>
