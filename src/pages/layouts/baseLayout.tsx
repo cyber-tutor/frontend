@@ -5,7 +5,7 @@ import { FiMenu } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../firebase/config";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 
 // I redefined the types again because of the data transformation that happens through the Firebase Cloud Function.
 type Topic = {
@@ -79,7 +79,9 @@ export const BaseLayout = ({ children }: LayoutProps) => {
       const topicsArray: Topic[] = [];
 
       try {
-        const topicsSnapshot = await getDocs(topicsCollectionRef);
+        const topicsSnapshot = await getDocs(
+          query(topicsCollectionRef, orderBy("order")),
+        );
         topicsSnapshot.forEach((topicDoc) => {
           const topicData = topicDoc.data();
           const topicId = topicDoc.id;
@@ -88,7 +90,6 @@ export const BaseLayout = ({ children }: LayoutProps) => {
             topicId: topicId,
             topicTitle: topicData.topicTitle,
             topicDescription: topicData.topicDescription,
-            order: topicData.order,
             chapters: [],
           };
 
@@ -170,39 +171,34 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                 </button>
               </MenuItem>
               <SubMenu
-  label="Topics"
-  open={isSubMenuOpen}
-  onOpenChange={toggleSubMenu}
->
-  {user ? (
-    topics.map((topic) => (
-      <MenuItem
-        key={topic.topicId}
-        onClick={() => handleTopicClick(topic)}
-      >
-        {topic.topicTitle}
-      </MenuItem>
-    ))
-  ) : (
-    <div className="relative">
-      <div className="pointer-events-none select-none blur-sm">
-
-        {topics.map((topic) => (
-          <MenuItem
-            key={topic.topicId}
-
-          >
-            {topic.topicTitle}
-          </MenuItem>
-        ))}
-      </div>
-      <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center bg-white bg-opacity-75">
-        <span>Sign in to unlock</span>
-      </div>
-    </div>
-  )}
-</SubMenu>
-
+                label="Topics"
+                open={isSubMenuOpen}
+                onOpenChange={toggleSubMenu}
+              >
+                {user ? (
+                  topics.map((topic) => (
+                    <MenuItem
+                      key={topic.topicId}
+                      onClick={() => handleTopicClick(topic)}
+                    >
+                      {topic.topicTitle}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <div className="relative">
+                    <div className="pointer-events-none select-none blur-sm">
+                      {topics.map((topic) => (
+                        <MenuItem key={topic.topicId}>
+                          {topic.topicTitle}
+                        </MenuItem>
+                      ))}
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center bg-white bg-opacity-75">
+                      <span>Sign in to unlock</span>
+                    </div>
+                  </div>
+                )}
+              </SubMenu>
             </Menu>
 
             <div>
