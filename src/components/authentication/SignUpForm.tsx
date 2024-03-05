@@ -13,6 +13,7 @@ import "primereact/resources/themes/lara-light-cyan/theme.css";
 const SignUpForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
 
   const [isWeak, setIsWeak] = useState(false);
 
@@ -48,6 +49,7 @@ const SignUpForm = () => {
         const docRef = await addDoc(collection(db, "users"), {
           userId: res.user.uid,
           group: group,
+          name: name,
           progress: {0: {0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}, 1:{0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}, 2:{0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}, 3:{0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}, 4:{0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}, 5:{0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}},
           proficiency: {0: 0, 1:0, 2:0, 3:0, 4:0, 5:0},
           scoresQuiz: {0: 0, 1:0, 2:0, 3:0, 4:0, 5:0},
@@ -56,6 +58,7 @@ const SignUpForm = () => {
       }
 
       setEmail("");
+      setName("");
       setPassword("");
 
       router.push("/");
@@ -81,7 +84,7 @@ const SignUpForm = () => {
   return (
 
 
-    <form onSubmit={handleSignUp} className="space-y-6">
+    <form onSubmit={handleSignUp} className="space-y-6</form>">
       <div>
         <label htmlFor="email" className="text-start">
           Email
@@ -91,6 +94,17 @@ const SignUpForm = () => {
           id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
+          className="flex w-full justify-center rounded border-2 p-1"
+        />
+        <label htmlFor="name" className="text-start">
+          Name
+        </label>
+        <input
+          type="text"
+          id="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           required
           className="flex w-full justify-center rounded border-2 p-1"
         />
