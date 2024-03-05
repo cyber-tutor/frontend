@@ -4,6 +4,10 @@ import { auth, db } from "../../pages/firebase/config";
 import { useRouter } from "next/router";
 import { collection, addDoc } from "firebase/firestore";
 import PasswordStrengthBar from 'react-password-strength-bar';
+import { Password } from 'primereact/password';
+import { Divider } from 'primereact/divider';
+import "primereact/resources/themes/lara-light-cyan/theme.css";
+
 
 
 const SignUpForm = () => {
@@ -60,7 +64,23 @@ const SignUpForm = () => {
     }
   };
 
+  const header = <div className="font-bold mb-3">Pick a password</div>;
+    const footer = (
+        <>
+            <Divider />
+            <p className="mt-2">Suggestions</p>
+            <ul className="pl-2 ml-2 mt-0 line-height-3">
+                <li>At least one lowercase</li>
+                <li>At least one uppercase</li>
+                <li>At least one numeric</li>
+                <li>Minimum 8 characters</li>
+            </ul>
+        </>
+    );
+
   return (
+
+
     <form onSubmit={handleSignUp} className="space-y-6">
       <div>
         <label htmlFor="email" className="text-start">
@@ -80,15 +100,19 @@ const SignUpForm = () => {
           Password
         </label>
         
-        <input
+        {/* <input
           type="password"
           id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           className="flex w-full justify-center rounded border-2 p-1"
-        />
-        <PasswordStrengthBar password={password} />
+        /> */}
+
+
+        
+        <Password className="card flex justify-content-center" id="" value={password} onChange={(e) => setPassword(e.target.value)} header={header} footer={footer} />
+        {/* <PasswordStrengthBar password={password} /> */}
       </div>
       <button
         type="submit"
@@ -99,6 +123,7 @@ const SignUpForm = () => {
 
       {isWeak && <p className="text-red-500">Password is weak</p>}
     </form>
+
   );
 };
 
