@@ -3,10 +3,14 @@ import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth, db } from "../../pages/firebase/config";
 import { useRouter } from "next/router";
 import { collection, addDoc } from "firebase/firestore";
+import PasswordStrengthBar from 'react-password-strength-bar';
+
 
 const SignUpForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [isWeak, setIsWeak] = useState(false);
 
   const [createUserWithEmailAndPassword] =
     useCreateUserWithEmailAndPassword(auth);
@@ -17,6 +21,16 @@ const SignUpForm = () => {
     event.preventDefault();
     // This is the try-catch block that will handle the actual sign-up process. If it succeeds, they will be redirected to the sign-in page. If it fails, well, nothing really at the moment on the front end, YET. It logs the error to the console though.
     try {
+
+
+      const strongRegex = /^(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`\-]).{8,}$/;
+      
+      if (!strongRegex.test(password)) {
+        setIsWeak(true);
+        return;
+      }
+      
+
       const res = await createUserWithEmailAndPassword(email, password);
 
       const isExperimental = Math.random() < 0.5;
@@ -65,6 +79,7 @@ const SignUpForm = () => {
         <label htmlFor="password" className="text-start">
           Password
         </label>
+        
         <input
           type="password"
           id="password"
@@ -73,6 +88,7 @@ const SignUpForm = () => {
           required
           className="flex w-full justify-center rounded border-2 p-1"
         />
+        <PasswordStrengthBar password={password} />
       </div>
       <button
         type="submit"
@@ -80,6 +96,8 @@ const SignUpForm = () => {
       >
         Sign Up
       </button>
+
+      {isWeak && <p className="text-red-500">Password is weak</p>}
     </form>
   );
 };
