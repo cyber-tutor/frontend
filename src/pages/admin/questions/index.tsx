@@ -33,7 +33,7 @@ export default function CRUD_Questions() {
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
-      collection(db, "questions"),
+      collection(db, "quizQuestions"),
       (querySnapshot) => {
         const fetchedQuestions = querySnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -46,7 +46,7 @@ export default function CRUD_Questions() {
   }, []);
 
   const createQuestion = async (question: Question) => {
-    await addDoc(collection(db, "questions"), question);
+    await addDoc(collection(db, "quizQuestions"), question);
   };
 
   const editQuestion = async (id: string, updatedQuestion: Question) => {
