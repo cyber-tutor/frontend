@@ -4,12 +4,36 @@ import { auth } from "./firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import React, { useEffect, useState } from 'react';
 import dynamic from "next/dynamic";
+import queryUserDocument from "./firebase/firebase_functions";
+import { DocumentData } from "firebase/firestore";
+import { useRouter } from "next/router";
 
 
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 
 export default function Home() {
   const [user, loading, error] = useAuthState(auth);
+  const [userDocument, setUserDocument] = useState<DocumentData | null>(null);
+  const router = useRouter();
+
+  const uid = user ? user.uid : null;
+
+  console.log("User Id:", uid);
+
+
+  // If user is logged in, query and retreive the reference to their document in the users collection in firestore
+  if (uid) {
+    queryUserDocument(uid).then((userDocument) => {
+      console.log("User Document:", userDocument?.data());
+
+      setUserDocument(userDocument);
+    });
+  }
+
+  // Check if user completed initial survey, if not then redirect to initial survey
+  if (userDocument && !userDocument.data().initialSurveyComplete) {
+    router.push('/initialsurvey/begin');
+  }
 
   return (
     <>
