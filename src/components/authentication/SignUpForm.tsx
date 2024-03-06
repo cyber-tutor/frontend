@@ -27,7 +27,6 @@ const SignUpForm = () => {
     // This is the try-catch block that will handle the actual sign-up process. If it succeeds, they will be redirected to the sign-in page. If it fails, well, nothing really at the moment on the front end, YET. It logs the error to the console though.
     try {
 
-
       const strongRegex = /^(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`\-]).{8,}$/;
       
       if (!strongRegex.test(password)) {
@@ -61,7 +60,7 @@ const SignUpForm = () => {
       setName("");
       setPassword("");
 
-      router.push("/");
+      router.push("/initialsurvey/begin");
     } catch (e) {
       console.error(e);
     }
@@ -131,6 +130,7 @@ const SignUpForm = () => {
       <button
         type="submit"
         className="flex w-full justify-center rounded bg-blue-500 py-1 text-white"
+        style={{ marginTop: "20rem" }}
       >
         Sign Up
       </button>
