@@ -49,6 +49,7 @@ const SignUpForm = () => {
           userId: res.user.uid,
           group: group,
           name: name,
+          initialSurveyComplete: false,
           progress: {0: {0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}, 1:{0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}, 2:{0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}, 3:{0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}, 4:{0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}, 5:{0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}},
           proficiency: {0: 0, 1:0, 2:0, 3:0, 4:0, 5:0},
           scoresQuiz: {0: 0, 1:0, 2:0, 3:0, 4:0, 5:0},
@@ -124,7 +125,7 @@ const SignUpForm = () => {
 
 
         
-        <Password className="card flex justify-content-center" id="" value={password} onChange={(e) => setPassword(e.target.value)} header={header} footer={footer} />
+        <Password className="card flex w-full justify-center rounded border-2 p-1" id="" value={password} onChange={(e) => setPassword(e.target.value)} header={header} footer={footer} />
         {/* <PasswordStrengthBar password={password} /> */}
       </div>
       <button
