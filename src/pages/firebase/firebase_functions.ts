@@ -5,8 +5,9 @@ import { db } from './config';
 export default async function queryUserDocument(userIdString: string): Promise<DocumentData | null> {
   const usersCollectionRef = collection(db, 'users');
 
+
   // Hardcoded user ID for testing 
-  const q = query(usersCollectionRef, where('userId', '==', "Iw53NYmgAkfhJSXH8AJCym6u7xV2")); 
+  const q = query(usersCollectionRef, where('userId', '==', userIdString)); 
 
 
   try {
