@@ -12,6 +12,8 @@ import {
 } from "firebase/firestore";
 import Link from "next/link";
 import CircularWithValueLabel from "~/components/ProgressCircle";
+import { auth } from "../firebase/config";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 type Topic = {
   topicId: string;
@@ -55,6 +57,17 @@ export default function TopicPage() {
   const { topic: topicId } = router.query;
 
   useEffect(() => {
+
+    // If user is not logged in, redirect to login page
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push('/users/sign-in'); 
+      }
+    });
+
+
+    // Fetch topics from the database
     const fetchTopic = async () => {
       if (!topicId || Array.isArray(topicId)) return;
 
