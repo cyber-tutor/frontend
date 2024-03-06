@@ -201,7 +201,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                 open={isSubMenuOpen}
                 onOpenChange={toggleSubMenu}
               >
-                {user ? (
+                {user && userDocument?.data().initialSurveyComplete ? (
                   topics.map((topic) => (
                     <MenuItem
                       key={topic.topicId}
