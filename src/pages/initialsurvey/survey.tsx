@@ -1,6 +1,10 @@
-import React from 'react';
+import { getAuth } from 'firebase/auth';
+import { updateDoc } from 'firebase/firestore';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
 import * as Survey from 'survey-react';
 import 'survey-react/survey.css';
+import queryUserDocument from '../firebase/firebase_functions';
 
 Survey.StylesManager.applyTheme("default");
 
@@ -27,32 +31,59 @@ const surveyJson = {
         }
       ]
     },
-    {
-      name: "page3",
-      elements: [
-        {
-          type: "comment",
-          name: "question3",
-          title: "What do you like most about the selected programming language?"
-        }
-      ]
-    }
   ]
 };
 
 export default function SurveyComponent(): JSX.Element {
   const survey = new Survey.Model(surveyJson);
+  const router = useRouter();
+  const [isComplete, setIsComplete] = useState(false);
 
   const onComplete = (result: any) => {
     console.log(result.data);
+    setIsComplete(true);
   };
+
+  useEffect(() => {
+    if (isComplete) {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
+        const userId = user.uid;
+
+        queryUserDocument(userId).then((docSnapshot) => {
+          if (docSnapshot) {
+
+            updateDoc(docSnapshot.ref, { initialSurveyComplete: true })
+              .then(() => {
+                console.log('Document successfully updated');
+
+
+
+                if(docSnapshot.data().group === "experimental"){
+                  router.push('/initialsurvey/generating');
+                }
+                else{
+                  router.push('/');
+                }
+              })
+              .catch((error) => {
+                console.error('Error updating document: ', error);
+              });
+          } else {
+            console.log('No document found or error occurred');
+          }
+        });
+      } 
+    }
+  }, [router, isComplete]);
+
+  
 
   return (
     <div>
-      <Survey.Survey
-        model={survey}
-        onComplete={onComplete}
-      />
+      <Survey.Survey model={survey} onComplete={onComplete} />
     </div>
   );
 }
