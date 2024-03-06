@@ -9,11 +9,13 @@ import {
   getDocs,
   orderBy,
   query,
+  DocumentData,
 } from "firebase/firestore";
 import Link from "next/link";
 import CircularWithValueLabel from "~/components/ProgressCircle";
 import { auth } from "../firebase/config";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import queryUserDocument from "../firebase/firebase_functions";
 
 type Topic = {
   topicId: string;
@@ -52,6 +54,7 @@ export default function TopicPage() {
   const [topic, setTopic] = useState<Topic | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userDocument, setUserDocument] = useState<DocumentData | null>(null);
 
   const router = useRouter();
   const { topic: topicId } = router.query;
@@ -59,7 +62,27 @@ export default function TopicPage() {
   useEffect(() => {
 
     // If user is not logged in, redirect to login page
-    const auth = getAuth();
+
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const uid = user ? user.uid : null;
+
+
+  // If user is logged in, query and retreive the reference to their document in the users collection in firestore
+  if (uid) {
+    queryUserDocument(uid).then((userDocument) => {
+      console.log("User Document:", userDocument);
+
+      setUserDocument(userDocument);
+    });
+  }
+
+  // Check if user completed initial survey, if not then redirect to initial survey
+  if (userDocument && !userDocument.data().initialSurveyComplete) {
+    router.push('/initialsurvey/begin');
+  }
+
+  console.log("User Document ID:", userDocument?.id);
     onAuthStateChanged(auth, (user) => {
       if (!user) {
         router.push('/users/sign-in'); 

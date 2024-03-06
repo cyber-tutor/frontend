@@ -5,7 +5,9 @@ import { FiMenu } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../firebase/config";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, DocumentData } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import queryUserDocument from "../firebase/firebase_functions";
 
 // I redefined the types again because of the data transformation that happens through the Firebase Cloud Function.
 type Topic = {
@@ -50,6 +52,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
   // This sets a state variable for the currently selected topic. We intent to use this to highlight the selected topic in the sidebar.
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
   const [collapsed, setCollapsed] = useState(false);
+  const [userDocument, setUserDocument] = useState<DocumentData | null>(null);
 
   // This sets a state variable for the open state of the submenu.
   const [isSubMenuOpen, setSubMenuOpen] = useState<boolean>(() => {
@@ -67,6 +70,29 @@ export const BaseLayout = ({ children }: LayoutProps) => {
   const router = useRouter();
   // This stores the state of isSubMenuOpen in localStorage whenever it changes. This allows the state to persist across page reloads.
   useEffect(() => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const uid = user ? user.uid : null;
+    console.log("User:", uid);
+  
+    // If user is logged in, query and retreive the reference to their document in the users collection in firestore
+    if (uid) {
+      queryUserDocument(uid).then((userDocument) => {
+        console.log("User Document:", userDocument);
+  
+        setUserDocument(userDocument);
+      });
+    }
+  
+    // Check if user completed initial survey, if not then redirect to initial survey
+    if (userDocument && !userDocument.data().initialSurveyComplete) {
+      router.push('/initialsurvey/begin');
+    }
+
+
+
+
+
     // This checks if window is defined to make sure we're not on the server.
     if (typeof window !== "undefined") {
       localStorage.setItem("isSubMenuOpen", JSON.stringify(isSubMenuOpen));
