@@ -4,7 +4,7 @@ import SignInForm from "../../components/authentication/SignInForm";
 
 const SignInPage = () => {
   return (
-    <BaseLayout>
+    <BaseLayout showSidebar={false}>
       <div className="flex w-full justify-center">
         <SignInForm />
       </div>
