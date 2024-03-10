@@ -60,35 +60,32 @@ export default function TopicPage() {
   const { topic: topicId } = router.query;
 
   useEffect(() => {
-
     // If user is not logged in, redirect to login page
 
-  const auth = getAuth();
-  const user = auth.currentUser;
-  const uid = user ? user.uid : null;
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const uid = user ? user.uid : null;
 
+    // If user is logged in, query and retreive the reference to their document in the users collection in firestore
+    if (uid) {
+      queryUserDocument(uid).then((userDocument) => {
+        console.log("User Document:", userDocument);
 
-  // If user is logged in, query and retreive the reference to their document in the users collection in firestore
-  if (uid) {
-    queryUserDocument(uid).then((userDocument) => {
-      console.log("User Document:", userDocument);
+        setUserDocument(userDocument);
+      });
+    }
 
-      setUserDocument(userDocument);
-    });
-  }
+    // Check if user completed initial survey, if not then redirect to initial survey
+    if (userDocument && !userDocument.data().initialSurveyComplete) {
+      router.push("/initialsurvey/begin");
+    }
 
-  // Check if user completed initial survey, if not then redirect to initial survey
-  if (userDocument && !userDocument.data().initialSurveyComplete) {
-    router.push('/initialsurvey/begin');
-  }
-
-  console.log("User Document ID:", userDocument?.id);
+    console.log("User Document ID:", userDocument?.id);
     onAuthStateChanged(auth, (user) => {
       if (!user) {
-        router.push('/users/sign-in'); 
+        router.push("/users/sign-in");
       }
     });
-
 
     // Fetch topics from the database
     const fetchTopic = async () => {
@@ -193,6 +190,9 @@ export default function TopicPage() {
               <div>
                 <div className="grid grid-cols-6 items-center">
                   <h3 className="col-span-5 text-xl font-bold">
+                    <p className="text-xs font-bold">
+                      {chapter.chapterType.toUpperCase()}
+                    </p>
                     {chapter.chapterTitle}
                   </h3>
                   {/* Same here, boolean stuff */}
