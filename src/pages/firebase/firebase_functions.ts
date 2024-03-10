@@ -1,5 +1,6 @@
 import { Firestore, doc, addDoc, collection, query, where, getDocs, DocumentData, QueryDocumentSnapshot, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from './config'; 
+import { User } from "firebase/auth";
 
 
 export default async function queryUserDocument(userIdString: string): Promise<DocumentData | null> {
@@ -79,5 +80,27 @@ export async function isWatched(userDocumentId: string): Promise<boolean> {
     }
   }
 
-
-
+  export const createUserDocument = async (user: User) => {
+    const isExperimental = Math.random() < 0.5;
+    const group = isExperimental ? "experimental" : "control";
+  
+    const docRef = await addDoc(collection(db, "users"), {
+      userId: user.uid,
+      group: group,
+      name: user.displayName || "",
+      initialSurveyComplete: false,
+      progress: {
+        0: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+        1: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+        2: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+        3: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+        4: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+        5: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+      },
+      proficiency: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+      scoresQuiz: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+      scoresTest: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+    });
+  
+    return docRef;
+  };
