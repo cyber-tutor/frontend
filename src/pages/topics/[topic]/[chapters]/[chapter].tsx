@@ -128,60 +128,7 @@ export default function ChapterPage() {
       </BaseLayout>
     );
 
-  // Currently commented out because I removed the JSON from the database. I will refactor this later. But we probably don't even want that in the database, and instead, dynamically generate the survey based on questions in the database as we have discussed. In other words, we have the empty template here, and we just fill in the questions from the database.
-  // This function renders the survey using the SurveyJS library.
-  // https://surveyjs.io/form-library/documentation/get-started-react
-  // function App() {
-  //   if (
-  //     !chapter ||
-  //     chapter.chapterType !== "assessment" ||
-  //     !chapter.controlGroup.chapterContent
-  //   ) {
-  //     return <div>uh oh, no survey found 🦧</div>;
-  //   }
 
-  //   const surveyJson = chapter.controlGroup.chapterContent;
-  //   const survey = new Model(surveyJson);
-  //   survey.onComplete.add((sender) => {
-  //     console.log("Survey results: ", sender.data);
-  //   });
-
-  //   return <Survey model={survey} />;
-  // }
-
-  // I will refactor this later. This is somewhat garbage at the moment, the way it's set up. I'm thinking either an if or switch statement to determine what to render based on the chapterType. I will refactor this later.
-
-  // Function that console.logs the length of the video, can be changed to return other information too, it stopped working, will fix later
-  // function formatDuration(duration: string): string {
-
-  //   const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
-  //   const matches = duration.match(regex);
-
-  //   const hours = matches && matches[1] ? parseInt(matches[1]) : 0;
-  //   const minutes = matches && matches[2] ? parseInt(matches[2]) : 0;
-  //   const seconds = matches && matches[3] ? parseInt(matches[3]) : 0;
-
-  //   let formattedDuration = '';
-  //   if (hours > 0) {
-  //     formattedDuration += `${hours}:`;
-  //   }
-  //   formattedDuration += `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-  //   return formattedDuration;
-  // }
-
-  // // Will be made dynamic later
-  // async function fetchVideoDuration() {
-  //   const videoUrl = 'https://www.youtube.com/watch?v=8BoovULyJeg';
-  //   try {
-  //     const duration = await getVideoDuration(videoUrl);
-  //     const formattedDuration = formatDuration(duration);
-  //     console.log('Video Duration:', formattedDuration);
-  //   } catch (error) {
-  //     console.error('Failed to fetch video duration', error);
-  //   }
-  // }
-  // fetchVideoDuration();
 
   // Retreive the id of the user logged in and print it
   const user = auth.currentUser;
@@ -191,12 +138,10 @@ export default function ChapterPage() {
   // If user is logged in, query and retreive the reference to their document in the users collection in firestore
   if (uid) {
     queryUserDocument(uid).then((userDocument) => {
-      console.log("User Document:", userDocument);
 
       setUserDocument(userDocument);
     });
   }
-  console.log("User Document ID:", userDocument?.id);
 
   // Check if the isWatched key value pair is set to true in the user's document in firestore to decide if the next button should be visible
   (async () => {
