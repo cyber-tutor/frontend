@@ -4,9 +4,12 @@ interface InputProps {
   name: string;
   value: string;
   onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onSelectChange?: (e: ChangeEvent<HTMLSelectElement>) => void;
   placeholder: string;
   type?: string;
   isTextArea?: boolean;
+  isSelect?: boolean;
+  options?: string[];
   error?: string;
 }
 
@@ -14,11 +17,35 @@ const InputField: React.FC<InputProps> = ({
   name,
   value,
   onChange,
+  onSelectChange,
   placeholder,
   type = "text",
   isTextArea = false,
+  isSelect = false,
+  options = [],
   error,
 }) => {
+  if (isSelect) {
+    return (
+      <div className="flex flex-col">
+        <select
+          name={name}
+          value={value}
+          onChange={onSelectChange}
+          className={`mb-4 w-full rounded border p-2 ${error ? "border-red-500" : ""}`}
+        >
+          <option value="">Select a {placeholder}</option>
+          {options.map((option, index) => (
+            <option key={index} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+        {error && <div className="text-red-500">{error}</div>}
+      </div>
+    );
+  }
+
   const InputComponent = isTextArea ? "textarea" : "input";
 
   return (

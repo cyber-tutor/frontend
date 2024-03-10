@@ -83,6 +83,10 @@ const QuestionForm: React.FC<{
       errors.explanation = "uh oh 🦧, you need an explanation.";
     }
 
+    if (!question.difficulty || question.difficulty === "Select a difficulty") {
+      errors.difficulty = "uh oh 🦧, you need to select a difficulty.";
+    }
+
     if (!question.topicId) {
       errors.topicId = "uh oh 🦧, you need a topic ID.";
     }
@@ -193,19 +197,15 @@ const QuestionForm: React.FC<{
           <label htmlFor="difficulty" className="mb-1 font-bold">
             Difficulty
           </label>
-          <select
+          <InputField
             name="difficulty"
             value={editedQuestion.difficulty}
             onChange={handleChange}
-            className="your-classname-for-styling"
-          >
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Hard">Hard</option>
-          </select>
-          {errors.difficulty && (
-            <p className="error-message">{errors.difficulty}</p>
-          )}
+            placeholder="Select a difficulty"
+            isSelect={true}
+            options={["", "Beginner", "Intermediate", "Hard"]}
+            error={errors.difficulty}
+          />
         </div>
         <div className="flex flex-col">
           <label htmlFor="chapterId" className="mb-1 font-bold">
