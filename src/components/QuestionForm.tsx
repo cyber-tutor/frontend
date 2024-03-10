@@ -6,11 +6,11 @@ export interface Question {
   question: string;
   choices: { [key: string]: string };
   answer: string;
-  topicId: string;
-  chapterId: string;
-  difficulty: string;
   explanation: string;
-  topics: string[];
+  topicId: string;
+  difficulty: string;
+  chapterId: string;
+  [key: string]: any;
 }
 
 const QuestionForm: React.FC<{
@@ -38,23 +38,49 @@ const QuestionForm: React.FC<{
   ) => {
     const { name, value } = e.target;
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
-    setEditedQuestion((prevQuestion) => ({
-      ...prevQuestion,
-      [name]: value, // Change this line
-    }));
+
+    if (name === "choices") {
+      const choiceKey = value.substring(0, 1);
+      const choiceValue = value.substring(1).trim();
+
+      setEditedQuestion((prevQuestion) => ({
+        ...prevQuestion,
+        choices: {
+          ...prevQuestion.choices,
+          [choiceKey]: choiceValue,
+        },
+      }));
+    } else {
+      setEditedQuestion((prevQuestion) => ({
+        ...prevQuestion,
+        [name]: value,
+      }));
+    }
   };
 
   const handleArrayChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    const arrayValue = value
-      ? Array.from(new Set(value.split(",").map((item) => item.trim())))
-      : [];
-    setEditedQuestion((prevQuestion) => ({
-      ...prevQuestion,
-      [name]: arrayValue,
-    }));
+
+    if (name === "choices") {
+      const choiceStrings = value.split(",").map((choice) => choice.trim());
+      const choicesObject: { [key: string]: string | undefined } = {};
+      for (let i = 0; i < choiceStrings.length; i++) {
+        const key = String.fromCharCode(97 + i);
+        choicesObject[key] = choiceStrings[i];
+      }
+
+      setEditedQuestion((prevQuestion) => ({
+        ...prevQuestion,
+        choices: choicesObject as { [key: string]: string },
+      }));
+    } else {
+      setEditedQuestion((prevQuestion) => ({
+        ...prevQuestion,
+        [name]: value.split(",").map((item) => item.trim()),
+      }));
+    }
   };
 
   const validateQuestion = (
@@ -74,9 +100,9 @@ const QuestionForm: React.FC<{
       errors.answer = "uh oh 🦧, you need a correct answer.";
     }
 
-    if (!Object.values(question.choices).includes(question.answer)) {
+    if (!Object.keys(question.choices).includes(question.answer)) {
       errors.answer =
-        "uh oh 🦧, the correct answer should be one of the choices.";
+        "uh oh 🦧, the correct answer should be one of the choice keys.";
     }
 
     if (!question.explanation) {
@@ -153,6 +179,7 @@ const QuestionForm: React.FC<{
             value={Object.values(editedQuestion.choices).join(", ")}
             onChange={handleArrayChange}
             placeholder="Options (comma-separated)"
+            isTextArea
             error={errors.choices}
           />
         </div>
@@ -203,7 +230,7 @@ const QuestionForm: React.FC<{
             onChange={handleChange}
             placeholder="Select a difficulty"
             isSelect={true}
-            options={["", "Beginner", "Intermediate", "Hard"]}
+            options={["Beginner", "Intermediate", "Hard"]}
             error={errors.difficulty}
           />
         </div>
@@ -225,7 +252,11 @@ const QuestionForm: React.FC<{
           </label>
           <InputField
             name="topics"
-            value={editedQuestion.topics.join(", ")}
+            value={
+              Array.isArray(editedQuestion.topics)
+                ? editedQuestion.topics.join(", ")
+                : ""
+            }
             onChange={handleArrayChange}
             placeholder="Tags (comma-separated)"
             error={errors.topics}

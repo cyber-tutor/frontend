@@ -3,7 +3,7 @@ import React, { ChangeEvent } from "react";
 interface InputProps {
   name: string;
   value: string;
-  onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onSelectChange?: (e: ChangeEvent<HTMLSelectElement>) => void;
   placeholder: string;
   type?: string;
@@ -31,10 +31,10 @@ const InputField: React.FC<InputProps> = ({
         <select
           name={name}
           value={value}
-          onChange={onSelectChange}
+          onChange={onSelectChange as (e: ChangeEvent<HTMLSelectElement>) => void || onChange}
           className={`mb-4 w-full rounded border p-2 ${error ? "border-red-500" : ""}`}
         >
-          <option value="">Select a {placeholder}</option>
+          <option value="">{placeholder}</option>
           {options.map((option, index) => (
             <option key={index} value={option}>
               {option}
