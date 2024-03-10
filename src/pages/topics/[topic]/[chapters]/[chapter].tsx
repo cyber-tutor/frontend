@@ -13,6 +13,7 @@ import queryUserDocument from "~/pages/firebase/firebase_functions";
 import { DocumentData, doc, getDoc, updateDoc } from "firebase/firestore";
 import { handleVideoEnd, isWatched } from "~/pages/firebase/firebase_functions";
 import TimerComponent from "~/components/Timer";
+import DynamicSurvey from "../../../../components/DynamicSurvey";
 
 type Chapter = {
   chapterId: string;
@@ -208,7 +209,7 @@ export default function ChapterPage() {
     <BaseLayout>
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
       <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
-      <div className="max-h-screen overflow-y-auto">
+      <div className="mx-auto w-full overflow-y-auto">
         {/* Later on, AFTER we set up user profiles, we want to implement conditional logic to determine what content we want to display based on what group they are assigned after either signing up/completing initial assessment */}
         {chapter.chapterType === "text" && (
           <div className="m-4 rounded border p-4 shadow">
@@ -264,21 +265,24 @@ export default function ChapterPage() {
           </div>
         )}
         {isVideoWatched && (
-          <button 
-          className="rounded bg-blue-500 px-4 py-2 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-700"
-          onClick={async () => {
-            // Pushes time user was on the page for to firestore
-            const userDocRef = doc(db, 'users', userDocument?.id);
-            const minutes = Math.floor(secondsElapsed / 60);
-            const seconds = secondsElapsed % 60;
-            await updateDoc(userDocRef, {
-              timeOnPage: `${minutes}:${String(seconds).padStart(2, '0')}`
-            });
-            console.log('User time watched pushed successfully to firestore:', secondsElapsed);
-          }}
-        >
-          Next
-        </button>
+          <button
+            className="rounded bg-blue-500 px-4 py-2 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-700"
+            onClick={async () => {
+              // Pushes time user was on the page for to firestore
+              const userDocRef = doc(db, "users", userDocument?.id);
+              const minutes = Math.floor(secondsElapsed / 60);
+              const seconds = secondsElapsed % 60;
+              await updateDoc(userDocRef, {
+                timeOnPage: `${minutes}:${String(seconds).padStart(2, "0")}`,
+              });
+              console.log(
+                "User time watched pushed successfully to firestore:",
+                secondsElapsed,
+              );
+            }}
+          >
+            Next
+          </button>
         )}
         <br />
         {/* Converts seconds to minutes and removes the decimal point */}
@@ -287,8 +291,16 @@ export default function ChapterPage() {
         {/* Record how long a user spends on the chapter currently open */}
         <br />
         <p>User's time spent on this chapter:</p>
-        <TimerComponent secondsElapsed={secondsElapsed} setSecondsElapsed={setSecondsElapsed} />
-        {/* {chapter.chapterType === "assessment" && App()} */}
+        <TimerComponent
+          secondsElapsed={secondsElapsed}
+          setSecondsElapsed={setSecondsElapsed}
+        />
+        {chapter.chapterType === "assessment" && ( // Add any other conditions as needed
+          <div className="assessment-container">
+            <h2 className="mb-4 text-2xl font-semibold">Assessment</h2>
+            <DynamicSurvey />
+          </div>
+        )}
       </div>
     </BaseLayout>
   );
