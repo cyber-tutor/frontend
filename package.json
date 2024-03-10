@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@mui/material": "^5.15.11",
+    "@nextui-org/react": "^2.2.10",
     "@t3-oss/env-nextjs": "^0.7.1",
     "@tanstack/react-query": "^4.36.1",
     "@trpc/client": "^10.43.6",
@@ -21,6 +22,7 @@
     "firebase": "^10.8.0",
     "firebase-functions": "^4.7.0",
     "firebase-tools": "^13.3.0",
+    "framer-motion": "^11.0.8",
     "next": "^14.0.4",
     "primereact": "^10.5.1",
     "react": "18.2.0",
