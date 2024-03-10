@@ -1,5 +1,25 @@
-import React, { useState, FormEvent, ChangeEvent } from "react";
+import React, { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import InputField from "../components/InputField";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { db } from "../pages/firebase/config";
+
+type Topic = {
+  topicId: string;
+  topicTitle: string;
+  topicDescription: string;
+  chapters: Chapter[];
+};
+
+type Chapter = {
+  chapterId: string;
+  chapterType: string;
+  chapterTitle: string;
+  chapterDescription: string;
+  controlGroupContent: string;
+  experimentalGroupContent: string;
+  controlGroupImageURLs: string[];
+  experimentalGroupImageURLs: string[];
+};
 
 export interface Question {
   id?: string;
@@ -17,6 +37,58 @@ const QuestionForm: React.FC<{
   question?: Question;
   onSubmit: (updatedQuestion: Question) => void;
 }> = ({ question, onSubmit }) => {
+  const [topics, setTopics] = useState<Topic[]>([]);
+
+  useEffect(() => {
+    const fetchTopics = async () => {
+      const topicsCollectionRef = collection(db, "topics");
+      const topicsArray: Topic[] = [];
+
+      try {
+        const topicsSnapshot = await getDocs(
+          query(topicsCollectionRef, orderBy("order")),
+        );
+        for (const topicDoc of topicsSnapshot.docs) {
+          const topicData = topicDoc.data();
+          const topicId = topicDoc.id;
+
+          const chaptersCollectionRef = collection(topicDoc.ref, "chapters");
+          const chaptersSnapshot = await getDocs(chaptersCollectionRef);
+          const chapters: Chapter[] = [];
+          chaptersSnapshot.forEach((chapterDoc) => {
+            const chapterData = chapterDoc.data();
+            const chapterId = chapterDoc.id;
+            chapters.push({
+              chapterId: chapterId,
+              chapterType: chapterData.chapterType,
+              chapterTitle: chapterData.chapterTitle,
+              chapterDescription: chapterData.chapterDescription,
+              controlGroupContent: chapterData.controlGroupContent,
+              experimentalGroupContent: chapterData.experimentalGroupContent,
+              controlGroupImageURLs: chapterData.controlGroupImageURLs,
+              experimentalGroupImageURLs:
+                chapterData.experimentalGroupImageURLs,
+            });
+          });
+
+          const newTopic = {
+            topicId: topicId,
+            topicTitle: topicData.topicTitle,
+            topicDescription: topicData.topicDescription,
+            chapters: chapters,
+          };
+
+          topicsArray.push(newTopic);
+        }
+
+        setTopics(topicsArray);
+      } catch (error) {
+        console.error("uh oh, error fetching topics 🦧:", error);
+      }
+    };
+
+    fetchTopics();
+  }, []);
   const [editedQuestion, setEditedQuestion] = useState<Question>(
     question || {
       question: "",
@@ -33,6 +105,7 @@ const QuestionForm: React.FC<{
     {},
   );
 
+  const [chapters, setChapters] = useState<Chapter[]>([]);
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
@@ -55,6 +128,14 @@ const QuestionForm: React.FC<{
         ...prevQuestion,
         [name]: value,
       }));
+    }
+    if (name === "topicId") {
+      const selectedTopic = topics.find((topic) => topic.topicId === value);
+      if (selectedTopic) {
+        setChapters(selectedTopic.chapters);
+      } else {
+        setChapters([]);
+      }
     }
   };
 
@@ -114,11 +195,11 @@ const QuestionForm: React.FC<{
     }
 
     if (!question.topicId) {
-      errors.topicId = "uh oh 🦧, you need a topic ID.";
+      errors.topicId = "uh oh 🦧, you need to choose a topic.";
     }
 
     if (!question.chapterId) {
-      errors.chapterId = "uh oh 🦧, you need a chapter ID.";
+      errors.chapterId = "uh oh 🦧, you need to choose a chapter.";
     }
 
     if (question.topics.length < 1) {
@@ -216,7 +297,12 @@ const QuestionForm: React.FC<{
             name="topicId"
             value={editedQuestion.topicId}
             onChange={handleChange}
-            placeholder="Topic ID (Needs to be a dropdown later)"
+            placeholder="Topic ID"
+            isSelect={true}
+            options={topics.map((topic) => ({
+              value: topic.topicId,
+              label: topic.topicTitle,
+            }))}
             error={errors.topicId}
           />
         </div>
@@ -230,7 +316,10 @@ const QuestionForm: React.FC<{
             onChange={handleChange}
             placeholder="Select a difficulty"
             isSelect={true}
-            options={["Beginner", "Intermediate", "Hard"]}
+            options={["Beginner", "Intermediate", "Hard"].map((difficulty) => ({
+              value: difficulty,
+              label: difficulty,
+            }))}
             error={errors.difficulty}
           />
         </div>
@@ -242,7 +331,13 @@ const QuestionForm: React.FC<{
             name="chapterId"
             value={editedQuestion.chapterId}
             onChange={handleChange}
-            placeholder="Chapter ID (Needs to be disabled if topicId is not selected, and a dropdown later)"
+            placeholder="Chapter ID"
+            isSelect={true}
+            options={chapters.map((chapter) => ({
+              value: chapter.chapterId,
+              label: chapter.chapterTitle,
+            }))}
+            disabled={!editedQuestion.topicId}
             error={errors.chapterId}
           />
         </div>

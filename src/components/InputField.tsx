@@ -1,5 +1,10 @@
 import React, { ChangeEvent } from "react";
 
+interface Option {
+  value: string;
+  label: string;
+}
+
 interface InputProps {
   name: string;
   value: string;
@@ -9,8 +14,9 @@ interface InputProps {
   type?: string;
   isTextArea?: boolean;
   isSelect?: boolean;
-  options?: string[];
+  options?: Option[];
   error?: string;
+  disabled?: boolean
 }
 
 const InputField: React.FC<InputProps> = ({
@@ -36,8 +42,8 @@ const InputField: React.FC<InputProps> = ({
         >
           <option value="">{placeholder}</option>
           {options.map((option, index) => (
-            <option key={index} value={option}>
-              {option}
+            <option key={index} value={option.value}>
+              {option.label}
             </option>
           ))}
         </select>
