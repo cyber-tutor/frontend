@@ -3,12 +3,17 @@ import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth, db } from "../../pages/firebase/config";
 import { useRouter } from "next/router";
 import { collection, addDoc } from "firebase/firestore";
-import PasswordStrengthBar from 'react-password-strength-bar';
-import { Password } from 'primereact/password';
-import { Divider } from 'primereact/divider';
+import PasswordStrengthBar from "react-password-strength-bar";
+import { Password } from "primereact/password";
+import { Divider } from "primereact/divider";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
-
-
+import {
+  GoogleAuthProvider,
+  getAdditionalUserInfo,
+  signInWithPopup,
+} from "firebase/auth";
+import { FcGoogle } from "react-icons/fc";
+import { createUserDocument } from "~/pages/firebase/firebase_functions";
 
 const SignUpForm = () => {
   const [email, setEmail] = useState("");
@@ -21,69 +26,66 @@ const SignUpForm = () => {
     useCreateUserWithEmailAndPassword(auth);
   const router = useRouter();
 
-  const handleSignUp = async (event: React.FormEvent) => {
-    // This prevents the default behavior of a form submission is to reload the page. We don't want that because of async behavior.
-    event.preventDefault();
-    // This is the try-catch block that will handle the actual sign-up process. If it succeeds, they will be redirected to the sign-in page. If it fails, well, nothing really at the moment on the front end, YET. It logs the error to the console though.
+  const provider = new GoogleAuthProvider();
+
+  // Configure Google provider and handle Google sign-in
+  const handleGoogleSignIn = async () => {
     try {
+      const result = await signInWithPopup(auth, provider);
+      const additionalUserInfo = getAdditionalUserInfo(result);
+      if (additionalUserInfo?.isNewUser) {
+        console.log("User is signing up for the first time.");
+        const user = result.user;
 
-      const strongRegex = /^(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`\-]).{8,}$/;
-      
-      if (!strongRegex.test(password)) {
-        setIsWeak(true);
-        return;
+        await createUserDocument(user);
+      } else {
+        console.log("User is an existing user.");
       }
-      
-
-      const res = await createUserWithEmailAndPassword(email, password);
-
-      const isExperimental = Math.random() < 0.5;
-
-      const group = isExperimental ? "experimental" : "control";
-
-      // If the user was successfully created, add a document to the 'users' collection
-      // Progress will be inserted on completion of sections so currently 
-      // just empty map. Length can me modified by how many section are in each chapter
-      if (res?.user) {
-        const docRef = await addDoc(collection(db, "users"), {
-          userId: res.user.uid,
-          group: group,
-          name: name,
-          initialSurveyComplete: false,
-          progress: {0: {0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}, 1:{0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}, 2:{0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}, 3:{0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}, 4:{0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}, 5:{0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}},
-          proficiency: {0: 0, 1:0, 2:0, 3:0, 4:0, 5:0},
-          scoresQuiz: {0: 0, 1:0, 2:0, 3:0, 4:0, 5:0},
-          scoresTest: {0: 0, 1:0, 2:0, 3:0, 4:0, 5:0}
-        });
-      }
-
-      setEmail("");
-      setName("");
-      setPassword("");
-
-      router.push("/initialsurvey/begin");
+      router.push("/");
     } catch (e) {
       console.error(e);
     }
   };
 
-  const header = <div className="font-bold mb-3">Pick a password</div>;
-    const footer = (
-        <>
-            <Divider />
-            <p className="mt-2">Suggestions</p>
-            <ul className="pl-2 ml-2 mt-0 line-height-3">
-                <li>At least one lowercase</li>
-                <li>At least one uppercase</li>
-                <li>At least one numeric</li>
-                <li>Minimum 8 characters</li>
-            </ul>
-        </>
-    );
+  const handleSignUp = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      const strongRegex =
+        /^(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`\-]).{8,}$/;
+      if (!strongRegex.test(password)) {
+        setIsWeak(true);
+        return;
+      }
+      const res = await createUserWithEmailAndPassword(email, password);
+      if (res?.user) {
+        await createUserDocument(res.user);
+        setEmail("");
+        setName("");
+        setPassword("");
+        router.push("/initialsurvey/begin");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const header = <div className="mb-3 font-bold">Pick a password</div>;
+  const footer = (
+    <>
+      <Divider />
+      <p className="mt-2">Suggestions</p>
+      <ul className="line-height-3 ml-2 mt-0 pl-2">
+        <li>At least one lowercase</li>
+        <li>At least one uppercase</li>
+        <li>At least one numeric</li>
+        <li>At least one special character</li>
+        <li>Minimum 8 characters</li>
+        <li>Strong password ex: 7h!sI$C0oL</li>
+      </ul>
+    </>
+  );
 
   return (
-
-
     <form onSubmit={handleSignUp} className="space-y-6</form>">
       <div>
         <label htmlFor="email" className="text-start">
@@ -113,7 +115,7 @@ const SignUpForm = () => {
         <label htmlFor="password" className="text-start">
           Password
         </label>
-        
+
         {/* <input
           type="password"
           id="password"
@@ -123,9 +125,14 @@ const SignUpForm = () => {
           className="flex w-full justify-center rounded border-2 p-1"
         /> */}
 
-
-        
-        <Password className="card flex w-full justify-center rounded border-2 p-1" id="" value={password} onChange={(e) => setPassword(e.target.value)} header={header} footer={footer} />
+        <Password
+          className="card flex w-full justify-center rounded border-2 p-1"
+          id=""
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          header={header}
+          footer={footer}
+        />
         {/* <PasswordStrengthBar password={password} /> */}
       </div>
       <button
@@ -136,9 +143,21 @@ const SignUpForm = () => {
         Sign Up
       </button>
 
+      <div className="my-4 flex items-center justify-center">
+        <div className="flex-grow border-t border-gray-300"></div>
+        <span className="mx-4 flex-shrink text-gray-600">or</span>
+        <div className="flex-grow border-t border-gray-300"></div>
+      </div>
+
+      <button
+        onClick={handleGoogleSignIn}
+        className="flex w-full items-center justify-center rounded border border-gray-300 bg-white px-4 py-2 shadow-sm hover:bg-gray-50"
+      >
+        <FcGoogle className="mr-2" /> Sign up with Google
+      </button>
+
       {isWeak && <p className="text-red-500">Password is weak</p>}
     </form>
-
   );
 };
 

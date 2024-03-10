@@ -1,9 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { useAuthState, useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { auth } from "../../pages/firebase/config";
+import {
+  useAuthState,
+  useSignInWithEmailAndPassword,
+} from "react-firebase-hooks/auth";
+import { auth, db } from "../../pages/firebase/config";
 import { useRouter } from "next/router";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { FcGoogle } from 'react-icons/fc';
+import {
+  signInWithPopup,
+  GoogleAuthProvider,
+  getAdditionalUserInfo,
+} from "firebase/auth";
+import { FcGoogle } from "react-icons/fc";
+import { collection, addDoc } from "firebase/firestore";
+import { createUserDocument } from "~/pages/firebase/firebase_functions";
+
 
 const SignInForm = () => {
   const [email, setEmail] = useState("");
@@ -13,7 +23,8 @@ const SignInForm = () => {
   // useAuthState to observe the user's sign-in state
   const [user] = useAuthState(auth);
   // Destructure and use the signInWithEmailAndPassword hook from react-firebase-hooks
-  const [signInWithEmailAndPassword, userCredential, , error] = useSignInWithEmailAndPassword(auth);
+  const [signInWithEmailAndPassword, userCredential, , error] =
+    useSignInWithEmailAndPassword(auth);
   const router = useRouter();
 
   // Function to clear input fields
@@ -24,30 +35,36 @@ const SignInForm = () => {
 
   const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSignInError(""); 
-  
+    setSignInError("");
+
     try {
       await signInWithEmailAndPassword(email, password);
-      emptyTextBoxes(); 
+      emptyTextBoxes();
     } catch (e) {
       console.error(e);
 
       setSignInError("An unexpected error occurred. Please try again.");
     }
   };
-  
-  
+
+  const provider = new GoogleAuthProvider();
 
   // Configure Google provider and handle Google sign-in
-  const provider = new GoogleAuthProvider();
   const handleGoogleSignIn = async () => {
     try {
-      await signInWithPopup(auth, provider);
-      emptyTextBoxes();
+      const result = await signInWithPopup(auth, provider);
+      const additionalUserInfo = getAdditionalUserInfo(result);
+      if (additionalUserInfo?.isNewUser) {
+        console.log("User is signing up for the first time.");
+        const user = result.user;
+  
+        await createUserDocument(user);
+      } else {
+        console.log("User is an existing user.");
+      }
       router.push("/");
     } catch (e) {
       console.error(e);
-     
     }
   };
 
@@ -62,9 +79,7 @@ const SignInForm = () => {
     <form onSubmit={handleSignIn} className="space-y-6">
       {/* Display sign-in error message */}
       {signInError && (
-        <div className="mb-4 text-center text-red-500">
-          {signInError}
-        </div>
+        <div className="mb-4 text-center text-red-500">{signInError}</div>
       )}
       <div>
         <label htmlFor="email" className="text-start">
@@ -76,7 +91,7 @@ const SignInForm = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="flex w-full justify-center rounded p-1 border-2"
+          className="flex w-full justify-center rounded border-2 p-1"
         />
       </div>
       <div>
@@ -89,7 +104,7 @@ const SignInForm = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="flex w-full justify-center rounded p-1 border-2"
+          className="flex w-full justify-center rounded border-2 p-1"
         />
       </div>
       <button
@@ -99,15 +114,15 @@ const SignInForm = () => {
         Sign In
       </button>
 
-      <div className="flex items-center justify-center my-4">
+      <div className="my-4 flex items-center justify-center">
         <div className="flex-grow border-t border-gray-300"></div>
-        <span className="flex-shrink mx-4 text-gray-600">or</span>
+        <span className="mx-4 flex-shrink text-gray-600">or</span>
         <div className="flex-grow border-t border-gray-300"></div>
       </div>
 
       <button
         onClick={handleGoogleSignIn}
-        className="flex w-full justify-center items-center rounded bg-white py-2 px-4 border border-gray-300 shadow-sm hover:bg-gray-50"
+        className="flex w-full items-center justify-center rounded border border-gray-300 bg-white px-4 py-2 shadow-sm hover:bg-gray-50"
       >
         <FcGoogle className="mr-2" /> Login with Google
       </button>
