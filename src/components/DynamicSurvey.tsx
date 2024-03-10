@@ -1,20 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { Survey, StylesManager, Model } from "survey-react";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../pages/firebase/config";
 
 interface Question {
   question: string;
   choices: Record<string, string>;
+  chapterId: string;
 }
 
-const DynamicSurvey = () => {
+interface DynamicSurveyProps {
+  chapterId: string;
+}
+
+const DynamicSurvey = ({ chapterId }: DynamicSurveyProps) => {
   const [surveyJson, setSurveyJson] = useState<Model>(new Model({}));
 
   useEffect(() => {
     const fetchQuestions = async () => {
       const questions: Question[] = [];
-      const querySnapshot = await getDocs(collection(db, "quizQuestions"));
+      // Create a query against the collection, filtering by chapterId
+      const q = query(
+        collection(db, "quizQuestions"),
+        where("chapterId", "==", chapterId),
+      );
+      const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         questions.push(doc.data() as Question);
       });
@@ -23,6 +39,8 @@ const DynamicSurvey = () => {
 
     const formatQuestionsForSurveyJS = (questions: Question[]) => {
       return {
+        title: "Chapter Assessment",
+        showProgressBar: "bottom",
         pages: [
           {
             questions: questions.map((q, index) => ({
@@ -44,7 +62,7 @@ const DynamicSurvey = () => {
       const formattedQuestions = formatQuestionsForSurveyJS(questions);
       setSurveyJson(new Model(formattedQuestions));
     });
-  }, []);
+  }, [chapterId]);
 
   return (
     <Survey

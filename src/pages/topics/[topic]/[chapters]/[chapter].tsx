@@ -128,8 +128,6 @@ export default function ChapterPage() {
       </BaseLayout>
     );
 
-
-
   // Retreive the id of the user logged in and print it
   const user = auth.currentUser;
   const uid = user ? user.uid : null;
@@ -138,7 +136,6 @@ export default function ChapterPage() {
   // If user is logged in, query and retreive the reference to their document in the users collection in firestore
   if (uid) {
     queryUserDocument(uid).then((userDocument) => {
-
       setUserDocument(userDocument);
     });
   }
@@ -240,10 +237,10 @@ export default function ChapterPage() {
           secondsElapsed={secondsElapsed}
           setSecondsElapsed={setSecondsElapsed}
         />
-        {chapter.chapterType === "assessment" && ( // Add any other conditions as needed
-          <div className="assessment-container">
-            <h2 className="mb-4 text-2xl font-semibold">Assessment</h2>
-            <DynamicSurvey />
+        {chapter && chapter.chapterType === "assessment" && (
+          <div className="w-full px-4 md:px-0">
+            {" "}
+            <DynamicSurvey chapterId={chapter.chapterId} />
           </div>
         )}
       </div>
