@@ -9,7 +9,6 @@ import { collection, getDocs, query, orderBy, DocumentData } from "firebase/fire
 import { getAuth } from "firebase/auth";
 import queryUserDocument from "../firebase/firebase_functions";
 
-// I redefined the types again because of the data transformation that happens through the Firebase Cloud Function.
 type Topic = {
   topicId: string;
   topicTitle: string;
@@ -48,56 +47,39 @@ type LayoutProps = {
 
 export const BaseLayout = ({ children }: LayoutProps) => {
   const [topics, setTopics] = useState<Topic[]>([]);
-
-  // This sets a state variable for the currently selected topic. We intent to use this to highlight the selected topic in the sidebar.
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   const [userDocument, setUserDocument] = useState<DocumentData | null>(null);
-
-  // This sets a state variable for the open state of the submenu.
   const [isSubMenuOpen, setSubMenuOpen] = useState<boolean>(() => {
-    // This checks if window is defined to make sure we're not on the server.
     if (typeof window !== "undefined") {
       const persistedState = localStorage.getItem("isSubMenuOpen");
-      // This returns the persisted state if it exists. If not, then it returns true.
       return persistedState ? JSON.parse(persistedState) : true;
     }
-    // If we're on the server, just return true.
     return true;
   });
 
   const [user, loading, error] = useAuthState(auth);
   const router = useRouter();
-  // This stores the state of isSubMenuOpen in localStorage whenever it changes. This allows the state to persist across page reloads.
+
   useEffect(() => {
     const auth = getAuth();
     const user = auth.currentUser;
     const uid = user ? user.uid : null;
-    console.log("User:", uid);
-  
-    // If user is logged in, query and retreive the reference to their document in the users collection in firestore
+
     if (uid) {
       queryUserDocument(uid).then((userDocument) => {
-        console.log("User Document:", userDocument);
-  
         setUserDocument(userDocument);
+        // Check if user completed initial survey, if not then redirect to initial survey
+        if (userDocument && !userDocument.data().initialSurveyComplete) {
+          router.push('/initialsurvey/begin');
+        }
       });
     }
-  
-    // Check if user completed initial survey, if not then redirect to initial survey
-    if (userDocument && !userDocument.data().initialSurveyComplete) {
-      router.push('/initialsurvey/begin');
-    }
 
-
-
-
-
-    // This checks if window is defined to make sure we're not on the server.
     if (typeof window !== "undefined") {
       localStorage.setItem("isSubMenuOpen", JSON.stringify(isSubMenuOpen));
     }
-  }, [isSubMenuOpen]);
+  }, [isSubMenuOpen, user]);
 
   useEffect(() => {
     const fetchTopics = async () => {
@@ -105,9 +87,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
       const topicsArray: Topic[] = [];
 
       try {
-        const topicsSnapshot = await getDocs(
-          query(topicsCollectionRef, orderBy("order")),
-        );
+        const topicsSnapshot = await getDocs(query(topicsCollectionRef, orderBy("order")));
         topicsSnapshot.forEach((topicDoc) => {
           const topicData = topicDoc.data();
           const topicId = topicDoc.id;
@@ -124,7 +104,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
 
         setTopics(topicsArray);
       } catch (error) {
-        console.error("uh oh, error fetching topics 🦧:", error);
+        console.error("Error fetching topics:", error);
       }
     };
 
@@ -149,7 +129,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
       await auth.signOut();
       router.push("/users/sign-in");
     } catch (error) {
-      console.error("uh oh, logout error 🦧::", error);
+      console.error("Logout error:", error);
     }
   };
 
@@ -201,7 +181,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
                 open={isSubMenuOpen}
                 onOpenChange={toggleSubMenu}
               >
-                {user && userDocument?.data().initialSurveyComplete ? (
+                {user && userDocument && userDocument.data().initialSurveyComplete ? (
                   topics.map((topic) => (
                     <MenuItem
                       key={topic.topicId}
