@@ -5,9 +5,27 @@ import { FiMenu } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../firebase/config";
-import { collection, getDocs, query, orderBy, DocumentData } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  DocumentData,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import queryUserDocument from "../firebase/firebase_functions";
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  Link,
+  Button,
+  DropdownItem,
+  DropdownTrigger,
+  Dropdown,
+  DropdownMenu,
+} from "@nextui-org/react";
 
 type Topic = {
   topicId: string;
@@ -43,13 +61,15 @@ type Option = {
 
 type LayoutProps = {
   children: ReactNode;
+  showSidebar?: boolean;
 };
 
-export const BaseLayout = ({ children }: LayoutProps) => {
+export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   const [userDocument, setUserDocument] = useState<DocumentData | null>(null);
+  const [screenSize, setScreenSize] = useState("");
   const [isSubMenuOpen, setSubMenuOpen] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
       const persistedState = localStorage.getItem("isSubMenuOpen");
@@ -71,7 +91,7 @@ export const BaseLayout = ({ children }: LayoutProps) => {
         setUserDocument(userDocument);
         // Check if user completed initial survey, if not then redirect to initial survey
         if (userDocument && !userDocument.data().initialSurveyComplete) {
-          router.push('/initialsurvey/begin');
+          router.push("/initialsurvey/begin");
         }
       });
     }
@@ -82,12 +102,41 @@ export const BaseLayout = ({ children }: LayoutProps) => {
   }, [isSubMenuOpen, user]);
 
   useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+
+      if (width > 1200) {
+        setScreenSize("lg");
+      } else if (width > 992) {
+        setScreenSize("md");
+      } else if (width > 768) {
+        setScreenSize("sm");
+      } else {
+        setScreenSize("xs");
+      }
+    };
+
+    // Call the handleResize function to set the initial state
+    handleResize();
+
+    // Attach the event listener
+    window.addEventListener("resize", handleResize);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
     const fetchTopics = async () => {
       const topicsCollectionRef = collection(db, "topics");
       const topicsArray: Topic[] = [];
 
       try {
-        const topicsSnapshot = await getDocs(query(topicsCollectionRef, orderBy("order")));
+        const topicsSnapshot = await getDocs(
+          query(topicsCollectionRef, orderBy("order")),
+        );
         topicsSnapshot.forEach((topicDoc) => {
           const topicData = topicDoc.data();
           const topicId = topicDoc.id;
@@ -146,118 +195,217 @@ export const BaseLayout = ({ children }: LayoutProps) => {
   }, []);
 
   return (
+    <>
     <div className="flex min-h-screen items-stretch bg-slate-50">
-      <div className="flex h-screen flex-col items-center bg-slate-400">
-        <div className="flex h-full flex-col justify-between">
-          <Sidebar collapsed={collapsed} className="flex h-full flex-col">
-            <Menu>
-              <MenuItem className="flex flex-col justify-center p-2 text-center">
-                <div className="flex items-center justify-center">
-                  <Image
-                    src="/Cyber-Tutor_Logo.png"
-                    alt="Cyber Tutor Logo"
-                    width={40}
-                    height={40}
-                    layout="fixed"
-                    onClick={handleLogoClick}
-                  />
-                  {!collapsed && (
-                    <span className="pe-2 font-mono" onClick={handleLogoClick}>
-                      Cyber Tutor{" "}
-                    </span>
-                  )}
-                </div>
-                <button
-                  type="button"
-                  className="sb-button font-mono"
-                  onClick={() => setCollapsed(!collapsed)}
-                  aria-label="Sidebar Toggle Button"
-                >
-                  <FiMenu />
-                </button>
-              </MenuItem>
-              <SubMenu
-                label="Topics"
-                open={isSubMenuOpen}
-                onOpenChange={toggleSubMenu}
-              >
-                {user && userDocument && userDocument.data().initialSurveyComplete ? (
-                  topics.map((topic) => (
-                    <MenuItem
-                      key={topic.topicId}
-                      onClick={() => handleTopicClick(topic)}
-                    >
-                      {topic.topicTitle}
-                    </MenuItem>
-                  ))
-                ) : (
-                  <div className="relative">
-                    <div className="pointer-events-none select-none blur-sm">
-                      {topics.map((topic) => (
-                        <MenuItem key={topic.topicId}>
-                          {topic.topicTitle}
-                        </MenuItem>
-                      ))}
-                    </div>
-                    <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center bg-white bg-opacity-75">
-                      <span>Sign in to unlock</span>
-                    </div>
-                  </div>
-                )}
-              </SubMenu>
-            </Menu>
-
-            <div>
-              <Menu
-                className="text-center"
-                menuItemStyles={{
-                  button: {
-                    "&:hover": {
-                      background: "none",
-                      color: "inherit",
-                    },
-                    pointerEvents: "none",
-                  },
-                }}
-              >
-                {!user && !loading && (
-                  <MenuItem>
-                    <button
-                      type="button"
-                      className="pointer-events-auto rounded px-3 hover:bg-blue-500"
-                      onClick={() => router.push("/users/sign-in")}
-                    >
-                      {collapsed ? "L" : "Login"}
-                    </button>
-                    <button
-                      type="button"
-                      className="pointer-events-auto rounded px-3 hover:bg-blue-500"
-                      onClick={() => router.push("/users/sign-up")}
-                    >
-                      {collapsed ? "R" : "Register"}
-                    </button>
-                  </MenuItem>
-                )}
+      {showSidebar ? (
+        <>
+          {screenSize !== "lg" && screenSize !== "md" ? (
+            <Navbar>
+              <NavbarBrand className="pr-7">
+                <Image
+                  src="/Cyber-Tutor_Logo.png"
+                  alt="Cyber Tutor Logo"
+                  width={40}
+                  height={40}
+                  layout="fixed"
+                  onClick={handleLogoClick}
+                />
+                <p className="font-bold text-inherit" onClick={handleLogoClick}>
+                  Cyber Tutor{" "}
+                </p>
+              </NavbarBrand>
+              <NavbarContent className="gap-2 sm:flex" justify="center">
+                <Dropdown>
+                  <NavbarItem>
+                    <DropdownTrigger>
+                      <Button radius="sm">Topics↓</Button>
+                    </DropdownTrigger>
+                  </NavbarItem>
+                  <DropdownMenu>
+                    {topics.map((topic) => (
+                      <DropdownItem
+                        key={topic.topicId}
+                        onClick={() => {
+                          if (
+                            user &&
+                            userDocument &&
+                            userDocument.data().initialSurveyComplete
+                          ) {
+                            handleTopicClick(topic);
+                          }
+                        }}
+                      >
+                        {user &&
+                        userDocument &&
+                        userDocument.data().initialSurveyComplete ? (
+                          topic.topicTitle
+                        ) : (
+                          <div className="relative">
+                            <div className="pointer-events-none select-none blur-sm">
+                              {topic.topicTitle}
+                            </div>
+                            <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center bg-white bg-opacity-75">
+                              <span>Sign in to unlock</span>
+                            </div>
+                          </div>
+                        )}
+                      </DropdownItem>
+                    ))}
+                  </DropdownMenu>
+                </Dropdown>
+                <NavbarItem isActive>
+                  <Link
+                    onClick={() => router.push("/users/sign-in")}
+                    className="text-sm"
+                  >
+                    Login
+                  </Link>
+                </NavbarItem>
+                <NavbarItem>
+                  <Link
+                    onClick={() => router.push("/users/sign-up")}
+                    className="text-sm"
+                  >
+                    Register
+                  </Link>
+                </NavbarItem>
+              </NavbarContent>
+              <NavbarContent justify="end">
                 {user && (
-                  <MenuItem>
+                  <NavbarItem>
                     <p>Welcome {user.displayName}</p>
-                    <button
-                      type="button"
-                      className="pointer-events-auto rounded px-3 hover:bg-blue-500"
-                      onClick={handleLogout}
-                    >
-                      {collapsed ? "L" : "Logout"}
-                    </button>
-                  </MenuItem>
+                    <Button onClick={handleLogout}>Logout</Button>
+                  </NavbarItem>
                 )}
-              </Menu>
+              </NavbarContent>
+            </Navbar>
+          ) : null}
+            <div className="flex h-screen flex-col items-center bg-slate-400 ">
+              <div className="flex h-full flex-col justify-between">
+                {screenSize === "lg" || screenSize === "md" ? (
+                  <Sidebar
+                    collapsed={collapsed}
+                    className="flex h-full flex-col"
+                  >
+                    <Menu>
+                      <MenuItem className="flex flex-col justify-center p-2 text-center">
+                        <div className="flex items-center justify-center">
+                          <Image
+                            src="/Cyber-Tutor_Logo.png"
+                            alt="Cyber Tutor Logo"
+                            width={40}
+                            height={40}
+                            layout="fixed"
+                            onClick={handleLogoClick}
+                          />
+                          {!collapsed && (
+                            <span
+                              className="pe-2 font-mono"
+                              onClick={handleLogoClick}
+                            >
+                              Cyber Tutor{" "}
+                            </span>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          className="sb-button font-mono"
+                          onClick={() => setCollapsed(!collapsed)}
+                          aria-label="Sidebar Toggle Button"
+                        >
+                          <FiMenu />
+                        </button>
+                      </MenuItem>
+                      <SubMenu
+                        label="Topics"
+                        open={isSubMenuOpen}
+                        onOpenChange={toggleSubMenu}
+                      >
+                        {user &&
+                        userDocument &&
+                        userDocument.data().initialSurveyComplete ? (
+                          topics.map((topic) => (
+                            <MenuItem
+                              key={topic.topicId}
+                              onClick={() => handleTopicClick(topic)}
+                            >
+                              {topic.topicTitle}
+                            </MenuItem>
+                          ))
+                        ) : (
+                          <div className="relative">
+                            <div className="pointer-events-none select-none blur-sm">
+                              {topics.map((topic) => (
+                                <MenuItem key={topic.topicId}>
+                                  {topic.topicTitle}
+                                </MenuItem>
+                              ))}
+                            </div>
+                            <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center bg-white bg-opacity-75">
+                              <span>Sign in to unlock</span>
+                            </div>
+                          </div>
+                        )}
+                      </SubMenu>
+                    </Menu>
+
+                    <div>
+                      <Menu
+                        className="text-center"
+                        menuItemStyles={{
+                          button: {
+                            "&:hover": {
+                              background: "none",
+                              color: "inherit",
+                            },
+                            pointerEvents: "none",
+                          },
+                        }}
+                      >
+                        {!user && !loading && (
+                          <MenuItem>
+                            <button
+                              type="button"
+                              className="pointer-events-auto rounded px-3 hover:bg-blue-500"
+                              onClick={() => router.push("/users/sign-in")}
+                            >
+                              {collapsed ? "L" : "Login"}
+                            </button>
+                            <button
+                              type="button"
+                              className="pointer-events-auto rounded px-3 hover:bg-blue-500"
+                              onClick={() => router.push("/users/sign-up")}
+                            >
+                              {collapsed ? "R" : "Register"}
+                            </button>
+                          </MenuItem>
+                        )}
+                        {user && (
+                          <MenuItem>
+                            <p>Welcome {user.displayName}</p>
+                            <button
+                              type="button"
+                              className="pointer-events-auto rounded px-3 hover:bg-blue-500"
+                              onClick={handleLogout}
+                            >
+                              {collapsed ? "L" : "Logout"}
+                            </button>
+                          </MenuItem>
+                        )}
+                      </Menu>
+                    </div>
+                  </Sidebar>
+                ) : null}
+              </div>
             </div>
-          </Sidebar>
-        </div>
-      </div>
+            
+          
+        </>
+      ) : null}
       <div className="container flex h-screen flex-col items-center gap-4 lg:py-16">
-        {children}
+              {children}
       </div>
     </div>
+    </>
   );
 };
