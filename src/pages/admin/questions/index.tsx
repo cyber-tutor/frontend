@@ -56,7 +56,7 @@ export default function CRUD_Questions() {
   };
 
   const deleteQuestion = async (id: string) => {
-    const questionDoc = doc(db, "questions", id);
+    const questionDoc = doc(db, "quizQuestions", id);
     await deleteDoc(questionDoc);
   };
 
