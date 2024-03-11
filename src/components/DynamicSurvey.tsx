@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Survey, StylesManager, Model } from "survey-react";
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
-} from "firebase/firestore";
+import { Survey, Model } from "survey-react";
+import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../pages/firebase/config";
 
 interface Question {
   question: string;
   choices: Record<string, string>;
+  correctAnswer: string; 
   chapterId: string;
 }
 
@@ -21,19 +16,24 @@ interface DynamicSurveyProps {
 
 const DynamicSurvey = ({ chapterId }: DynamicSurveyProps) => {
   const [surveyJson, setSurveyJson] = useState<Model>(new Model({}));
+  const [correctAnswers, setCorrectAnswers] = useState<Record<string, string>>({}); 
 
   useEffect(() => {
     const fetchQuestions = async () => {
       const questions: Question[] = [];
-      // Create a query against the collection, filtering by chapterId
+      const correctAnswers: Record<string, string> = {}; 
+
       const q = query(
         collection(db, "quizQuestions"),
         where("chapterId", "==", chapterId),
       );
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-        questions.push(doc.data() as Question);
+        const questionData = doc.data() as Question;
+        questions.push(questionData);
+        correctAnswers[`question${questions.length}`] = questionData.correctAnswer; 
       });
+      setCorrectAnswers(correctAnswers);
       return questions;
     };
 
@@ -64,11 +64,26 @@ const DynamicSurvey = ({ chapterId }: DynamicSurveyProps) => {
     });
   }, [chapterId]);
 
+  const calculateResults = (results: Record<string, string>) => {
+    let correctCount = 0;
+    Object.entries(results).forEach(([key, value]) => {
+      if (correctAnswers[key] === value) {
+        correctCount++;
+      }
+    });
+    const totalQuestions = Object.keys(correctAnswers).length;
+    const percentage = (correctCount / totalQuestions) * 100;
+    const resultMessage = percentage >= 70 ? "User passed" : "User failed";
+    return { percentage, resultMessage };
+  };
+
   return (
     <Survey
       model={surveyJson}
       onComplete={(result: Model) => {
         console.log("Survey results: ", result.data);
+        const { percentage, resultMessage } = calculateResults(result.data);
+        console.log(`Survey results: ${resultMessage} (${percentage.toFixed(2)}%)`);
       }}
     />
   );
