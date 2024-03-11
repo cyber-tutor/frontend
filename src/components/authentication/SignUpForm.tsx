@@ -37,7 +37,7 @@ const SignUpForm = () => {
         console.log("User is signing up for the first time.");
         const user = result.user;
 
-        await createUserDocument(user);
+        await createUserDocument(user, user.displayName || "");
       } else {
         console.log("User is an existing user.");
       }
@@ -58,7 +58,7 @@ const SignUpForm = () => {
       }
       const res = await createUserWithEmailAndPassword(email, password);
       if (res?.user) {
-        await createUserDocument(res.user);
+        await createUserDocument(res.user,name);
         setEmail("");
         setName("");
         setPassword("");
