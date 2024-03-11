@@ -1,5 +1,5 @@
 import { getAuth } from 'firebase/auth';
-import { updateDoc } from 'firebase/firestore';
+import { updateDoc, doc, getDoc, getFirestore } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import * as Survey from 'survey-react';
@@ -8,60 +8,57 @@ import queryUserDocument from '../firebase/firebase_functions';
 
 Survey.StylesManager.applyTheme("default");
 
-const surveyJson = {
-  pages: [
-    {
-      name: "page1",
-      elements: [
-        {
-          type: "radiogroup",
-          name: "question1",
-          title: "What is phishing?",
-          choices: [
-            "A fishing activity",
-            "A type of cyberattack",
-            "A computer virus",
-            "A social media platform"
-          ],
-          correctAnswer: "A type of cyberattack"
-        }
-      ]
-    },
-    {
-      name: "page2",
-      elements: [
-        {
-          type: "radiogroup",
-          name: "question2",
-          title: "What is a firewall?",
-          choices: [
-            "A protective barrier around a building",
-            "A security feature in computer networks",
-            "A type of computer virus",
-            "A programming language"
-          ],
-          correctAnswer: "A security feature in computer networks"
-        }
-      ]
-    },
-  ]
-};
+interface SurveyResult {
+  [key: string]: any;
+}
+
+interface SurveyJson {
+  pages: {
+    elements: {
+      name: string;
+      correctAnswer?: string;
+    }[];
+  }[];
+}
 
 export default function SurveyComponent(): JSX.Element {
-  const survey = new Survey.Model(surveyJson);
   const router = useRouter();
-  const [isComplete, setIsComplete] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [isComplete, setIsComplete] = useState<boolean>(false);
+  const [result, setResult] = useState<SurveyResult | null>(null);
   const [incorrectCount, setIncorrectCount] = useState<string>("0/2");
+  const [surveyJson, setSurveyJson] = useState<SurveyJson | null>(null);
 
-  const onComplete = (result: any) => {
+  useEffect(() => {
+    const fetchSurveyJson = async () => {
+      const db = getFirestore();
+      const surveyRef = doc(db, "userResponses", "initialSurvey");
+      const surveyDoc = await getDoc(surveyRef);
+
+      if (surveyDoc.exists()) {
+        const surveyData = surveyDoc.data();
+        if (typeof surveyData.JSON === 'string') {
+          setSurveyJson(JSON.parse(surveyData.JSON) as SurveyJson);
+        } else {
+          console.log("Survey JSON is not a string.");
+        }
+      } else {
+        console.log("No such document!");
+      }
+    };
+
+    fetchSurveyJson();
+  }, []);
+
+  const survey = new Survey.Model(surveyJson || {});
+
+  const onComplete = (result: SurveyResult) => {
     setIsComplete(true);
-    setResult(result.data);
-    console.log(JSON.stringify(result.data)); 
+    setResult(result);
+    console.log(JSON.stringify(result));
   };
 
   useEffect(() => {
-    if (isComplete) {
+    if (isComplete && surveyJson) {
       const auth = getAuth();
       const user = auth.currentUser;
 
@@ -71,7 +68,7 @@ export default function SurveyComponent(): JSX.Element {
         const { incorrect, total } = surveyJson.pages.reduce((count, page) => {
           return page.elements.reduce((pageCount, element) => {
             const questionId = element.name;
-            const userAnswer = result[questionId];
+            const userAnswer = result ? result[questionId] : undefined;
             const correctAnswer = element.correctAnswer;
             return userAnswer !== correctAnswer ? { incorrect: pageCount.incorrect + 1, total: pageCount.total + 1 } : pageCount;
           }, count);
@@ -81,8 +78,11 @@ export default function SurveyComponent(): JSX.Element {
 
         queryUserDocument(userId).then((docSnapshot) => {
           if (docSnapshot) {
-            updateDoc(docSnapshot.ref, { 
-              initialSurveyResults: result, 
+            // Convert the SurveyModel object to a plain object
+            const surveyResultsPlainObject = result ? JSON.parse(JSON.stringify(result)) : {};
+
+            updateDoc(docSnapshot.ref, {
+              initialSurveyResults: surveyResultsPlainObject,
               initialSurveyComplete: true,
               initialSurveyIncorrectCount: `${incorrect}/${total}`
             }).then(() => {
@@ -100,15 +100,20 @@ export default function SurveyComponent(): JSX.Element {
             console.log('No document found or error occurred');
           }
         });
-      } 
+      }
     }
-  }, [router, isComplete, result]);
+  }, [router, isComplete, result, surveyJson]);
 
   return (
     <div>
-      <Survey.Survey model={survey} onComplete={onComplete} />
-      <div>Incorrect answers: {incorrectCount}</div>
+      {surveyJson ? (
+        <>
+          <Survey.Survey model={survey} onComplete={onComplete} />
+          <div>Incorrect answers: {incorrectCount}</div>
+        </>
+      ) : (
+        <div>Loading survey...</div>
+      )}
     </div>
   );
 }
-
