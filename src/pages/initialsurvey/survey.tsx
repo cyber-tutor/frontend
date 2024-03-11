@@ -1,10 +1,11 @@
 import { getAuth } from 'firebase/auth';
-import { updateDoc, doc, getDoc, getFirestore } from 'firebase/firestore';
+import { updateDoc, doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import * as Survey from 'survey-react';
 import 'survey-react/survey.css';
 import queryUserDocument from '../firebase/firebase_functions';
+import { db } from '../firebase/config';
 
 Survey.StylesManager.applyTheme("default");
 
@@ -51,10 +52,11 @@ export default function SurveyComponent(): JSX.Element {
 
   const survey = new Survey.Model(surveyJson || {});
 
-  const onComplete = (result: SurveyResult) => {
+  const onComplete = (surveyResult: Survey.SurveyModel) => {
     setIsComplete(true);
-    setResult(result);
-    console.log(JSON.stringify(result));
+    const userResponses = surveyResult.data;
+    setResult(userResponses);
+    console.log(JSON.stringify(userResponses));
   };
 
   useEffect(() => {
@@ -76,28 +78,33 @@ export default function SurveyComponent(): JSX.Element {
 
         setIncorrectCount(`${incorrect}/${total}`);
 
-        queryUserDocument(userId).then((docSnapshot) => {
-          if (docSnapshot) {
-            // Convert the SurveyModel object to a plain object
+        queryUserDocument(userId).then((userDocRef) => {
+          if (userDocRef) {
+
+            const userSurveyRef = doc(db, "userResponses", "initialSurvey", "users", userId);
             const surveyResultsPlainObject = result ? JSON.parse(JSON.stringify(result)) : {};
 
-            updateDoc(docSnapshot.ref, {
+            setDoc(userSurveyRef, {
               initialSurveyResults: surveyResultsPlainObject,
               initialSurveyComplete: true,
               initialSurveyIncorrectCount: `${incorrect}/${total}`
             }).then(() => {
-              console.log('Document successfully updated');
-
-              if (docSnapshot.data().group === "experimental") {
-                router.push('/initialsurvey/generating');
-              } else {
-                router.push('/');
-              }
+              console.log('Survey document successfully updated');
             }).catch((error) => {
-              console.error('Error updating document: ', error);
+              console.error('Error updating survey document: ', error);
+            });
+
+
+            updateDoc(userDocRef.ref, {
+              initialSurveyComplete: true
+            }).then(() => {
+              console.log('User document successfully updated');
+              router.push('/');
+            }).catch((error) => {
+              console.error('Error updating user document: ', error);
             });
           } else {
-            console.log('No document found or error occurred');
+            console.log('No user document found');
           }
         });
       }
