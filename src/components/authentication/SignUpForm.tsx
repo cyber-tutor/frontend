@@ -1,72 +1,101 @@
-import React, { useState } from "react";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { auth, db } from "../../pages/firebase/config";
-import { useRouter } from "next/router";
-import { collection, addDoc } from "firebase/firestore";
-import PasswordStrengthBar from "react-password-strength-bar";
-import { Password } from "primereact/password";
-import { Divider } from "primereact/divider";
-import "primereact/resources/themes/lara-light-cyan/theme.css";
+import React, { useState } from 'react';
+import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { auth } from '../../pages/firebase/config';
+import { useRouter } from 'next/router';
+import { Password } from 'primereact/password';
+import { Divider } from 'primereact/divider';
+import 'primereact/resources/themes/lara-light-cyan/theme.css';
 import {
   GoogleAuthProvider,
   getAdditionalUserInfo,
   signInWithPopup,
-} from "firebase/auth";
-import { FcGoogle } from "react-icons/fc";
-import { createUserDocument } from "~/pages/firebase/firebase_functions";
+} from 'firebase/auth';
+import { FcGoogle } from 'react-icons/fc';
+import { createUserDocument } from '~/pages/firebase/firebase_functions';
 
-const SignUpForm = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+const SignUpForm: React.FC = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [name, setName] = useState<string>('');
+  const [isWeak, setIsWeak] = useState<boolean>(false);
+  const [emailError, setEmailError] = useState<string>('');
 
-  const [isWeak, setIsWeak] = useState(false);
-
-  const [createUserWithEmailAndPassword] =
-    useCreateUserWithEmailAndPassword(auth);
+  const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth);
   const router = useRouter();
 
   const provider = new GoogleAuthProvider();
 
-  // Configure Google provider and handle Google sign-in
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = async (): Promise<void> => {
     try {
       const result = await signInWithPopup(auth, provider);
       const additionalUserInfo = getAdditionalUserInfo(result);
       if (additionalUserInfo?.isNewUser) {
-        console.log("User is signing up for the first time.");
+        console.log('User is signing up for the first time.');
         const user = result.user;
-
-        await createUserDocument(user, user.displayName || "");
+        await createUserDocument(user, user.displayName || '');
       } else {
-        console.log("User is an existing user.");
+        console.log('User is an existing user.');
       }
-      router.push("/");
+      router.push('/');
     } catch (e) {
       console.error(e);
     }
   };
 
-  const handleSignUp = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const validateEmail = async (email: string): Promise<boolean> => {
+    const apiUrl = `https://api.hunter.io/v2/email-verifier?email=${email}&api_key=${process.env.NEXT_PUBLIC_EMAIL_VERIFIER_HUNTER_API_KEY}`;
     try {
-      const strongRegex =
-        /^(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`\-]).{8,}$/;
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      if (data.data && data.data.status === 'valid') {
+        setEmailError('');
+        return true;
+      } else {
+        setEmailError('Invalid email address');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error validating email:', error);
+      setEmailError('Error validating email');
+      return false;
+    }
+  };
+
+  const handleSignUp = async (event: React.FormEvent): Promise<void> => {
+    event.preventDefault();
+
+    // Validate the email address, don't delete this code
+
+    // const isValidEmail = await validateEmail(email);
+    // // Check if the email is valid before signing up
+    // if (!isValidEmail) {
+    //   return; // Exit the function if the email is not valid
+    // }
+
+
+    
+    try {
+      const strongRegex = /^(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`\-]).{8,}$/;
       if (!strongRegex.test(password)) {
         setIsWeak(true);
         return;
       }
       const res = await createUserWithEmailAndPassword(email, password);
       if (res?.user) {
-        await createUserDocument(res.user,name);
-        setEmail("");
-        setName("");
-        setPassword("");
-        router.push("/initialsurvey/begin");
+        await createUserDocument(res.user, name);
+        setEmail('');
+        setName('');
+        setPassword('');
+        router.push('/initialsurvey/begin');
       }
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const emailValue = e.target.value;
+    setEmail(emailValue);
   };
 
   const header = <div className="mb-3 font-bold">Pick a password</div>;
@@ -86,7 +115,7 @@ const SignUpForm = () => {
   );
 
   return (
-    <form onSubmit={handleSignUp} className="space-y-6</form>">
+    <form onSubmit={handleSignUp} className="space-y-6">
       <div>
         <label htmlFor="email" className="text-start">
           Email
@@ -95,10 +124,11 @@ const SignUpForm = () => {
           type="email"
           id="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={handleEmailChange}
           required
           className="flex w-full justify-center rounded border-2 p-1"
         />
+        {emailError && <p className="text-red-500">{emailError}</p>}
         <label htmlFor="name" className="text-start">
           Name
         </label>
@@ -115,25 +145,13 @@ const SignUpForm = () => {
         <label htmlFor="password" className="text-start">
           Password
         </label>
-
-        {/* <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="flex w-full justify-center rounded border-2 p-1"
-        /> */}
-
         <Password
           className="card flex w-full justify-center rounded border-2 p-1"
-          id=""
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           header={header}
           footer={footer}
         />
-        {/* <PasswordStrengthBar password={password} /> */}
       </div>
       <button
         type="submit"
