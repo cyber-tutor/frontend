@@ -26,7 +26,7 @@ export default function SurveyComponent(): JSX.Element {
   const router = useRouter();
   const [isComplete, setIsComplete] = useState<boolean>(false);
   const [result, setResult] = useState<SurveyResult | null>(null);
-  const [incorrectCount, setIncorrectCount] = useState<string>("0/2");
+  const [incorrectCount, setIncorrectCount] = useState<string>("0/0");
   const [surveyJson, setSurveyJson] = useState<SurveyJson | null>(null);
 
   useEffect(() => {
@@ -72,7 +72,11 @@ export default function SurveyComponent(): JSX.Element {
             const questionId = element.name;
             const userAnswer = result ? result[questionId] : undefined;
             const correctAnswer = element.correctAnswer;
-            return userAnswer !== correctAnswer ? { incorrect: pageCount.incorrect + 1, total: pageCount.total + 1 } : pageCount;
+            const isIncorrect = userAnswer !== correctAnswer;
+            return {
+              incorrect: isIncorrect ? pageCount.incorrect + 1 : pageCount.incorrect,
+              total: pageCount.total + 1 
+            };
           }, count);
         }, { incorrect: 0, total: 0 });
 
@@ -93,7 +97,6 @@ export default function SurveyComponent(): JSX.Element {
             }).catch((error) => {
               console.error('Error updating survey document: ', error);
             });
-
 
             updateDoc(userDocRef.ref, {
               initialSurveyComplete: true
