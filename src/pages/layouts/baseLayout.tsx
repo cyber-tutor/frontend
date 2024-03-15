@@ -387,9 +387,11 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
                         </button>
                       </MenuItem>
                     )}
+                    {userDocument ? userDocument.id : ''}
+
                     {user && (
                       <MenuItem>
-                        <p>Welcome {user.displayName}</p>
+                        <p>Welcome {userDocument ? userDocument.data().name : ''}</p>
                         <button
                           type="button"
                           className="pointer-events-auto rounded px-3 hover:bg-blue-500"
