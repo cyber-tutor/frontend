@@ -37,6 +37,7 @@ const DynamicSurvey = ({ chapterId }: DynamicSurveyProps) => {
       return questions;
     };
 
+    console.log("Chapter ID:", chapterId);
     const formatQuestionsForSurveyJS = (questions: Question[]) => {
       return {
         title: "Chapter Assessment",
