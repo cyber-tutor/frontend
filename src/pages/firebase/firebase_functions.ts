@@ -96,11 +96,11 @@ export async function createUserDocument(
   const isExperimental = Math.random() < 0.5;
   const group = isExperimental ? "experimental" : "control";
 
-  // Start a batch operation. This makes it so that if any part of the batch fails, the entire batch fails.
-  const batch = writeBatch(db);
+  const mainBatch = writeBatch(db);
 
+  // Create the main user document
   const userRef = doc(collection(db, "users"));
-  batch.set(userRef, {
+  mainBatch.set(userRef, {
     userId: user.uid,
     group: group,
     name: userName || "",
@@ -113,15 +113,15 @@ export async function createUserDocument(
     const topicsSnapshot = await getDocs(
       query(topicsCollectionRef, orderBy("order")),
     );
-    const chapterPromises = topicsSnapshot.docs.map(async (topicDoc) => {
+    for (const topicDoc of topicsSnapshot.docs) {
       const topicId = topicDoc.id;
 
       const proficiencyRef = doc(
         collection(db, "users", userRef.id, "proficiency"),
         topicId,
       );
-      batch.set(proficiencyRef, {
-        proficiency: 0,
+      mainBatch.set(proficiencyRef, {
+        number: 0,
       });
 
       const chaptersCollectionRef = collection(
@@ -131,24 +131,36 @@ export async function createUserDocument(
         "chapters",
       );
       const chaptersSnapshot = await getDocs(chaptersCollectionRef);
-      chaptersSnapshot.forEach((chapterDoc) => {
+
+      for (const chapterDoc of chaptersSnapshot.docs) {
         const chapterId = chapterDoc.id;
         const progressRef = doc(
           collection(db, "users", userRef.id, "progress"),
           chapterId,
         );
-        batch.set(progressRef, {
+        mainBatch.set(progressRef, {
           complete: false,
-          quizScores: [],
         });
-      });
-    });
 
-    // Wait for all chapter fetching and adding to batch to complete
-    await Promise.all(chapterPromises);
+        const quizScoreRef = doc(
+          collection(
+            db,
+            "users",
+            userRef.id,
+            "progress",
+            chapterId,
+            "quizScores",
+          ),
+        );
+        mainBatch.set(quizScoreRef, {
+          attempt: 0,
+          quizScore: 0,
+        });
+      }
+    }
 
-    // Commit the batch
-    await batch.commit();
+    // Commit the main batch
+    await mainBatch.commit();
     console.log(
       "User document and subcollections created with ID: ",
       userRef.id,
