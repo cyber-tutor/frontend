@@ -37,6 +37,21 @@ type Chapter = {
   proficiency: number; // Add proficiency property
 };
 
+// Utility function for updating chapter completion status
+const updateChapterCompletion = (
+  chapterId: string,
+  complete: boolean,
+  setChapterCompletion: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
+): void => {
+  setChapterCompletion((prev: Record<string, boolean>) => {
+    const updated: Record<string, boolean> = { ...prev, [chapterId]: complete };
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('chapterCompletion', JSON.stringify(updated));
+    }
+    return updated;
+  });
+};
+
 export default function TopicPage() {
   const [topic, setTopic] = useState<Topic | null>(null);
   const [loading, setLoading] = useState(true);
@@ -44,53 +59,65 @@ export default function TopicPage() {
   const [userDocument, setUserDocument] = useState<DocumentData | null>(null);
   const [userProficiency, setUserProficiency] = useState<number | null>(null);
   const [chapterCompletion, setChapterCompletion] = useState<Record<string, boolean>>({});
+  const [userDataLoaded, setUserDataLoaded] = useState(false); // New state variable to track user data loading
 
   const router = useRouter();
   const { topic: topicId } = router.query;
 
+  // Check authentication state
   useEffect(() => {
-    // If user is not logged in, redirect to login page
-    const auth = getAuth();
-    const user = auth.currentUser;
-    const uid = user ? user.uid : null;
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push("/users/sign-in");
+      }
+    });
 
-    // If user is logged in, query and retrieve the reference to their document in the users collection in firestore
-    if (uid) {
-      queryUserDocument(uid).then(async (userDocument) => {
-        console.log("User Document:", userDocument);
-        setUserDocument(userDocument);
+    return () => unsubscribe();
+  }, [router]);
+
+  // Fetch user data (proficiency and chapter completion status)
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      const uid = user ? user.uid : null;
+
+      if (uid) {
+        const userDoc = await queryUserDocument(uid);
+        setUserDocument(userDoc);
 
         // Fetch user proficiency for the topic
-        const proficiencyRef = doc(db, `users/${userDocument?.id}/proficiency`, topicId?.toString() ?? ""); // Ensure topicId is always a string
+        const proficiencyRef = doc(db, `users/${userDoc?.id}/proficiency`, topicId?.toString() ?? "");
         const proficiencySnapshot = await getDoc(proficiencyRef);
         if (proficiencySnapshot.exists()) {
-          setUserProficiency(proficiencySnapshot.data().number);
+          const proficiency = proficiencySnapshot.data().number;
+          setUserProficiency(proficiency);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('userProficiency', proficiency.toString()); // Store proficiency in local storage
+          }
         }
 
         // Fetch chapter completion status
-        const progressCollectionRef = collection(db, `users/${userDocument?.id}/progress`);
+        const progressCollectionRef = collection(db, `users/${userDoc?.id}/progress`);
         const progressSnapshot = await getDocs(progressCollectionRef);
         const completionStatus: Record<string, boolean> = {};
         progressSnapshot.forEach((doc) => {
           completionStatus[doc.id] = doc.data().complete;
         });
         setChapterCompletion(completionStatus);
-      });
-    }
-
-    // Check if user completed initial survey, if not then redirect to initial survey
-    if (userDocument && !userDocument.data().initialSurveyComplete) {
-      router.push("/initialsurvey/begin");
-    }
-
-    console.log("User Document ID:", userDocument?.id);
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push("/users/sign-in");
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('chapterCompletion', JSON.stringify(completionStatus)); // Store completion status in local storage
+        }
       }
-    });
 
-    // Fetch topics from the database
+      setUserDataLoaded(true); // Set user data loaded to true once everything is fetched
+    };
+
+    fetchUserData();
+  }, [topicId]);
+
+  // Fetch topic data
+  useEffect(() => {
     const fetchTopic = async () => {
       if (!topicId || Array.isArray(topicId)) return;
 
@@ -121,8 +148,7 @@ export default function TopicPage() {
               controlGroupContent: chapterData.controlGroupContent,
               experimentalGroupContent: chapterData.experimentalGroupContent,
               controlGroupImageURLs: chapterData.controlGroupImageURLs,
-              experimentalGroupImageURLs:
-                chapterData.experimentalGroupImageURLs,
+              experimentalGroupImageURLs: chapterData.experimentalGroupImageURLs,
               order: chapterData.order,
               proficiency: chapterData.proficiency,
             };
@@ -149,7 +175,22 @@ export default function TopicPage() {
     fetchTopic();
   }, [topicId]);
 
-  if (loading)
+  // Load user proficiency and chapter completion from local storage when the component mounts
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedProficiency = localStorage.getItem('userProficiency');
+      if (storedProficiency) {
+        setUserProficiency(parseInt(storedProficiency));
+      }
+
+      const storedCompletion = localStorage.getItem('chapterCompletion');
+      if (storedCompletion) {
+        setChapterCompletion(JSON.parse(storedCompletion));
+      }
+    }
+  }, []);
+
+  if (loading || !userDataLoaded)
     return (
       <BaseLayout>
         <div>please wait, loading... 🦧</div>
