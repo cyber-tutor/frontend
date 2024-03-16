@@ -13,6 +13,7 @@ import {
   writeBatch,
   orderBy,
   arrayUnion,
+  increment,
 } from "firebase/firestore";
 import { db } from "./config";
 import { User } from "firebase/auth";
@@ -213,4 +214,11 @@ export async function getNextChapterId(order: number, documentId: string) {
   return nextChapterId;
 }
 
+export async function increaseProficiency(topicId: string, userId: string) {
+ 
+  const userDoc = doc(db, 'users', userId, 'proficiency', topicId);
 
+  await updateDoc(userDoc, {
+    number: increment(1)
+  });
+}
