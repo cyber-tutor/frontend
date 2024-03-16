@@ -8,9 +8,11 @@ import ReactPlayer from "react-player";
 import getVideoDuration from "~/components/youtube_data";
 import { db, auth } from "~/pages/firebase/config";
 import { DocumentData, doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
-import { findUserDocId, handleVideoEnd, isWatched } from "~/pages/firebase/firebase_functions";
+import { findUserDocId, handleVideoEnd, isWatched, getNextChapterId } from "~/pages/firebase/firebase_functions";
 import TimerComponent from "~/components/Timer";
 import DynamicSurvey from "../../../../components/DynamicSurvey";
+import { progress } from "framer-motion";
+
 
 
 type Chapter = {
@@ -22,6 +24,7 @@ type Chapter = {
   experimentalGroupContent: string;
   controlGroupImageURLs: string[];
   experimentalGroupImageURLs: string[];
+  order: number;
 };
 
 type Question = {
@@ -204,10 +207,15 @@ export default function ChapterPage() {
             },
           };
 
+
+
+          const topicString = await getNextChapterId(chapter.order, progressData.topicId);
+
           await updateDoc(progressRef, {
             complete: true,
             attempts: updatedAttempts,
           });
+          router.push(`/topics/${progressData.topicId}/chapters/${topicString}`);
         } else {
           // If no progress document exists, create the first attempt
           await updateDoc(progressRef, {
