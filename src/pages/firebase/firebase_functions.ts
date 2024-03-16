@@ -122,7 +122,7 @@ export async function createUserDocument(
         topicId,
       );
       batch.set(proficiencyRef, {
-        number: 0,
+        proficiency: 0,
       });
 
       const chaptersCollectionRef = collection(
