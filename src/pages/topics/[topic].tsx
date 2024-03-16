@@ -63,7 +63,7 @@ export default function TopicPage() {
         const proficiencyRef = doc(db, `users/${userDocument?.id}/proficiency`, topicId?.toString() ?? ""); // Ensure topicId is always a string
         const proficiencySnapshot = await getDoc(proficiencyRef);
         if (proficiencySnapshot.exists()) {
-          setUserProficiency(proficiencySnapshot.data().proficiency);
+          setUserProficiency(proficiencySnapshot.data().number);
         }
       });
     }
@@ -217,7 +217,7 @@ export default function TopicPage() {
                     </h3>
                     <div className="flex justify-end">
                       <span className="decoration-5 rounded-full border border-solid border-black bg-red-500 p-1.5 text-xs font-bold">
-                        🔒
+                        🔒 
                       </span>
                     </div>
                   </div>
