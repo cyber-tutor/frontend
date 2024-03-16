@@ -96,15 +96,14 @@ export async function createUserDocument(
   const isExperimental = Math.random() < 0.5;
   const group = isExperimental ? "experimental" : "control";
 
-  const mainBatch = writeBatch(db);
+  const batch = writeBatch(db);
 
-  // Create the main user document
   const userRef = doc(collection(db, "users"));
-  mainBatch.set(userRef, {
+  batch.set(userRef, {
     userId: user.uid,
     group: group,
     name: userName || "",
-    initialSurveyComplete: false,
+    initialSurveyComplete: true,
     isSuperuser: false,
   });
 
@@ -120,7 +119,7 @@ export async function createUserDocument(
         collection(db, "users", userRef.id, "proficiency"),
         topicId,
       );
-      mainBatch.set(proficiencyRef, {
+      batch.set(proficiencyRef, {
         number: 0,
       });
 
@@ -133,34 +132,31 @@ export async function createUserDocument(
       const chaptersSnapshot = await getDocs(chaptersCollectionRef);
 
       for (const chapterDoc of chaptersSnapshot.docs) {
+        const chapterData = chapterDoc.data();
         const chapterId = chapterDoc.id;
+
+        const progressData: {
+          complete: boolean;
+          attempts?: { [key: string]: number };
+        } = {
+          complete: false,
+        };
+
+        if (chapterData.chapterType === "assessment") {
+          progressData.attempts = {
+            // exampleAttemptId: { score: 0, date: Firebase.firestore.Timestamp.now(), ...otherAttemptDetails }
+          };
+        }
+
         const progressRef = doc(
           collection(db, "users", userRef.id, "progress"),
           chapterId,
         );
-        mainBatch.set(progressRef, {
-          complete: false,
-        });
-
-        const quizScoreRef = doc(
-          collection(
-            db,
-            "users",
-            userRef.id,
-            "progress",
-            chapterId,
-            "quizScores",
-          ),
-        );
-        mainBatch.set(quizScoreRef, {
-          attempt: 0,
-          quizScore: 0,
-        });
+        batch.set(progressRef, progressData);
       }
     }
 
-    // Commit the main batch
-    await mainBatch.commit();
+    await batch.commit();
     console.log(
       "User document and subcollections created with ID: ",
       userRef.id,
