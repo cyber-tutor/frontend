@@ -12,6 +12,7 @@ import {
   getDoc,
   writeBatch,
   orderBy,
+  arrayUnion,
 } from "firebase/firestore";
 import { db } from "./config";
 import { User } from "firebase/auth";
@@ -182,3 +183,15 @@ export const findUserDocId = async (userId: string): Promise<string | null> => {
   return userDoc ? userDoc.id : null;
 };
 
+export const updateProgress = async (
+  userId: string,
+  chapterId: string,
+  timeElapsed: number
+) => {
+  const progressDocRef = doc(db, "users", userId, "progress", chapterId);
+
+  await updateDoc(progressDocRef, {
+    complete: true,
+    attempts: arrayUnion({ timeElapsed }),
+  });
+};
