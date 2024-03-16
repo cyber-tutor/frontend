@@ -240,7 +240,7 @@ export default function ChapterPage() {
         {chapter && chapter.chapterType === "assessment" && (
           <div className="w-full px-4 md:px-0">
             {" "}
-            <DynamicSurvey chapterId={chapter.chapterId} />
+            <DynamicSurvey chapterId={chapter.chapterId} userId={userDocument?.data().userId} />
           </div>
         )}
       </div>
