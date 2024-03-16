@@ -137,9 +137,11 @@ export async function createUserDocument(
 
         const progressData: {
           complete: boolean;
+          topicId: string;
           attempts?: { [key: string]: number };
         } = {
           complete: false,
+          topicId: topicId,
         };
 
         if (chapterData.chapterType === "assessment") {
