@@ -195,3 +195,22 @@ export const updateProgress = async (
     attempts: arrayUnion({ timeElapsed }),
   });
 };
+
+export async function getNextChapterId(order: number, documentId: string) {
+  
+  const topicsCollection = collection(db, 'topics', documentId, 'chapters');
+  const q = query(topicsCollection, where('order', '==', order + 1));
+
+  const querySnapshot = await getDocs(q);
+  let nextChapterId = null;
+
+  querySnapshot.forEach((doc) => {
+
+    console.log(doc.id, " => ", doc.data());
+    nextChapterId = doc.id;
+  });
+
+  return nextChapterId;
+}
+
+
