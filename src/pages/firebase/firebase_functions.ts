@@ -120,7 +120,7 @@ export async function createUserDocument(
         topicId,
       );
       batch.set(proficiencyRef, {
-        proficiency: 0,
+        number: 0,
       });
 
       const chaptersCollectionRef = collection(
@@ -170,3 +170,15 @@ export async function createUserDocument(
     );
   }
 }
+
+export const findUserDocId = async (userId: string): Promise<string | null> => {
+  if (!userId) {
+    console.error("User ID is undefined");
+    return null;
+  }
+  const q = query(collection(db, "users"), where("userId", "==", userId));
+  const querySnapshot = await getDocs(q);
+  const userDoc = querySnapshot.docs[0];
+  return userDoc ? userDoc.id : null;
+};
+
