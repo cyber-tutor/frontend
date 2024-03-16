@@ -125,6 +125,8 @@ export default function ChapterPage() {
   const uid = user ? user.uid : null;
   console.log("User:", uid);
 
+  
+
   return (
     <BaseLayout>
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
@@ -175,7 +177,7 @@ export default function ChapterPage() {
           
         )}
 
-{progressComplete && (
+{progressComplete && chapter.chapterType !== "assessment" && (
   <button
     className="rounded bg-blue-500 px-4 py-2 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-700"
     onClick={async () => {
@@ -215,7 +217,12 @@ export default function ChapterPage() {
             complete: true,
             attempts: updatedAttempts,
           });
-          router.push(`/topics/${progressData.topicId}/chapters/${topicString}`);
+
+          if (topicString !== null){
+            router.push(`/topics/${progressData.topicId}/chapters/${topicString}`);
+          } else {
+            router.push(`/topics/${progressData.topicId}`);
+          }
         } else {
           // If no progress document exists, create the first attempt
           await updateDoc(progressRef, {
