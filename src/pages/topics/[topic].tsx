@@ -158,16 +158,24 @@ export default function TopicPage() {
       </BaseLayout>
     );
 
+    
+
+
+
+
+  const proficiencyRatio = userProficiency !== null && topic ? Math.round((userProficiency / topic.chapters.length) * 100) : 0;
+      
   return (
     <BaseLayout>
       <div className="overflow-y-auto rounded-lg border-2 border-solid text-center lg:w-7/12 lg:p-10">
         <div className="grid grid-cols-6 items-center">
           <h1 className="col-span-5 flex justify-start text-3xl font-bold">
             {topic.topicTitle}
+            {proficiencyRatio}
           </h1>
           <div className="flex justify-end">
             <span className="decoration-5 flex rounded-full border-solid border-black  p-1.5 text-xs font-bold ">
-              <CircularWithValueLabel />
+              <CircularWithValueLabel value={proficiencyRatio} />
             </span>
           </div>
         </div>
