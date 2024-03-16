@@ -43,6 +43,7 @@ export default function TopicPage() {
   const [error, setError] = useState<string | null>(null);
   const [userDocument, setUserDocument] = useState<DocumentData | null>(null);
   const [userProficiency, setUserProficiency] = useState<number | null>(null);
+  const [chapterCompletion, setChapterCompletion] = useState<Record<string, boolean>>({});
 
   const router = useRouter();
   const { topic: topicId } = router.query;
@@ -65,6 +66,15 @@ export default function TopicPage() {
         if (proficiencySnapshot.exists()) {
           setUserProficiency(proficiencySnapshot.data().number);
         }
+
+        // Fetch chapter completion status
+        const progressCollectionRef = collection(db, `users/${userDocument?.id}/progress`);
+        const progressSnapshot = await getDocs(progressCollectionRef);
+        const completionStatus: Record<string, boolean> = {};
+        progressSnapshot.forEach((doc) => {
+          completionStatus[doc.id] = doc.data().complete;
+        });
+        setChapterCompletion(completionStatus);
       });
     }
 
@@ -158,11 +168,6 @@ export default function TopicPage() {
       </BaseLayout>
     );
 
-    
-
-
-
-
   const proficiencyRatio = userProficiency !== null && topic ? Math.round((userProficiency / topic.chapters.length) * 100) : 0;
       
   return (
@@ -171,7 +176,6 @@ export default function TopicPage() {
         <div className="grid grid-cols-6 items-center">
           <h1 className="col-span-5 flex justify-start text-3xl font-bold">
             {topic.topicTitle}
-            {proficiencyRatio}
           </h1>
           <div className="flex justify-end">
             <span className="decoration-5 flex rounded-full border-solid border-black  p-1.5 text-xs font-bold ">
@@ -197,15 +201,14 @@ export default function TopicPage() {
                         {chapter.chapterType.toUpperCase()}
                       </p>
                       {chapter.chapterTitle}
+                      {chapterCompletion[chapter.chapterId] ? ' ✅' : ''}
                     </h3>
-                    {/* Same here, boolean stuff */}
                     <div className="flex justify-end">
                       <span className="decoration-5 rounded-full border border-solid border-black bg-slate-200 p-1.5 text-xs font-bold">
                         🔓
                       </span>
                     </div>
                   </div>
-                  <div></div>
                   <p className="border-b-2 pb-3">{chapter.chapterDescription}</p>
                 </div>
               </Link>
@@ -221,7 +224,6 @@ export default function TopicPage() {
                         {chapter.chapterType.toUpperCase()}
                       </p>
                       {chapter.chapterTitle}
-                      
                     </h3>
                     <div className="flex justify-end">
                       <span className="decoration-5 rounded-full border border-solid border-black bg-red-500 p-1.5 text-xs font-bold">
@@ -229,7 +231,6 @@ export default function TopicPage() {
                       </span>
                     </div>
                   </div>
-                  <div></div>
                   <p className="border-b-2 pb-3">{chapter.chapterDescription}</p>
                 </div>
               </div>
