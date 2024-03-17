@@ -108,6 +108,8 @@ export async function createUserDocument(
     name: userName || "",
     initialSurveyComplete: true,
     isSuperuser: false,
+    initialSurveyIncorrectCount: 0,
+    userLevel: "",
   });
 
   const topicsCollectionRef = collection(db, "topics");
@@ -226,7 +228,7 @@ export async function increaseProficiency(topicId: string, userId: string) {
   const userDoc = doc(db, 'users', userId, 'proficiency', topicId);
 
   await updateDoc(userDoc, {
-    number: increment(1)
+    proficiency: increment(1)
   });
 }
 
