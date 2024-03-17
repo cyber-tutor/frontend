@@ -58,7 +58,7 @@ const SignInForm = () => {
         console.log("User is signing up for the first time.");
         const user = result.user;
   
-        await createUserDocument(user);
+        await createUserDocument(user, user.displayName || '');
       } else {
         console.log("User is an existing user.");
       }
