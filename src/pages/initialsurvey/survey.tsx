@@ -1,126 +1,69 @@
-import { getAuth } from 'firebase/auth';
-import { updateDoc, doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
-import * as Survey from 'survey-react';
-import 'survey-react/survey.css';
-import queryUserDocument from '../firebase/firebase_functions';
-import { db } from '../firebase/config';
+import { useEffect, useState } from "react";
+import * as Survey from "survey-react";
+import "survey-react/survey.css";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { useRouter } from "next/router";
+import { getAuth } from "firebase/auth";
+import { db } from "../firebase/config";
 
 Survey.StylesManager.applyTheme("default");
-
-interface SurveyResult {
-  [key: string]: any;
-}
-
-interface SurveyJson {
-  pages: {
-    elements: {
-      name: string;
-      correctAnswer?: string;
-    }[];
-  }[];
-}
 
 export default function SurveyComponent(): JSX.Element {
   const router = useRouter();
   const [isComplete, setIsComplete] = useState<boolean>(false);
-  const [result, setResult] = useState<SurveyResult | null>(null);
-  const [incorrectCount, setIncorrectCount] = useState<string>("0/0");
-  const [surveyJson, setSurveyJson] = useState<SurveyJson | null>(null);
+  const [surveyJson, setSurveyJson] = useState<any>(null);
 
   useEffect(() => {
-    const fetchSurveyJson = async () => {
-      const db = getFirestore();
-      const surveyRef = doc(db, "userResponses", "initialSurvey");
-      const surveyDoc = await getDoc(surveyRef);
-
-      if (surveyDoc.exists()) {
-        const surveyData = surveyDoc.data();
-        if (typeof surveyData.JSON === 'string') {
-          setSurveyJson(JSON.parse(surveyData.JSON) as SurveyJson);
-        } else {
-          console.log("Survey JSON is not a string.");
+    const fetchSurveyQuestions = async () => {
+      const surveyCollectionRef = collection(db, "initialSurveyQuestions");
+      const querySnapshot = await getDocs(surveyCollectionRef);
+      const questions = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        let question = {
+          name: doc.id,
+          title: data.question,
+          isRequired: true,
+        };
+        if (data.questionType === "radiogroup") {
+          question = {
+            ...question,
+            type: "radiogroup",
+            choices: Object.values(data.choices),
+          } as { name: string; title: any; isRequired: boolean; type: string };
+        } else if (data.questionType === "comment") {
+          question = { ...question, type: "comment", maxLength: 400 } as {
+            name: string;
+            title: any;
+            isRequired: boolean;
+            type: string;
+          };
         }
-      } else {
-        console.log("No such document!");
-      }
+        return question;
+      });
+
+      setSurveyJson({
+        showProgressBar: "bottom",
+        pages: questions.map((question) => ({
+          questions: [question],
+        })),
+      });
     };
 
-    fetchSurveyJson();
+    fetchSurveyQuestions();
   }, []);
 
   const survey = new Survey.Model(surveyJson || {});
 
-  const onComplete = (surveyResult: Survey.SurveyModel) => {
+  survey.onComplete.add((surveyResult) => {
     setIsComplete(true);
     const userResponses = surveyResult.data;
-    setResult(userResponses);
     console.log(JSON.stringify(userResponses));
-  };
-
-  useEffect(() => {
-    if (isComplete && surveyJson) {
-      const auth = getAuth();
-      const user = auth.currentUser;
-
-      if (user) {
-        const userId = user.uid;
-
-        const { incorrect, total } = surveyJson.pages.reduce((count, page) => {
-          return page.elements.reduce((pageCount, element) => {
-            const questionId = element.name;
-            const userAnswer = result ? result[questionId] : undefined;
-            const correctAnswer = element.correctAnswer;
-            const isIncorrect = userAnswer !== correctAnswer;
-            return {
-              incorrect: isIncorrect ? pageCount.incorrect + 1 : pageCount.incorrect,
-              total: pageCount.total + 1 
-            };
-          }, count);
-        }, { incorrect: 0, total: 0 });
-
-        setIncorrectCount(`${incorrect}/${total}`);
-
-        queryUserDocument(userId).then((userDocRef) => {
-          if (userDocRef) {
-
-            const userSurveyRef = doc(db, "userResponses", "initialSurvey", "users", userId);
-            const surveyResultsPlainObject = result ? JSON.parse(JSON.stringify(result)) : {};
-
-            setDoc(userSurveyRef, {
-              initialSurveyResults: surveyResultsPlainObject,
-              initialSurveyComplete: true,
-              initialSurveyIncorrectCount: `${incorrect}/${total}`
-            }).then(() => {
-              console.log('Survey document successfully updated');
-            }).catch((error) => {
-              console.error('Error updating survey document: ', error);
-            });
-
-            updateDoc(userDocRef.ref, {
-              initialSurveyComplete: true
-            }).then(() => {
-              console.log('User document successfully updated');
-              router.push('/');
-            }).catch((error) => {
-              console.error('Error updating user document: ', error);
-            });
-          } else {
-            console.log('No user document found');
-          }
-        });
-      }
-    }
-  }, [router, isComplete, result, surveyJson]);
+  });
 
   return (
     <div>
       {surveyJson ? (
-        <>
-          <Survey.Survey model={survey} onComplete={onComplete} />
-          <div>Incorrect answers: {incorrectCount}</div>
-        </>
+        <Survey.Survey model={survey} />
       ) : (
         <div>Loading survey...</div>
       )}
