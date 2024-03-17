@@ -7,8 +7,6 @@ import {
   doc,
   setDoc,
   updateDoc,
-  addDoc,
-  CollectionReference,
 } from "firebase/firestore";
 import { db } from "../firebase/config";
 import "survey-react/survey.css";
@@ -35,6 +33,8 @@ const InitialSurvey = () => {
   const [isComplete, setIsComplete] = useState<boolean>(false);
   const [result, setResult] = useState<any | null>(null);
   const [incorrectCount, setIncorrectCount] = useState<string>("0/0");
+  const [totalPoints, setTotalPoints] = useState<number>(0);
+  const [userLevel, setUserLevel] = useState<string>("");
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -62,6 +62,7 @@ const InitialSurvey = () => {
               title: q.data.question,
               isRequired: false,
               answer: q.data.answer,
+              difficulty: q.data.difficulty,
               ...(q.data.questionType === "comment" && { maxLength: 400 }),
               ...(q.data.questionType === "radiogroup" && {
                 choices: Object.entries(q.data.choices || {}).map(
@@ -100,13 +101,19 @@ const InitialSurvey = () => {
       if (user) {
         const userId = user.uid;
 
-        const { incorrect, total } = surveyJson.pages.reduce(
+        const { incorrect, total, points } = surveyJson.pages.reduce(
           (count: any, page: any) => {
             return page.elements.reduce((pageCount: any, element: any) => {
               const questionId = element.name;
               const userAnswer = result ? result[questionId] : undefined;
               const answer = element.answer;
-              const isIncorrect = userAnswer !== answer;
+              const difficulty = element.difficulty;
+              let isIncorrect = userAnswer !== answer;
+
+              // Handle multiple choice questions
+              if (Array.isArray(userAnswer) && typeof answer === 'string') {
+                isIncorrect = !userAnswer.includes(answer);
+              }
 
               const userDocRef = doc(
                 db,
@@ -116,20 +123,39 @@ const InitialSurvey = () => {
                 userId,
               );
               setDoc(userDocRef, {
-                response: userAnswer,
+                response: userAnswer !== undefined ? userAnswer : null,
                 name: user.displayName || "Anonymous",
               });
+
+              const pointsForQuestion = isIncorrect
+                ? 0
+                : difficulty === "hard"
+                ? 3
+                : difficulty === "intermediate"
+                ? 2
+                : 1;
 
               return {
                 incorrect: isIncorrect
                   ? pageCount.incorrect + 1
                   : pageCount.incorrect,
                 total: pageCount.total + 1,
+                points: pageCount.points + pointsForQuestion,
               };
             }, count);
           },
-          { incorrect: 0, total: 0 },
+          { incorrect: 0, total: 0, points: 0 },
         );
+
+        setTotalPoints(points);
+
+        const level =
+          points >= total * 2.5
+            ? "hard"
+            : points >= total * 1.5
+            ? "intermediate"
+            : "beginner";
+        setUserLevel(level);
 
         const correct = total - incorrect;
         setIncorrectCount(`${incorrect}/${total}`);
@@ -140,6 +166,7 @@ const InitialSurvey = () => {
               return updateDoc(userDocRef.ref, {
                 initialSurveyComplete: true,
                 initialSurveyCorrectCount: correct,
+                userLevel: level,
               });
             } else {
               console.log("No user document found");
@@ -159,7 +186,13 @@ const InitialSurvey = () => {
   return (
     <div>
       {surveyJson && <Survey model={surveyJson} />}
-      {isComplete && <div>Incorrect count: {incorrectCount}</div>}
+      {isComplete && (
+        <div>
+          <div>Incorrect count: {incorrectCount}</div>
+          <div>Total points: {totalPoints}</div>
+          <div>User level: {userLevel}</div>
+        </div>
+      )}
     </div>
   );
 };
