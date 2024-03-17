@@ -1,72 +1,167 @@
-import { useEffect, useState } from "react";
-import * as Survey from "survey-react";
+import React, { useState, useEffect } from "react";
+import { Survey, Model } from "survey-react";
+import {
+  collection,
+  query,
+  getDocs,
+  doc,
+  setDoc,
+  updateDoc,
+  addDoc,
+  CollectionReference,
+} from "firebase/firestore";
+import { db } from "../firebase/config";
 import "survey-react/survey.css";
-import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { StylesManager } from "survey-react";
 import { useRouter } from "next/router";
 import { getAuth } from "firebase/auth";
-import { db } from "../firebase/config";
+import queryUserDocument from "../firebase/firebase_functions";
 
-Survey.StylesManager.applyTheme("default");
+StylesManager.applyTheme("default");
 
-export default function SurveyComponent(): JSX.Element {
+interface Question {
+  question: string;
+  questionCategory: string;
+  questionType: string;
+  choices?: Record<string, string>;
+  answer?: string;
+  difficulty?: string;
+  explanation?: string;
+}
+
+const InitialSurvey = () => {
   const router = useRouter();
+  const [surveyJson, setSurveyJson] = useState<Model | null>(null);
   const [isComplete, setIsComplete] = useState<boolean>(false);
-  const [surveyJson, setSurveyJson] = useState<any>(null);
+  const [result, setResult] = useState<any | null>(null);
+  const [incorrectCount, setIncorrectCount] = useState<string>("0/0");
 
   useEffect(() => {
-    const fetchSurveyQuestions = async () => {
-      const surveyCollectionRef = collection(db, "initialSurveyQuestions");
-      const querySnapshot = await getDocs(surveyCollectionRef);
-      const questions = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        let question = {
-          name: doc.id,
-          title: data.question,
-          isRequired: true,
-        };
-        if (data.questionType === "radiogroup") {
-          question = {
-            ...question,
-            type: "radiogroup",
-            choices: Object.values(data.choices),
-          } as { name: string; title: any; isRequired: boolean; type: string };
-        } else if (data.questionType === "comment") {
-          question = { ...question, type: "comment", maxLength: 400 } as {
-            name: string;
-            title: any;
-            isRequired: boolean;
-            type: string;
-          };
-        }
-        return question;
+    const fetchQuestions = async () => {
+      const questions: { id: string; data: Question }[] = [];
+      const q = query(collection(db, "initialSurveyQuestions"));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        const questionData = doc.data() as Question;
+        questions.push({ id: doc.id, data: questionData });
       });
-
-      setSurveyJson({
-        showProgressBar: "bottom",
-        pages: questions.map((question) => ({
-          questions: [question],
-        })),
-      });
+      return questions;
     };
 
-    fetchSurveyQuestions();
+    const formatQuestionsForSurveyJS = (
+      questions: { id: string; data: Question }[],
+    ) => {
+      return {
+        showProgressBar: "bottom",
+        pages: questions.map((q, index) => ({
+          name: `page${index + 1}`,
+          elements: [
+            {
+              type: q.data.questionType,
+              name: q.id,
+              title: q.data.question,
+              isRequired: false,
+              answer: q.data.answer,
+              ...(q.data.questionType === "comment" && { maxLength: 400 }),
+              ...(q.data.questionType === "radiogroup" && {
+                choices: Object.entries(q.data.choices || {}).map(
+                  ([key, value]) => ({
+                    value: key,
+                    text: value,
+                  }),
+                ),
+              }),
+            },
+          ],
+        })),
+      };
+    };
+
+    fetchQuestions().then((questions) => {
+      const formattedQuestions = formatQuestionsForSurveyJS(questions);
+      setSurveyJson(new Model(formattedQuestions));
+    });
   }, []);
 
-  const survey = new Survey.Model(surveyJson || {});
+  useEffect(() => {
+    if (surveyJson) {
+      surveyJson.onComplete.add((surveyResult: any) => {
+        setIsComplete(true);
+        setResult(surveyResult.data);
+      });
+    }
+  }, [surveyJson]);
 
-  survey.onComplete.add((surveyResult) => {
-    setIsComplete(true);
-    const userResponses = surveyResult.data;
-    console.log(JSON.stringify(userResponses));
-  });
+  useEffect(() => {
+    if (isComplete && surveyJson) {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
+        const userId = user.uid;
+
+        const { incorrect, total } = surveyJson.pages.reduce(
+          (count: any, page: any) => {
+            return page.elements.reduce((pageCount: any, element: any) => {
+              const questionId = element.name;
+              const userAnswer = result ? result[questionId] : undefined;
+              const answer = element.answer;
+              const isIncorrect = userAnswer !== answer;
+
+              const userDocRef = doc(
+                db,
+                "initialSurveyQuestions",
+                questionId,
+                "users",
+                userId,
+              );
+              setDoc(userDocRef, {
+                response: userAnswer,
+                name: user.displayName || "Anonymous",
+              });
+
+              return {
+                incorrect: isIncorrect
+                  ? pageCount.incorrect + 1
+                  : pageCount.incorrect,
+                total: pageCount.total + 1,
+              };
+            }, count);
+          },
+          { incorrect: 0, total: 0 },
+        );
+
+        const correct = total - incorrect;
+        setIncorrectCount(`${incorrect}/${total}`);
+
+        queryUserDocument(userId)
+          .then((userDocRef) => {
+            if (userDocRef) {
+              return updateDoc(userDocRef.ref, {
+                initialSurveyComplete: true,
+                initialSurveyCorrectCount: correct,
+              });
+            } else {
+              console.log("No user document found");
+            }
+          })
+          .then(() => {
+            console.log("User document successfully updated");
+            router.push("/");
+          })
+          .catch((error) => {
+            console.error("Error updating documents: ", error);
+          });
+      }
+    }
+  }, [router, isComplete, surveyJson, result]);
 
   return (
     <div>
-      {surveyJson ? (
-        <Survey.Survey model={survey} />
-      ) : (
-        <div>Loading survey...</div>
-      )}
+      {surveyJson && <Survey model={surveyJson} />}
+      {isComplete && <div>Incorrect count: {incorrectCount}</div>}
     </div>
   );
-}
+};
+
+export default InitialSurvey;
