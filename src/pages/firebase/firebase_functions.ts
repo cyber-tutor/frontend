@@ -18,6 +18,7 @@ import {
 import { db } from "./config";
 import { User } from "firebase/auth";
 import { Console } from "console";
+import router, { useRouter } from "next/router";
 
 export default async function queryUserDocument(
   userIdString: string,
@@ -197,21 +198,27 @@ export const updateProgress = async (
   });
 };
 
-export async function getNextChapterId(order: number, documentId: string) {
-  
+export async function getNextChapterId(order: number, documentId: string, userProficiency: number) {
+
+
   const topicsCollection = collection(db, 'topics', documentId, 'chapters');
   const q = query(topicsCollection, where('order', '==', order + 1));
 
   const querySnapshot = await getDocs(q);
   let nextChapterId = null;
+  let nextChapterProficiency = 0;
 
   querySnapshot.forEach((doc) => {
-
     console.log(doc.id, " => ", doc.data());
     nextChapterId = doc.id;
+    nextChapterProficiency = doc.data().proficiency;
   });
 
-  return nextChapterId;
+  if (nextChapterProficiency > userProficiency) {
+    return null;
+  } else {
+    return nextChapterId;
+  }
 }
 
 export async function increaseProficiency(topicId: string, userId: string) {
@@ -220,5 +227,16 @@ export async function increaseProficiency(topicId: string, userId: string) {
 
   await updateDoc(userDoc, {
     number: increment(1)
+  });
+}
+
+export async function initialSurveyComplete (userId: string) {
+  const docId = await findUserDocId(userId);
+  const userDoc = doc(db, 'users', docId? docId : '');
+
+ 
+
+  await updateDoc(userDoc, {
+    initialSurveyComplete: true
   });
 }

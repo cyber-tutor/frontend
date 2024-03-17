@@ -210,8 +210,13 @@ export default function ChapterPage() {
           };
 
 
+          const userProficiency = doc(db, "users", userDocId, "proficiency", progressData.topicId);
+          const proficiencySnapshot = await getDoc(userProficiency);
+          const proficiencyData = proficiencySnapshot.data();
 
-          const topicString = await getNextChapterId(chapter.order, progressData.topicId);
+          const topicString: String|null = await getNextChapterId(chapter.order, progressData.topicId, proficiencyData?.proficiency);
+
+          
 
           if(progressData.complete === false){
           await updateDoc(progressRef, {
@@ -222,11 +227,14 @@ export default function ChapterPage() {
           await increaseProficiency(progressData.topicId, userDocId);
           
         }
-          if (topicString !== null){
+
+        if (topicString === null){
+          alert("Your proficiency is too low to access the next chapter. Please complete some other chapters to raise it.");
+          router.push(`/topics/${progressData.topicId}`);
+        }
+        else if (topicString !== null){
             router.push(`/topics/${progressData.topicId}/chapters/${topicString}`);
-          } else {
-            router.push(`/topics/${progressData.topicId}`);
-          }
+          } 
         } else {
           // If no progress document exists, create the first attempt
           await updateDoc(progressRef, {
