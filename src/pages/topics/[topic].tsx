@@ -90,7 +90,7 @@ export default function TopicPage() {
         const proficiencyRef = doc(db, `users/${userDoc?.id}/proficiency`, topicId?.toString() ?? "");
         const proficiencySnapshot = await getDoc(proficiencyRef);
         if (proficiencySnapshot.exists()) {
-          const proficiency = proficiencySnapshot.data().number;
+          const proficiency = proficiencySnapshot.data().proficiency;
           setUserProficiency(proficiency);
           if (typeof window !== 'undefined') {
             localStorage.setItem('userProficiency', proficiency.toString()); // Store proficiency in local storage
