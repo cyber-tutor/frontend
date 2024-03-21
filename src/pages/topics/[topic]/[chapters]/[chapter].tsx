@@ -8,7 +8,7 @@ import ReactPlayer from "react-player";
 import getVideoDuration from "~/components/youtube_data";
 import { db, auth } from "~/pages/firebase/config";
 import { DocumentData, doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
-import { findUserDocId, handleVideoEnd, isWatched, getNextChapterId, increaseProficiency} from "~/pages/firebase/firebase_functions";
+import { findUserDocId, handleVideoEnd, isWatched, getNextChapterId, increaseLevel} from "~/pages/firebase/firebase_functions";
 import TimerComponent from "~/components/Timer";
 import DynamicSurvey from "../../../../components/DynamicSurvey";
 import { progress } from "framer-motion";
@@ -210,11 +210,11 @@ export default function ChapterPage() {
           };
 
 
-          const userProficiency = doc(db, "users", userDocId, "proficiency", progressData.topicId);
-          const proficiencySnapshot = await getDoc(userProficiency);
-          const proficiencyData = proficiencySnapshot.data();
+          const userLevel = doc(db, "users", userDocId, "levels", progressData.topicId);
+          const levelSnapshot = await getDoc(userLevel);
+          const levelData = levelSnapshot.data();
 
-          const topicString: String|null = await getNextChapterId(chapter.order, progressData.topicId, proficiencyData?.proficiency);
+          const topicString: String|null = await getNextChapterId(chapter.order, progressData.topicId, levelData?.level);
 
           
 
@@ -224,12 +224,12 @@ export default function ChapterPage() {
             attempts: updatedAttempts,
           });
 
-          await increaseProficiency(progressData.topicId, userDocId);
+          await increaseLevel(progressData.topicId, userDocId);
           
         }
 
         if (topicString === null){
-          alert("Your proficiency is too low to access the next chapter. Please complete some other chapters to raise it.");
+          alert("Your knowledge level is too low to access the next chapter. Please complete some other chapters to raise it.");
           router.push(`/topics/${progressData.topicId}`);
         }
         else if (topicString !== null){

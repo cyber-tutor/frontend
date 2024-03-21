@@ -14,6 +14,7 @@ import {
   orderBy,
   arrayUnion,
   increment,
+  setDoc,
 } from "firebase/firestore";
 import { db } from "./config";
 import { User } from "firebase/auth";
@@ -120,12 +121,22 @@ export async function createUserDocument(
     for (const topicDoc of topicsSnapshot.docs) {
       const topicId = topicDoc.id;
 
+      // Proficiency collection with proficiency attribute as string
       const proficiencyRef = doc(
         collection(db, "users", userRef.id, "proficiency"),
         topicId,
       );
       batch.set(proficiencyRef, {
-        proficiency: 0,
+        proficiency: "",
+      });
+
+      // Level collection with value attribute as number
+      const levelRef = doc(
+        collection(db, "users", userRef.id, "levels"),
+        topicId,
+      );
+      batch.set(levelRef, {
+        level: 0,
       });
 
       const chaptersCollectionRef = collection(
@@ -176,6 +187,7 @@ export async function createUserDocument(
   }
 }
 
+
 export const findUserDocId = async (userId: string): Promise<string | null> => {
   if (!userId) {
     console.error("User ID is undefined");
@@ -223,22 +235,26 @@ export async function getNextChapterId(order: number, documentId: string, userPr
   }
 }
 
-export async function increaseProficiency(topicId: string, userId: string) {
+export async function increaseLevel(topicId: string, userId: string) {
  
-  const userDoc = doc(db, 'users', userId, 'proficiency', topicId);
+  const userDoc = doc(db, 'users', userId, 'levels', topicId);
 
   await updateDoc(userDoc, {
-    proficiency: increment(1)
+    level: increment(1)
   });
 }
 
-export async function initialSurveyComplete (userId: string) {
+export async function initialSurveyComplete(userId: string, quizResponse: any) {
   const docId = await findUserDocId(userId);
-  const userDoc = doc(db, 'users', docId? docId : '');
+  const userDoc = doc(db, 'users', docId ? docId : '');
 
- 
-
-  await updateDoc(userDoc, {
+  await setDoc(userDoc, {
     initialSurveyComplete: true
+  });
+
+  const surveyResponseCollection = collection(userDoc, 'initialSurveyResponse');
+  const surveyResponseDoc = doc(surveyResponseCollection, userId);
+  await setDoc(surveyResponseDoc, {
+    response: quizResponse
   });
 }
