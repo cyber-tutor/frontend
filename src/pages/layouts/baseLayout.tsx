@@ -196,7 +196,7 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
 
   return (
     <>
-      {screenSize !== "lg" && screenSize !== "md" && showSidebar ? (
+      {(screenSize !== "lg" && screenSize !== "md") && showSidebar ? (
         <Navbar>
           <NavbarBrand className="pr-7">
             <Image
@@ -292,7 +292,7 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
       <div className="flex min-h-screen items-stretch bg-slate-50">
         <div className="flex h-screen flex-col items-center bg-slate-400 ">
           <div className="flex h-full flex-col justify-between">
-            {screenSize === "lg" || (screenSize === "md" && showSidebar) ? (
+            {(screenSize === "lg" || screenSize === "md") && showSidebar ? (
               <Sidebar collapsed={collapsed} className="flex h-full flex-col">
                 <Menu>
                   <MenuItem className="flex flex-col justify-center p-2 text-center">
@@ -387,11 +387,13 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
                         </button>
                       </MenuItem>
                     )}
-                    {userDocument ? userDocument.id : ''}
+                    {userDocument ? userDocument.id : ""}
 
                     {user && (
                       <MenuItem>
-                        <p>Welcome {userDocument ? userDocument.data().name : ''}</p>
+                        <p>
+                          Welcome {userDocument ? userDocument.data().name : ""}
+                        </p>
                         <button
                           type="button"
                           className="pointer-events-auto rounded px-3 hover:bg-blue-500"
