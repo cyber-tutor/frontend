@@ -83,7 +83,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
     if (selectedChapter) {
       setUpdatedContent(selectedChapter.controlGroupContent);
     } else {
-      setUpdatedContent(""); 
+      setUpdatedContent("");
     }
   };
 
@@ -101,29 +101,47 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
       console.log("Control group content updated successfully");
     } catch (error) {
       console.error("Error updating control group content:", error);
-      setFeedbackMessage(
-        "uh oh 🦧, error updating control group content.",
-      );
+      setFeedbackMessage("uh oh 🦧, error updating control group content.");
     }
   };
 
   return (
-    <div>
-      <h2>Update Control Group Content</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="topic">Select Topic:</label>
-        <select id="topic" onChange={(e) => setSelectedTopicId(e.target.value)}>
-          <option value="">Select a Topic</option>
-          {topics.map((topic) => (
-            <option key={topic.topicId} value={topic.topicId}>
-              {topic.topicTitle}
-            </option>
-          ))}
-        </select>
-        {selectedTopicId && (
-          <>
-            <label htmlFor="chapter">Select Chapter:</label>
-            <select id="chapter" onChange={handleChapterChange}>
+    <div className="rounded bg-white p-6 shadow-md">
+      <form onSubmit={handleSubmit} className="grid grid-cols-4 gap-4">
+        <div className="col-span-1 flex flex-col space-y-4">
+          <div>
+            <label
+              htmlFor="topic"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Select Topic:
+            </label>
+            <select
+              id="topic"
+              onChange={(e) => setSelectedTopicId(e.target.value)}
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+            >
+              <option value="">Select a Topic</option>
+              {topics.map((topic) => (
+                <option key={topic.topicId} value={topic.topicId}>
+                  {topic.topicTitle}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label
+              htmlFor="chapter"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Select Chapter:
+            </label>
+            <select
+              id="chapter"
+              onChange={handleChapterChange}
+              disabled={!selectedTopicId}
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+            >
               <option value="">Select a Chapter</option>
               {chapters.map((chapter) => (
                 <option key={chapter.chapterId} value={chapter.chapterId}>
@@ -131,22 +149,34 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
                 </option>
               ))}
             </select>
-            {selectedChapterId && (
-              <div>
-                <label htmlFor="content">Control Group Content:</label>
-                <InputField
-                  name="content"
-                  value={updatedContent}
-                  onChange={handleContentChange}
-                  placeholder="Enter control group content"
-                />
-              </div>
-            )}
-          </>
+          </div>
+          <button
+            type="submit"
+            className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
+          >
+            Update Control Group Content
+          </button>
+        </div>
+        {selectedChapterId && (
+          <div className="col-span-3 flex-grow">
+            <label
+              htmlFor="content"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Control Group Content:
+            </label>
+            <InputField
+              name="content"
+              value={updatedContent}
+              onChange={handleContentChange}
+              placeholder="Enter control group content"
+            />
+          </div>
         )}
-        <button type="submit">Update Control Group Content</button>
       </form>
-      {feedbackMessage && <div>{feedbackMessage}</div>}
+      {feedbackMessage && (
+        <div className="mt-4 text-red-500">{feedbackMessage}</div>
+      )}
     </div>
   );
 };
