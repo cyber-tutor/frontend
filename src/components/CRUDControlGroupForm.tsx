@@ -14,6 +14,7 @@ interface Chapter {
   chapterId: string;
   chapterTitle: string;
   controlGroupContent: string;
+  controlGroupImageURLs: string[];
 }
 
 interface Topic {
@@ -180,6 +181,18 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
               onChange={handleContentChange}
               placeholder="Enter control group content"
             />
+            <div className="mt-4">
+              <h3 className="text-sm font-medium text-gray-700">
+                Control Group Image URLs:
+              </h3>
+              {chapters
+                .find((chapter) => chapter.chapterId === selectedChapterId)
+                ?.controlGroupImageURLs.map((url, index) => (
+                  <div key={index} className="mt-2 text-sm text-gray-500">
+                    {url}
+                  </div>
+                ))}
+            </div>
           </div>
         )}
       </form>
