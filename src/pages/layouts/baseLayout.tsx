@@ -41,8 +41,8 @@ type Chapter = {
   chapterDescription: string;
   controlGroupContent: string;
   experimentalGroupContent: string;
-  controlGroupImageURLs: string[];
-  experimentalGroupImageURLs: string[];
+  controlGroupImageURL: string;
+  experimentalGroupImageURL: string;
 };
 
 type Question = {
@@ -196,7 +196,7 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
 
   return (
     <>
-      {(screenSize !== "lg" && screenSize !== "md") && showSidebar ? (
+      {screenSize !== "lg" && screenSize !== "md" && showSidebar ? (
         <Navbar>
           <NavbarBrand className="pr-7">
             <Image

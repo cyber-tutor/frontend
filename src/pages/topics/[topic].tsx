@@ -31,22 +31,24 @@ type Chapter = {
   chapterDescription: string;
   controlGroupContent: string;
   experimentalGroupContent: string;
-  controlGroupImageURLs: string[];
-  experimentalGroupImageURLs: string[];
+  controlGroupImageURL: string;
+  experimentalGroupImageURL: string;
   order: number;
-  proficiency: number; // Add proficiency property
+  proficiency: number;
 };
 
 // Utility function for updating chapter completion status
 const updateChapterCompletion = (
   chapterId: string,
   complete: boolean,
-  setChapterCompletion: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
+  setChapterCompletion: React.Dispatch<
+    React.SetStateAction<Record<string, boolean>>
+  >,
 ): void => {
   setChapterCompletion((prev: Record<string, boolean>) => {
     const updated: Record<string, boolean> = { ...prev, [chapterId]: complete };
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('chapterCompletion', JSON.stringify(updated));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("chapterCompletion", JSON.stringify(updated));
     }
     return updated;
   });
@@ -58,7 +60,9 @@ export default function TopicPage() {
   const [error, setError] = useState<string | null>(null);
   const [userDocument, setUserDocument] = useState<DocumentData | null>(null);
   const [userProficiency, setUserProficiency] = useState<number | null>(null);
-  const [chapterCompletion, setChapterCompletion] = useState<Record<string, boolean>>({});
+  const [chapterCompletion, setChapterCompletion] = useState<
+    Record<string, boolean>
+  >({});
   const [userDataLoaded, setUserDataLoaded] = useState(false); // New state variable to track user data loading
 
   const router = useRouter();
@@ -87,26 +91,36 @@ export default function TopicPage() {
         setUserDocument(userDoc);
 
         // Fetch user proficiency for the topic
-        const proficiencyRef = doc(db, `users/${userDoc?.id}/proficiency`, topicId?.toString() ?? "");
+        const proficiencyRef = doc(
+          db,
+          `users/${userDoc?.id}/proficiency`,
+          topicId?.toString() ?? "",
+        );
         const proficiencySnapshot = await getDoc(proficiencyRef);
         if (proficiencySnapshot.exists()) {
           const proficiency = proficiencySnapshot.data().proficiency;
           setUserProficiency(proficiency);
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('userProficiency', proficiency.toString()); // Store proficiency in local storage
+          if (typeof window !== "undefined") {
+            localStorage.setItem("userProficiency", proficiency.toString()); // Store proficiency in local storage
           }
         }
 
         // Fetch chapter completion status
-        const progressCollectionRef = collection(db, `users/${userDoc?.id}/progress`);
+        const progressCollectionRef = collection(
+          db,
+          `users/${userDoc?.id}/progress`,
+        );
         const progressSnapshot = await getDocs(progressCollectionRef);
         const completionStatus: Record<string, boolean> = {};
         progressSnapshot.forEach((doc) => {
           completionStatus[doc.id] = doc.data().complete;
         });
         setChapterCompletion(completionStatus);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('chapterCompletion', JSON.stringify(completionStatus)); // Store completion status in local storage
+        if (typeof window !== "undefined") {
+          localStorage.setItem(
+            "chapterCompletion",
+            JSON.stringify(completionStatus),
+          ); // Store completion status in local storage
         }
       }
 
@@ -147,8 +161,8 @@ export default function TopicPage() {
               chapterDescription: chapterData.chapterDescription,
               controlGroupContent: chapterData.controlGroupContent,
               experimentalGroupContent: chapterData.experimentalGroupContent,
-              controlGroupImageURLs: chapterData.controlGroupImageURLs,
-              experimentalGroupImageURLs: chapterData.experimentalGroupImageURLs,
+              controlGroupImageURL: chapterData.controlGroupImageURL,
+              experimentalGroupImageURL: chapterData.experimentalGroupImageURL,
               order: chapterData.order,
               proficiency: chapterData.proficiency,
             };
@@ -177,13 +191,13 @@ export default function TopicPage() {
 
   // Load user proficiency and chapter completion from local storage when the component mounts
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedProficiency = localStorage.getItem('userProficiency');
+    if (typeof window !== "undefined") {
+      const storedProficiency = localStorage.getItem("userProficiency");
       if (storedProficiency) {
         setUserProficiency(parseInt(storedProficiency));
       }
 
-      const storedCompletion = localStorage.getItem('chapterCompletion');
+      const storedCompletion = localStorage.getItem("chapterCompletion");
       if (storedCompletion) {
         setChapterCompletion(JSON.parse(storedCompletion));
       }
@@ -209,8 +223,11 @@ export default function TopicPage() {
       </BaseLayout>
     );
 
-  const proficiencyRatio = userProficiency !== null && topic ? Math.round((userProficiency / topic.chapters.length) * 100) : 0;
-      
+  const proficiencyRatio =
+    userProficiency !== null && topic
+      ? Math.round((userProficiency / topic.chapters.length) * 100)
+      : 0;
+
   return (
     <BaseLayout>
       <div className="overflow-y-auto rounded-lg border-2 border-solid text-center lg:w-7/12 lg:p-10">
@@ -226,8 +243,9 @@ export default function TopicPage() {
         </div>
         <p className="border-b-4 py-3">{topic.topicDescription}</p>
         <div className="flex flex-col text-start">
-          {topic.chapters.map((chapter) => (
-            userProficiency !== null && userProficiency >= chapter.proficiency ? (
+          {topic.chapters.map((chapter) =>
+            userProficiency !== null &&
+            userProficiency >= chapter.proficiency ? (
               <Link
                 key={chapter.chapterId}
                 href={`/topics/${encodeURIComponent(
@@ -242,7 +260,7 @@ export default function TopicPage() {
                         {chapter.chapterType.toUpperCase()}
                       </p>
                       {chapter.chapterTitle}
-                      {chapterCompletion[chapter.chapterId] ? ' ✅' : ''}
+                      {chapterCompletion[chapter.chapterId] ? " ✅" : ""}
                     </h3>
                     <div className="flex justify-end">
                       <span className="decoration-5 rounded-full border border-solid border-black bg-slate-200 p-1.5 text-xs font-bold">
@@ -250,13 +268,15 @@ export default function TopicPage() {
                       </span>
                     </div>
                   </div>
-                  <p className="border-b-2 pb-3">{chapter.chapterDescription}</p>
+                  <p className="border-b-2 pb-3">
+                    {chapter.chapterDescription}
+                  </p>
                 </div>
               </Link>
             ) : (
               <div
                 key={chapter.chapterId}
-                className="px-3 pt-3 bg-slate-200 cursor-not-allowed"
+                className="cursor-not-allowed bg-slate-200 px-3 pt-3"
               >
                 <div>
                   <div className="grid grid-cols-6 items-center">
@@ -268,15 +288,17 @@ export default function TopicPage() {
                     </h3>
                     <div className="flex justify-end">
                       <span className="decoration-5 rounded-full border border-solid border-black bg-red-500 p-1.5 text-xs font-bold">
-                        🔒 
+                        🔒
                       </span>
                     </div>
                   </div>
-                  <p className="border-b-2 pb-3">{chapter.chapterDescription}</p>
+                  <p className="border-b-2 pb-3">
+                    {chapter.chapterDescription}
+                  </p>
                 </div>
               </div>
-            )
-          ))}
+            ),
+          )}
         </div>
       </div>
     </BaseLayout>

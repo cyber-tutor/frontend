@@ -17,8 +17,8 @@ type Chapter = {
   chapterDescription: string;
   controlGroupContent: string;
   experimentalGroupContent: string;
-  controlGroupImageURLs: string[];
-  experimentalGroupImageURLs: string[];
+  controlGroupImageURL: string;
+  experimentalGroupImageURL: string;
 };
 
 export interface Question {
@@ -65,9 +65,8 @@ const QuestionForm: React.FC<{
               chapterDescription: chapterData.chapterDescription,
               controlGroupContent: chapterData.controlGroupContent,
               experimentalGroupContent: chapterData.experimentalGroupContent,
-              controlGroupImageURLs: chapterData.controlGroupImageURLs,
-              experimentalGroupImageURLs:
-                chapterData.experimentalGroupImageURLs,
+              controlGroupImageURL: chapterData.controlGroupImageURL,
+              experimentalGroupImageURL: chapterData.experimentalGroupImageURL,
             });
           });
 
