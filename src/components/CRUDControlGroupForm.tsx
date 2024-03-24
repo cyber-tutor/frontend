@@ -97,6 +97,25 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
     }
   };
 
+  const handleImageUrlChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+  ) => {
+    const newUrl = e.target.value;
+    setChapters((prevChapters) =>
+      prevChapters.map((chapter) =>
+        chapter.chapterId === selectedChapterId
+          ? {
+              ...chapter,
+              controlGroupImageURLs: chapter.controlGroupImageURLs.map(
+                (url, urlIndex) => (urlIndex === index ? newUrl : url),
+              ),
+            }
+          : chapter,
+      ),
+    );
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!selectedChapterId) return;
@@ -175,21 +194,34 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
             >
               Control Group Content:
             </label>
-            <InputField
+            <textarea
+              id="content"
               name="content"
               value={updatedContent}
               onChange={handleContentChange}
               placeholder="Enter control group content"
+              className="h-60 w-full rounded-md border p-2 text-sm text-gray-500"
             />
             <div className="mt-4">
-              <h3 className="text-sm font-medium text-gray-700">
-                Control Group Image URLs:
-              </h3>
+              <h3 className="text-sm font-medium">Control Group Image URLs:</h3>
               {chapters
                 .find((chapter) => chapter.chapterId === selectedChapterId)
                 ?.controlGroupImageURLs.map((url, index) => (
-                  <div key={index} className="mt-2 text-sm text-gray-500">
-                    {url}
+                  <div key={index} className="mt-2 flex items-center space-x-2">
+                    <label
+                      htmlFor={`imageUrl-${index}`}
+                      className="text-sm font-medium"
+                    >
+                      [{index + 1}]:
+                    </label>
+                    <input
+                      id={`imageUrl-${index}`}
+                      name={`imageUrl-${index}`}
+                      value={url}
+                      onChange={(e) => handleImageUrlChange(e, index)}
+                      placeholder="Enter image URL"
+                      className="flex-grow rounded-md border p-2 text-sm text-gray-500"
+                    />
                   </div>
                 ))}
             </div>
