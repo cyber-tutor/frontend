@@ -24,6 +24,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [updatedContent, setUpdatedContent] = useState("");
   const [selectedChapterId, setSelectedChapterId] = useState("");
+  const [feedbackMessage, setFeedbackMessage] = useState("");
 
   useEffect(() => {
     const fetchTopics = async () => {
@@ -37,6 +38,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
         setTopics(fetchedTopics);
       } catch (error) {
         console.error("Error fetching topics:", error);
+        setFeedbackMessage("Error fetching topics. Please try again later.");
       }
     };
     fetchTopics();
@@ -58,6 +60,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
         setChapters(fetchedChapters);
       } catch (error) {
         console.error("Error fetching chapters:", error);
+        setFeedbackMessage("Error fetching chapters. Please try again later.");
       }
     };
     fetchChapters();
@@ -80,7 +83,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
     if (selectedChapter) {
       setUpdatedContent(selectedChapter.controlGroupContent);
     } else {
-      setUpdatedContent("");
+      setUpdatedContent(""); 
     }
   };
 
@@ -94,9 +97,13 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
           controlGroupContent: updatedContent,
         },
       );
+      setFeedbackMessage("Control group content updated successfully");
       console.log("Control group content updated successfully");
     } catch (error) {
       console.error("Error updating control group content:", error);
+      setFeedbackMessage(
+        "uh oh 🦧, error updating control group content.",
+      );
     }
   };
 
@@ -139,6 +146,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
         )}
         <button type="submit">Update Control Group Content</button>
       </form>
+      {feedbackMessage && <div>{feedbackMessage}</div>}
     </div>
   );
 };
