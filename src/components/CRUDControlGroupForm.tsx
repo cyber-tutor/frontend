@@ -148,7 +148,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
             <select
               id="topic"
               onChange={(e) => setSelectedTopicId(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm sm:text-sm"
             >
               <option value="">Select a Topic</option>
               {topics.map((topic) => (
@@ -169,7 +169,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
               id="chapter"
               onChange={handleChapterChange}
               disabled={!selectedTopicId}
-              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm sm:text-sm"
             >
               <option value="">Select a Chapter</option>
               {chapters.map((chapter) => (
