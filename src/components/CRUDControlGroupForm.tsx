@@ -70,7 +70,18 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
   };
 
   const handleChapterChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setSelectedChapterId(e.target.value);
+    const selectedChapterId = e.target.value;
+    setSelectedChapterId(selectedChapterId);
+
+    const selectedChapter = chapters.find(
+      (chapter) => chapter.chapterId === selectedChapterId,
+    );
+
+    if (selectedChapter) {
+      setUpdatedContent(selectedChapter.controlGroupContent);
+    } else {
+      setUpdatedContent("");
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
