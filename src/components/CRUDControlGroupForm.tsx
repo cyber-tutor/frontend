@@ -200,7 +200,8 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
               value={updatedContent}
               onChange={handleContentChange}
               placeholder="Enter control group content"
-              className="h-60 w-full rounded-md border p-2 text-sm text-gray-500"
+              className="w-full resize-y rounded-md border p-2 text-sm text-gray-500"
+              rows={1}
             />
             <div className="mt-4">
               <h3 className="text-sm font-medium">Control Group Image URLs:</h3>
