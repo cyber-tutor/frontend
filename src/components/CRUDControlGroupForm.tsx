@@ -14,7 +14,7 @@ interface Chapter {
   chapterId: string;
   chapterTitle: string;
   controlGroupContent: string;
-  controlGroupImageURLs: string[];
+  controlGroupImageURL: string;
 }
 
 interface Topic {
@@ -97,19 +97,14 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
     }
   };
 
-  const handleImageUrlChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
-  ) => {
+  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newUrl = e.target.value;
     setChapters((prevChapters) =>
       prevChapters.map((chapter) =>
         chapter.chapterId === selectedChapterId
           ? {
               ...chapter,
-              controlGroupImageURLs: chapter.controlGroupImageURLs.map(
-                (url, urlIndex) => (urlIndex === index ? newUrl : url),
-              ),
+              controlGroupImageURL: newUrl,
             }
           : chapter,
       ),
@@ -204,27 +199,21 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
               rows={1}
             />
             <div className="mt-4">
-              <h3 className="text-sm font-medium">Control Group Image URLs:</h3>
-              {chapters
-                .find((chapter) => chapter.chapterId === selectedChapterId)
-                ?.controlGroupImageURLs.map((url, index) => (
-                  <div key={index} className="mt-2 flex items-center space-x-2">
-                    <label
-                      htmlFor={`imageUrl-${index}`}
-                      className="text-sm font-medium"
-                    >
-                      [{index + 1}]:
-                    </label>
-                    <input
-                      id={`imageUrl-${index}`}
-                      name={`imageUrl-${index}`}
-                      value={url}
-                      onChange={(e) => handleImageUrlChange(e, index)}
-                      placeholder="Enter image URL"
-                      className="flex-grow rounded-md border p-2 text-sm text-gray-500"
-                    />
-                  </div>
-                ))}
+              <h3 className="text-sm font-medium">Control Group Image URL:</h3>
+              <div className="mt-2 flex items-center space-x-2">
+                <input
+                  id={`imageUrl`}
+                  name={`imageUrl`}
+                  value={
+                    chapters.find(
+                      (chapter) => chapter.chapterId === selectedChapterId,
+                    )?.controlGroupImageURL
+                  }
+                  onChange={handleImageUrlChange}
+                  placeholder="Enter image URL"
+                  className="flex-grow rounded-md border p-2 text-sm text-gray-500"
+                />
+              </div>
             </div>
           </div>
         )}
