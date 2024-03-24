@@ -229,7 +229,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
         )}
       </form>
       {feedbackMessage && (
-        <div className="mt-4 text-red-500">{feedbackMessage}</div>
+        <div className="mt-4 text-green-500">{feedbackMessage}</div>
       )}
     </div>
   );
