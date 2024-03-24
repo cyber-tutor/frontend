@@ -1,5 +1,12 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { updateDoc, doc, collection, getDocs } from "firebase/firestore";
+import {
+  updateDoc,
+  doc,
+  collection,
+  getDocs,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { db } from "../pages/firebase/config";
 import InputField from "./InputField";
 
@@ -30,7 +37,8 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
     const fetchTopics = async () => {
       try {
         const topicsCollection = collection(db, "topics");
-        const topicsSnapshot = await getDocs(topicsCollection);
+        const topicsQuery = query(topicsCollection, orderBy("order"));
+        const topicsSnapshot = await getDocs(topicsQuery);
         const fetchedTopics = topicsSnapshot.docs.map((doc) => ({
           topicId: doc.id,
           ...doc.data(),
@@ -52,7 +60,8 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
           db,
           `topics/${selectedTopicId}/chapters`,
         );
-        const chaptersSnapshot = await getDocs(chaptersCollection);
+        const chaptersQuery = query(chaptersCollection, orderBy("order"));
+        const chaptersSnapshot = await getDocs(chaptersQuery);
         const fetchedChapters = chaptersSnapshot.docs.map((doc) => ({
           chapterId: doc.id,
           ...doc.data(),
