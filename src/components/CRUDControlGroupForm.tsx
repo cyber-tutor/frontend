@@ -1,5 +1,12 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { updateDoc, doc, collection, getDocs } from "firebase/firestore";
+import {
+  updateDoc,
+  doc,
+  collection,
+  getDocs,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { db } from "../pages/firebase/config";
 import InputField from "./InputField";
 
@@ -7,6 +14,7 @@ interface Chapter {
   chapterId: string;
   chapterTitle: string;
   controlGroupContent: string;
+  controlGroupImageURL: string;
 }
 
 interface Topic {
@@ -24,12 +32,14 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [updatedContent, setUpdatedContent] = useState("");
   const [selectedChapterId, setSelectedChapterId] = useState("");
+  const [feedbackMessage, setFeedbackMessage] = useState("");
 
   useEffect(() => {
     const fetchTopics = async () => {
       try {
         const topicsCollection = collection(db, "topics");
-        const topicsSnapshot = await getDocs(topicsCollection);
+        const topicsQuery = query(topicsCollection, orderBy("order"));
+        const topicsSnapshot = await getDocs(topicsQuery);
         const fetchedTopics = topicsSnapshot.docs.map((doc) => ({
           topicId: doc.id,
           ...doc.data(),
@@ -37,6 +47,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
         setTopics(fetchedTopics);
       } catch (error) {
         console.error("Error fetching topics:", error);
+        setFeedbackMessage("Error fetching topics. Please try again later.");
       }
     };
     fetchTopics();
@@ -50,7 +61,8 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
           db,
           `topics/${selectedTopicId}/chapters`,
         );
-        const chaptersSnapshot = await getDocs(chaptersCollection);
+        const chaptersQuery = query(chaptersCollection, orderBy("order"));
+        const chaptersSnapshot = await getDocs(chaptersQuery);
         const fetchedChapters = chaptersSnapshot.docs.map((doc) => ({
           chapterId: doc.id,
           ...doc.data(),
@@ -58,6 +70,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
         setChapters(fetchedChapters);
       } catch (error) {
         console.error("Error fetching chapters:", error);
+        setFeedbackMessage("Error fetching chapters. Please try again later.");
       }
     };
     fetchChapters();
@@ -70,7 +83,32 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
   };
 
   const handleChapterChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setSelectedChapterId(e.target.value);
+    const selectedChapterId = e.target.value;
+    setSelectedChapterId(selectedChapterId);
+
+    const selectedChapter = chapters.find(
+      (chapter) => chapter.chapterId === selectedChapterId,
+    );
+
+    if (selectedChapter) {
+      setUpdatedContent(selectedChapter.controlGroupContent);
+    } else {
+      setUpdatedContent("");
+    }
+  };
+
+  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newUrl = e.target.value;
+    setChapters((prevChapters) =>
+      prevChapters.map((chapter) =>
+        chapter.chapterId === selectedChapterId
+          ? {
+              ...chapter,
+              controlGroupImageURL: newUrl,
+            }
+          : chapter,
+      ),
+    );
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -83,29 +121,51 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
           controlGroupContent: updatedContent,
         },
       );
+      setFeedbackMessage("Control group content updated successfully");
       console.log("Control group content updated successfully");
     } catch (error) {
       console.error("Error updating control group content:", error);
+      setFeedbackMessage("uh oh 🦧, error updating control group content.");
     }
   };
 
   return (
-    <div>
-      <h2>Update Control Group Content</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="topic">Select Topic:</label>
-        <select id="topic" onChange={(e) => setSelectedTopicId(e.target.value)}>
-          <option value="">Select a Topic</option>
-          {topics.map((topic) => (
-            <option key={topic.topicId} value={topic.topicId}>
-              {topic.topicTitle}
-            </option>
-          ))}
-        </select>
-        {selectedTopicId && (
-          <>
-            <label htmlFor="chapter">Select Chapter:</label>
-            <select id="chapter" onChange={handleChapterChange}>
+    <div className="rounded bg-white p-6 shadow-md">
+      <form onSubmit={handleSubmit} className="grid grid-cols-4 gap-4">
+        <div className="col-span-1 flex flex-col space-y-4">
+          <div>
+            <label
+              htmlFor="topic"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Select Topic:
+            </label>
+            <select
+              id="topic"
+              onChange={(e) => setSelectedTopicId(e.target.value)}
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm sm:text-sm"
+            >
+              <option value="">Select a Topic</option>
+              {topics.map((topic) => (
+                <option key={topic.topicId} value={topic.topicId}>
+                  {topic.topicTitle}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label
+              htmlFor="chapter"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Select Chapter:
+            </label>
+            <select
+              id="chapter"
+              onChange={handleChapterChange}
+              disabled={!selectedTopicId}
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm sm:text-sm"
+            >
               <option value="">Select a Chapter</option>
               {chapters.map((chapter) => (
                 <option key={chapter.chapterId} value={chapter.chapterId}>
@@ -113,21 +173,54 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
                 </option>
               ))}
             </select>
-            {selectedChapterId && (
-              <div>
-                <label htmlFor="content">Control Group Content:</label>
-                <InputField
-                  name="content"
-                  value={updatedContent}
-                  onChange={handleContentChange}
-                  placeholder="Enter control group content"
+          </div>
+          <button
+            type="submit"
+            className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
+          >
+            Update Control Group Content
+          </button>
+        </div>
+        {selectedChapterId && (
+          <div className="col-span-3 flex-grow">
+            <label
+              htmlFor="content"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Control Group Content:
+            </label>
+            <textarea
+              id="content"
+              name="content"
+              value={updatedContent}
+              onChange={handleContentChange}
+              placeholder="Enter control group content"
+              className="w-full resize-y rounded-md border p-2 text-sm text-gray-500"
+              rows={1}
+            />
+            <div className="mt-4">
+              <h3 className="text-sm font-medium">Control Group Image URL:</h3>
+              <div className="mt-2 flex items-center space-x-2">
+                <input
+                  id={`imageUrl`}
+                  name={`imageUrl`}
+                  value={
+                    chapters.find(
+                      (chapter) => chapter.chapterId === selectedChapterId,
+                    )?.controlGroupImageURL
+                  }
+                  onChange={handleImageUrlChange}
+                  placeholder="Enter image URL"
+                  className="flex-grow rounded-md border p-2 text-sm text-gray-500"
                 />
               </div>
-            )}
-          </>
+            </div>
+          </div>
         )}
-        <button type="submit">Update Control Group Content</button>
       </form>
+      {feedbackMessage && (
+        <div className="mt-4 text-green-500">{feedbackMessage}</div>
+      )}
     </div>
   );
 };
