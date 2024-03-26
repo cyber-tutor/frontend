@@ -1,17 +1,12 @@
-import { ReactNode, useState, useEffect } from "react";
+import type { ReactNode } from "react";
+import { useState, useEffect } from "react";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import Image from "next/image";
 import { FiMenu } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../firebase/config";
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  DocumentData,
-} from "firebase/firestore";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import queryUserDocument from "../firebase/firebase_functions";
 import {
@@ -35,6 +30,11 @@ type Topic = {
   chapters: Chapter[];
 };
 
+interface TopicData {
+  topicTitle: string;
+  topicDescription: string;
+}
+
 type Chapter = {
   chapterId: string;
   chapterType: string;
@@ -46,41 +46,23 @@ type Chapter = {
   experimentalGroupImageURL: string;
 };
 
-type Question = {
-  questionId: string;
-  questionTitle: string;
-  questionDifficulty: string;
-  options: Option[];
-};
-
-type Option = {
-  optionId: string;
-  optionTitle: string;
-  optionCorrectness: string;
-  optionReasoning: string;
-};
-
 type LayoutProps = {
   children: ReactNode;
   showSidebar?: boolean;
 };
 
-interface UserDocument {
-  initialSurveyComplete: boolean;
-}
-
-const [userDocument, setUserDocument] = useState<UserDocument | null>(null);
-
 export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
   const [collapsed, setCollapsed] = useState(false);
-  const [userDocument, setUserDocument] = useState<DocumentData | null>(null);
+  const [userDocument, setUserDocument] = useState<UserDocumentData | null>(
+    null,
+  );
   const [screenSize, setScreenSize] = useState("");
   const [isSubMenuOpen, setSubMenuOpen] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
       const persistedState = localStorage.getItem("isSubMenuOpen");
-      return persistedState ? JSON.parse(persistedState) : true;
+      return persistedState ? (JSON.parse(persistedState) as boolean) : true;
     }
     return true;
   });
@@ -94,13 +76,19 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
     const uid = user ? user.uid : null;
 
     if (uid) {
-      queryUserDocument(uid).then((userDocument: UserDocumentData | null) => {
-        setUserDocument(userDocument);
-        // Check if user completed initial survey, if not then redirect to initial survey
-        if (userDocument && !userDocument.initialSurveyComplete) {
-          router.push("/initialsurvey/begin");
-        }
-      });
+      queryUserDocument(uid)
+        .then((userDocument: UserDocumentData | null) => {
+          setUserDocument(userDocument);
+          // Check if user completed initial survey, if not then redirect to initial survey
+          if (userDocument && !userDocument.initialSurveyComplete) {
+            router.push("/initialsurvey/begin").catch((error) => {
+              console.error("Navigation error:", error);
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Query user document error:", error);
+        });
     }
 
     if (typeof window !== "undefined") {
@@ -145,7 +133,7 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
           query(topicsCollectionRef, orderBy("order")),
         );
         topicsSnapshot.forEach((topicDoc) => {
-          const topicData = topicDoc.data();
+          const topicData: TopicData = topicDoc.data() as TopicData;
           const topicId = topicDoc.id;
 
           const newTopic = {
@@ -164,16 +152,24 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
       }
     };
 
-    fetchTopics();
+    void fetchTopics();
   }, []);
 
-  const handleLogoClick = () => {
-    router.push("/");
+  const handleLogoClick = async () => {
+    try {
+      await router.push("/");
+    } catch (error) {
+      console.error("Navigation error:", error);
+    }
   };
 
-  const handleTopicClick = (topic: Topic) => {
+  const handleTopicClick = async (topic: Topic) => {
     setSelectedTopic(topic);
-    router.push(`/topics/${encodeURIComponent(topic.topicId)}`);
+    try {
+      await router.push(`/topics/${encodeURIComponent(topic.topicId)}`);
+    } catch (error) {
+      console.error("Navigation error:", error);
+    }
   };
 
   const toggleSubMenu = () => {
@@ -183,7 +179,7 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
   const handleLogout = async () => {
     try {
       await auth.signOut();
-      router.push("/users/sign-in");
+      await router.push("/users/sign-in");
     } catch (error) {
       console.error("Logout error:", error);
     }
@@ -231,19 +227,17 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
                 {topics.map((topic) => (
                   <DropdownItem
                     key={topic.topicId}
-                    onClick={() => {
-                      if (
-                        user &&
-                        userDocument &&
-                        userDocument.data().initialSurveyComplete
-                      ) {
-                        handleTopicClick(topic);
+                    onClick={async () => {
+                      if (user?.uid && userDocument?.initialSurveyComplete) {
+                        try {
+                          await handleTopicClick(topic);
+                        } catch (error) {
+                          console.error("Handle topic click error:", error);
+                        }
                       }
                     }}
                   >
-                    {user &&
-                    userDocument &&
-                    userDocument.data().initialSurveyComplete ? (
+                    {user?.uid && userDocument?.initialSurveyComplete ? (
                       topic.topicTitle
                     ) : (
                       <div className="relative">
@@ -335,9 +329,7 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
                     open={isSubMenuOpen}
                     onOpenChange={toggleSubMenu}
                   >
-                    {user &&
-                    userDocument &&
-                    userDocument.initialSurveyComplete ? (
+                    {user?.uid && userDocument?.initialSurveyComplete ? (
                       topics.map((topic) => (
                         <MenuItem
                           key={topic.topicId}
@@ -398,9 +390,7 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
 
                     {user && (
                       <MenuItem>
-                        <p>
-                          Welcome {userDocument ? userDocument.data().name : ""}
-                        </p>
+                        <p>Welcome {userDocument ? userDocument.name : ""}</p>
                         <button
                           type="button"
                           className="pointer-events-auto rounded px-3 hover:bg-blue-500"
