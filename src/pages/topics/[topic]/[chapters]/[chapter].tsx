@@ -1,29 +1,19 @@
 import { BaseLayout } from "../../../layouts/baseLayout";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { Survey } from "survey-react-ui";
-import { Model } from "survey-core";
 import "survey-core/defaultV2.min.css";
 import ReactPlayer from "react-player";
-import getVideoDuration from "~/components/youtube_data";
 import { db, auth } from "~/pages/firebase/config";
-import {
-  DocumentData,
-  doc,
-  getDoc,
-  updateDoc,
-  arrayUnion,
-} from "firebase/firestore";
+import type { DocumentData } from "firebase/firestore"; // Change this line
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import {
   findUserDocId,
   handleVideoEnd,
-  isWatched,
   getNextChapterId,
   increaseLevel,
 } from "~/pages/firebase/firebase_functions";
 import TimerComponent from "~/components/Timer";
 import DynamicSurvey from "../../../../components/DynamicSurvey";
-import { progress } from "framer-motion";
 
 type Chapter = {
   chapterId: string;
@@ -37,19 +27,42 @@ type Chapter = {
   order: number;
 };
 
-type Question = {
-  questionId: string;
-  questionTitle: string;
-  questionDifficulty: string;
-  options: Option[];
-};
+interface ChapterData {
+  chapterType: string;
+  controlGroupContent: string;
+  controlGroupImageURL: string;
+  chapterTitle: string;
+}
 
-type Option = {
-  optionId: string;
-  optionTitle: string;
-  optionCorrectness: string;
-  optionReasoning: string;
-};
+interface UserDocument {
+  id: string;
+}
+
+interface UserDocumentData {
+  id: string;
+
+  userId: string;
+}
+
+interface Attempt {
+  timeElapsed: number;
+}
+
+interface ProgressData {
+  attempts: Record<string, Attempt>;
+  topicId: string;
+  complete: boolean;
+}
+
+interface LevelData {
+  level: number;
+}
+
+type GetNextChapterId = (
+  order: number,
+  topicId: string,
+  level?: number,
+) => Promise<string | null>;
 
 export default function ChapterPage() {
   const [chapter, setChapter] = useState<Chapter | null>(null);
@@ -102,7 +115,9 @@ export default function ChapterPage() {
       }
     };
 
-    fetchChapter();
+    fetchChapter().catch((error) => {
+      console.error("Fetch chapter error:", error);
+    });
   }, [topicId, chapterId]);
 
   useEffect(() => {
@@ -135,28 +150,32 @@ export default function ChapterPage() {
   const uid = user ? user.uid : null;
   console.log("User:", uid);
 
+  const chapterData: ChapterData = chapter as ChapterData;
+  const userDocumentData: UserDocumentData =
+    userDocument?.data() as UserDocumentData;
+
   return (
     <BaseLayout>
-      <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
+      <h1 className="text-3xl font-bold">{chapterData.chapterTitle}</h1>
       <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
       <div className="mx-auto w-full overflow-y-auto">
-        {chapter.chapterType === "text" && (
+        {chapterData.chapterType === "text" && (
           <div className="m-4 rounded border p-4 shadow">
-            {userDocument?.data().id}
+            {userDocumentData?.id}
 
-            {chapter.controlGroupContent}
-            {chapter.controlGroupImageURL && (
+            {chapterData.controlGroupContent}
+            {chapterData.controlGroupImageURL && (
               <img
                 className="mx-auto mt-5 w-1/3 shadow-lg"
-                src={chapter.controlGroupImageURL}
+                src={chapterData.controlGroupImageURL}
                 alt={
-                  chapter.chapterTitle
-                    ? String(chapter.chapterTitle)
+                  chapterData.chapterTitle
+                    ? String(chapterData.chapterTitle)
                     : undefined
                 }
                 title={
-                  chapter.chapterTitle
-                    ? String(chapter.chapterTitle)
+                  chapterData.chapterTitle
+                    ? String(chapterData.chapterTitle)
                     : undefined
                 }
               />
@@ -174,9 +193,15 @@ export default function ChapterPage() {
               allowFullScreen
               controls={false}
               onEnded={() => {
+                const userDocumentData: UserDocument =
+                  userDocument as UserDocument;
                 const playedMinutes = Math.floor(played / 60);
                 console.log("video ended");
-                handleVideoEnd(playedMinutes, userDocument?.id);
+                handleVideoEnd(playedMinutes, userDocumentData?.id).catch(
+                  (error) => {
+                    console.error("Handle video end error:", error);
+                  },
+                );
                 setIsVideoWatched(true);
               }}
               seekTo={20}
@@ -211,7 +236,8 @@ export default function ChapterPage() {
                 const progressSnapshot = await getDoc(progressRef);
 
                 if (progressSnapshot.exists()) {
-                  const progressData = progressSnapshot.data();
+                  const progressData: ProgressData =
+                    progressSnapshot.data() as ProgressData;
                   const attempts = progressData.attempts ?? {};
                   const nextAttemptNumber = Object.keys(attempts).length + 1;
                   const updatedAttempts = {
@@ -229,13 +255,18 @@ export default function ChapterPage() {
                     progressData.topicId,
                   );
                   const levelSnapshot = await getDoc(userLevel);
-                  const levelData = levelSnapshot.data();
+                  const levelData: LevelData =
+                    levelSnapshot.data() as LevelData;
 
-                  const topicString: String | null = await getNextChapterId(
-                    chapter.order,
-                    progressData.topicId,
-                    levelData?.level,
-                  );
+                  const getNextChapterIdTyped =
+                    getNextChapterId as GetNextChapterId;
+
+                  const topicString: string | null =
+                    await getNextChapterIdTyped(
+                      chapter.order,
+                      progressData.topicId,
+                      levelData?.level,
+                    );
 
                   if (progressData.complete === false) {
                     await updateDoc(progressRef, {
@@ -250,22 +281,31 @@ export default function ChapterPage() {
                     alert(
                       "Your knowledge level is too low to access the next chapter. Please complete some other chapters to raise it.",
                     );
-                    router.push(`/topics/${progressData.topicId}`);
+                    router
+                      .push(`/topics/${progressData.topicId}`)
+                      .catch((error) => {
+                        console.error("Router push error:", error);
+                      });
                   } else if (topicString !== null) {
-                    router.push(
-                      `/topics/${progressData.topicId}/chapters/${topicString}`,
-                    );
-                  }
-                } else {
-                  // If no progress document exists, create the first attempt
-                  await updateDoc(progressRef, {
-                    complete: true,
-                    attempts: {
-                      1: {
-                        timeElapsed,
+                    router
+                      .push(
+                        `/topics/${progressData.topicId}/chapters/${topicString}`,
+                      )
+                      .catch((error) => {
+                        console.error("Router push error:", error);
+                      });
+                  } else {
+                    await updateDoc(progressRef, {
+                      complete: true,
+                      attempts: {
+                        1: {
+                          timeElapsed,
+                        },
                       },
-                    },
-                  });
+                    }).catch((error) => {
+                      console.error("Update doc error:", error);
+                    });
+                  }
                 }
               }
             }}
@@ -277,7 +317,7 @@ export default function ChapterPage() {
         video progress: {Math.floor(played / 60)}:
         {String(Math.floor(played % 60)).padStart(2, "0")}
         <br />
-        <p>User's time spent on this chapter:</p>
+        <p>User&apos;s time spent on this chapter:</p>
         <TimerComponent
           secondsElapsed={secondsElapsed}
           setSecondsElapsed={setSecondsElapsed}
@@ -286,7 +326,7 @@ export default function ChapterPage() {
           <div className="w-full px-4 md:px-0">
             <DynamicSurvey
               chapterId={chapter.chapterId}
-              userId={userDocument?.data().userId}
+              userId={userDocumentData?.userId}
             />
           </div>
         )}
