@@ -1,4 +1,5 @@
-import React, { ChangeEvent } from "react";
+import React from "react";
+import type { ChangeEvent } from "react";
 
 interface Option {
   value: string;
@@ -16,7 +17,7 @@ interface InputProps {
   isSelect?: boolean;
   options?: Option[];
   error?: string;
-  disabled?: boolean
+  disabled?: boolean;
 }
 
 const InputField: React.FC<InputProps> = ({
@@ -37,7 +38,10 @@ const InputField: React.FC<InputProps> = ({
         <select
           name={name}
           value={value}
-          onChange={onSelectChange as (e: ChangeEvent<HTMLSelectElement>) => void || onChange}
+          onChange={
+            (onSelectChange as (e: ChangeEvent<HTMLSelectElement>) => void) ||
+            onChange
+          }
           className={`mb-4 w-full rounded border p-2 ${error ? "border-red-500" : ""}`}
         >
           <option value="">{placeholder}</option>
@@ -59,7 +63,7 @@ const InputField: React.FC<InputProps> = ({
       <InputComponent
         type={type}
         name={name}
-        value={value as string}
+        value={value}
         onChange={onChange}
         placeholder={placeholder}
         className={`mb-4 w-full rounded border p-2 ${error ? "border-red-500" : ""}`}
