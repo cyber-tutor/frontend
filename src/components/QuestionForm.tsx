@@ -1,4 +1,5 @@
-import React, { useState, useEffect, FormEvent, ChangeEvent } from "react";
+import React, { useState, useEffect } from "react";
+import type { FormEvent, ChangeEvent } from "react";
 import InputField from "../components/InputField";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../pages/firebase/config";
@@ -24,13 +25,14 @@ type Chapter = {
 export interface Question {
   id?: string;
   question: string;
-  choices: { [key: string]: string };
+  choices: Record<string, string>;
   answer: string;
   explanation: string;
   topicId: string;
   difficulty: string;
   chapterId: string;
-  [key: string]: any;
+  additionalProperties: Record<string, unknown>;
+  topics: string[];
 }
 
 const QuestionForm: React.FC<{
@@ -56,7 +58,7 @@ const QuestionForm: React.FC<{
           const chaptersSnapshot = await getDocs(chaptersCollectionRef);
           const chapters: Chapter[] = [];
           chaptersSnapshot.forEach((chapterDoc) => {
-            const chapterData = chapterDoc.data();
+            const chapterData = chapterDoc.data() as Chapter;
             const chapterId = chapterDoc.id;
             chapters.push({
               chapterId: chapterId,
@@ -72,8 +74,8 @@ const QuestionForm: React.FC<{
 
           const newTopic = {
             topicId: topicId,
-            topicTitle: topicData.topicTitle,
-            topicDescription: topicData.topicDescription,
+            topicTitle: topicData.topicTitle as string,
+            topicDescription: topicData.topicDescription as string,
             chapters: chapters,
           };
 
@@ -86,10 +88,10 @@ const QuestionForm: React.FC<{
       }
     };
 
-    fetchTopics();
+    void fetchTopics();
   }, []);
   const [editedQuestion, setEditedQuestion] = useState<Question>(
-    question || {
+    question ?? {
       question: "",
       choices: {},
       answer: "",
@@ -98,6 +100,7 @@ const QuestionForm: React.FC<{
       difficulty: "",
       explanation: "",
       topics: [],
+      additionalProperties: {},
     },
   );
   const [errors, setErrors] = useState<Partial<Record<keyof Question, string>>>(
@@ -145,7 +148,7 @@ const QuestionForm: React.FC<{
 
     if (name === "choices") {
       const choiceStrings = value.split(",").map((choice) => choice.trim());
-      const choicesObject: { [key: string]: string | undefined } = {};
+      const choicesObject: Record<string, string | undefined> = {};
       for (let i = 0; i < choiceStrings.length; i++) {
         const key = String.fromCharCode(97 + i);
         choicesObject[key] = choiceStrings[i];
@@ -153,7 +156,7 @@ const QuestionForm: React.FC<{
 
       setEditedQuestion((prevQuestion) => ({
         ...prevQuestion,
-        choices: choicesObject as { [key: string]: string },
+        choices: choicesObject as Record<string, string>,
       }));
     } else {
       setEditedQuestion((prevQuestion) => ({
@@ -228,6 +231,7 @@ const QuestionForm: React.FC<{
       difficulty: "",
       explanation: "",
       topics: [],
+      additionalProperties: {},
     });
   };
 

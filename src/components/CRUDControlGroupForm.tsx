@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import React, { useState, useEffect } from "react";
 import {
   updateDoc,
   doc,
@@ -8,7 +8,6 @@ import {
   query,
 } from "firebase/firestore";
 import { db } from "../pages/firebase/config";
-import InputField from "./InputField";
 
 interface Chapter {
   chapterId: string;
@@ -26,7 +25,7 @@ interface ControlGroupFormProps {
   topicId: string;
 }
 
-const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
+const ControlGroupForm: React.FC<ControlGroupFormProps> = () => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [selectedTopicId, setSelectedTopicId] = useState("");
   const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -35,7 +34,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
   const [feedbackMessage, setFeedbackMessage] = useState("");
 
   useEffect(() => {
-    const fetchTopics = async () => {
+    void (async () => {
       try {
         const topicsCollection = collection(db, "topics");
         const topicsQuery = query(topicsCollection, orderBy("order"));
@@ -49,13 +48,12 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
         console.error("Error fetching topics:", error);
         setFeedbackMessage("Error fetching topics. Please try again later.");
       }
-    };
-    fetchTopics();
+    })();
   }, []);
 
   useEffect(() => {
     if (!selectedTopicId) return;
-    const fetchChapters = async () => {
+    void (async () => {
       try {
         const chaptersCollection = collection(
           db,
@@ -72,17 +70,16 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
         console.error("Error fetching chapters:", error);
         setFeedbackMessage("Error fetching chapters. Please try again later.");
       }
-    };
-    fetchChapters();
+    })();
   }, [selectedTopicId]);
 
   const handleContentChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setUpdatedContent(e.target.value);
   };
 
-  const handleChapterChange = (e: ChangeEvent<HTMLSelectElement>) => {
+  const handleChapterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedChapterId = e.target.value;
     setSelectedChapterId(selectedChapterId);
 
@@ -111,7 +108,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
     );
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedChapterId) return;
     try {
