@@ -14,6 +14,7 @@ import QuestionForm, { Question } from "../../../components/QuestionForm";
 import StickyHeadTable from "../../../components/StickyHeadTable";
 
 interface TableRowData {
+  [key: string]: string | JSX.Element | undefined;
   id?: string;
   question: string;
   choices: string;
