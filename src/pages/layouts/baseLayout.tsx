@@ -26,6 +26,7 @@ import {
   Dropdown,
   DropdownMenu,
 } from "@nextui-org/react";
+import { UserDocumentData } from "../firebase/firebase_functions";
 
 type Topic = {
   topicId: string;
@@ -64,6 +65,12 @@ type LayoutProps = {
   showSidebar?: boolean;
 };
 
+interface UserDocument {
+  initialSurveyComplete: boolean;
+}
+
+const [userDocument, setUserDocument] = useState<UserDocument | null>(null);
+
 export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
@@ -87,10 +94,10 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
     const uid = user ? user.uid : null;
 
     if (uid) {
-      queryUserDocument(uid).then((userDocument) => {
+      queryUserDocument(uid).then((userDocument: UserDocumentData | null) => {
         setUserDocument(userDocument);
         // Check if user completed initial survey, if not then redirect to initial survey
-        if (userDocument && !userDocument.data().initialSurveyComplete) {
+        if (userDocument && !userDocument.initialSurveyComplete) {
           router.push("/initialsurvey/begin");
         }
       });
@@ -330,7 +337,7 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
                   >
                     {user &&
                     userDocument &&
-                    userDocument.data().initialSurveyComplete ? (
+                    userDocument.initialSurveyComplete ? (
                       topics.map((topic) => (
                         <MenuItem
                           key={topic.topicId}
