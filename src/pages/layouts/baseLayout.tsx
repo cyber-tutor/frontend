@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { UserDocumentData } from "../firebase/firebase_functions";
 import { useState, useEffect } from "react";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import Image from "next/image";
@@ -21,7 +22,6 @@ import {
   Dropdown,
   DropdownMenu,
 } from "@nextui-org/react";
-import { UserDocumentData } from "../firebase/firebase_functions";
 
 type Topic = {
   topicId: string;
@@ -94,7 +94,7 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
     if (typeof window !== "undefined") {
       localStorage.setItem("isSubMenuOpen", JSON.stringify(isSubMenuOpen));
     }
-  }, [isSubMenuOpen, user]);
+  }, [isSubMenuOpen, user, router]);
 
   useEffect(() => {
     const handleResize = () => {
