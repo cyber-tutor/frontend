@@ -151,10 +151,8 @@ export default function ChapterPage() {
   console.log("User:", uid);
 
   const chapterData: ChapterData = chapter as ChapterData;
-  let userDocumentData: UserDocumentData | undefined;
-  if (userDocument?.data) {
-    userDocumentData = userDocument.data() as UserDocumentData;
-  }
+  const userDocumentData: UserDocumentData =
+    userDocument?.data() as UserDocumentData;
 
   return (
     <BaseLayout>
