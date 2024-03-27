@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Survey, Model } from "survey-react";
+import React, { useState, useEffect } from 'react';
+import { Survey, Model } from 'survey-react';
 import {
   collection,
   query,
@@ -7,15 +7,16 @@ import {
   doc,
   setDoc,
   updateDoc,
-} from "firebase/firestore";
-import { db } from "../../components/firebase/config";
-import "survey-react/survey.css";
-import { StylesManager } from "survey-react";
-import { useRouter } from "next/router";
-import { getAuth } from "firebase/auth";
-import queryUserDocument from "../../components/firebase/firebase_functions";
+} from 'firebase/firestore';
+import { db } from '~/components/firebase/config';
+import 'survey-react/survey.css';
+import { StylesManager } from 'survey-react';
+import { useRouter } from 'next/router';
+import { getAuth } from 'firebase/auth';
+import queryUserDocument from '~/components/firebase/firebase_functions';
+import determineProficiency from '~/components/ai/gemini';
 
-StylesManager.applyTheme("default");
+StylesManager.applyTheme('default');
 
 interface Question {
   question: string;
@@ -32,17 +33,18 @@ const InitialSurvey = () => {
   const [surveyJson, setSurveyJson] = useState<Model | null>(null);
   const [isComplete, setIsComplete] = useState<boolean>(false);
   const [result, setResult] = useState<any | null>(null);
-  const [incorrectCount, setIncorrectCount] = useState<string>("0/0");
+  const [incorrectCount, setIncorrectCount] = useState<string>('0/0');
   const [totalPoints, setTotalPoints] = useState<number>(0);
-  const [userLevel, setUserLevel] = useState<string>("");
+  const [userLevel, setUserLevel] = useState<string>('');
 
   useEffect(() => {
     const fetchQuestions = async () => {
       const questions: { id: string; data: Question }[] = [];
-      const q = query(collection(db, "initialSurveyQuestions"));
+      const q = query(collection(db, 'initialSurveyQuestions'));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         const questionData = doc.data() as Question;
+        console.log("Question type: ",questionData.questionCategory);
         questions.push({ id: doc.id, data: questionData });
       });
       return questions;
@@ -52,7 +54,7 @@ const InitialSurvey = () => {
       questions: { id: string; data: Question }[],
     ) => {
       return {
-        showProgressBar: "bottom",
+        showProgressBar: 'bottom',
         pages: questions.map((q, index) => ({
           name: `page${index + 1}`,
           elements: [
@@ -61,22 +63,27 @@ const InitialSurvey = () => {
               name: q.id,
               title: q.data.question,
               isRequired: false,
-              answer: q.data.answer,
-              difficulty: q.data.difficulty,
-              ...(q.data.questionType === "comment" && { maxLength: 400 }),
-              ...(q.data.questionType === "radiogroup" && {
+              // Add the questionCategory as custom data
+              data: {
+                questionCategory: q.data.questionCategory,
+              },
+              ...(q.data.questionType === 'comment' && { maxLength: 400 }),
+              ...(q.data.questionType === 'radiogroup' && {
                 choices: Object.entries(q.data.choices || {}).map(
                   ([key, value]) => ({
                     value: key,
                     text: value,
                   }),
                 ),
+                correctAnswer: q.data.answer,
               }),
             },
           ],
         })),
       };
     };
+    
+    
 
     fetchQuestions().then((questions) => {
       const formattedQuestions = formatQuestionsForSurveyJS(questions);
@@ -106,32 +113,31 @@ const InitialSurvey = () => {
             return page.elements.reduce((pageCount: any, element: any) => {
               const questionId = element.name;
               const userAnswer = result ? result[questionId] : undefined;
-              const answer = element.answer;
+              const answer = element.correctAnswer;
               const difficulty = element.difficulty;
               let isIncorrect = userAnswer !== answer;
 
-              // Handle multiple choice questions
               if (Array.isArray(userAnswer) && typeof answer === 'string') {
                 isIncorrect = !userAnswer.includes(answer);
               }
 
               const userDocRef = doc(
                 db,
-                "initialSurveyQuestions",
+                'initialSurveyQuestions',
                 questionId,
-                "users",
+                'users',
                 userId,
               );
               setDoc(userDocRef, {
                 response: userAnswer !== undefined ? userAnswer : null,
-                name: user.displayName || "Anonymous",
+                name: user.displayName || 'Anonymous',
               });
 
               const pointsForQuestion = isIncorrect
                 ? 0
-                : difficulty === "hard"
+                : difficulty === 'hard'
                 ? 3
-                : difficulty === "intermediate"
+                : difficulty === 'intermediate'
                 ? 2
                 : 1;
 
@@ -151,10 +157,10 @@ const InitialSurvey = () => {
 
         const level =
           points >= total * 2.5
-            ? "hard"
+            ? 'hard'
             : points >= total * 1.5
-            ? "intermediate"
-            : "beginner";
+            ? 'intermediate'
+            : 'beginner';
         setUserLevel(level);
 
         const correct = total - incorrect;
@@ -169,19 +175,102 @@ const InitialSurvey = () => {
                 userLevel: level,
               });
             } else {
-              console.log("No user document found");
+              console.log('No user document found');
             }
           })
           .then(() => {
-            console.log("User document successfully updated");
-            router.push("/");
+            console.log('User document successfully updated');
+            router.push('/');
           })
           .catch((error) => {
-            console.error("Error updating documents: ", error);
+            console.error('Error updating documents: ', error);
           });
       }
     }
   }, [router, isComplete, surveyJson, result]);
+
+  const formatSurveyForGemini = (surveyJson: Model, userResponses: any) => {
+    if (!surveyJson || !surveyJson.pages) {
+      return 'Survey data is not available.';
+    }
+  
+    const questionsAndResponses = surveyJson.pages.flatMap((page) =>
+      page.elements.map((question: any) => {
+        const questionText = question.title;
+        const userResponse = userResponses[question.name] ?? 'User did not answer';
+        let responseText;
+        let correctAnswerText;
+  
+        if (question.type === 'radiogroup' && question.choices) {
+          const userResponseText = question.choices.find((choice: any) => choice.value === userResponse)?.text ?? 'No response provided';
+          const correctAnswerText = question.choices.find((choice: any) => choice.value === question.correctAnswer)?.text ?? 'No correct answer provided';
+          const allChoices = question.choices.map((choice: any) => choice.text).join(', ');
+          responseText = userResponseText;
+          return `${questionText} The User chose: [${allChoices}] User chose: ${responseText}, Correct Answer is: ${correctAnswerText}`;
+        } else {
+          responseText = userResponse;
+          correctAnswerText = question.correctAnswer ?? 'No correct answer provided';
+          const allChoices = question.choices ? question.choices.map((choice: any) => choice.text).join(', ') : 'There are no choices for this question, because its open ended.';
+          return `${questionText} 
+          Choices going from a (first) alphabetically, and going to b... c... : ${allChoices} 
+          User chose: ${responseText}, 
+          Correct Answer is: ${correctAnswerText}`;
+        }
+      })
+    );
+  
+    return questionsAndResponses.join(', ');
+  };  
+
+  useEffect(() => {
+    if (isComplete && result && surveyJson) {
+      const responseString = formatSurveyForGemini(surveyJson, result);
+      determineProficiency(responseString).then((proficiency) => {
+        console.log('User result:', result);
+        console.log('Determined proficiency:', proficiency);
+        const proficiencyArray = proficiency.slice(1, -1).split(',');
+        console.log(proficiencyArray);
+
+        const user = getAuth().currentUser;
+
+        const topics = [
+          'online_privacy',
+          'password_security',
+          'phishing',
+          'software_updates',
+          'two_factor_authentication',
+        ];
+
+        queryUserDocument(user?.uid ? user.uid : '').then((userDocRef) => {
+          updateProficiencyLevels(userDocRef?.ref.id, proficiencyArray, topics);
+        });
+      }).catch((error) => {
+        console.error('Error determining proficiency:', error);
+      });
+    }
+  }, [isComplete, result, surveyJson]);
+
+  const updateProficiencyLevels = async (
+    userId: string,
+    proficiencyArray: string[],
+    topics: string[],
+  ) => {
+    try {
+      proficiencyArray.forEach(async (level, index) => {
+        const topicId = topics[index];
+        const proficiencyRef = doc(
+          collection(doc(db, 'users', userId), 'proficiency'),
+          topicId,
+        );
+        await setDoc(proficiencyRef, {
+          level: level.trim(),
+        });
+      });
+      console.log('Proficiency levels updated successfully.');
+    } catch (error) {
+      console.error('Error updating proficiency levels:', error);
+    }
+  };
 
   return (
     <div>
