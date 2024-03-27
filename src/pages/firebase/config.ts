@@ -1,5 +1,6 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getDatabase } from "firebase/database";
 import { getFirestore } from "firebase/firestore";
 
 // STORE THE VALUES FOR THESE IN .env.local. Ngl, it doesn't really matter for Firebase though, but still.

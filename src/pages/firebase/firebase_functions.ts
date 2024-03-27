@@ -1,9 +1,13 @@
 import {
+  Firestore,
   doc,
+  addDoc,
   collection,
   query,
   where,
   getDocs,
+  DocumentData,
+  QueryDocumentSnapshot,
   updateDoc,
   getDoc,
   writeBatch,
@@ -13,20 +17,13 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { db } from "./config";
-import type { User } from "firebase/auth";
-import type { DocumentData as FirestoreDocumentData } from "firebase/firestore";
-
-export interface UserDocumentData extends FirestoreDocumentData {
-  videoCompleted: boolean;
-}
-
-interface ChapterData {
-  proficiency: number;
-}
+import { User } from "firebase/auth";
+import { Console } from "console";
+import router, { useRouter } from "next/router";
 
 export default async function queryUserDocument(
   userIdString: string,
-): Promise<UserDocumentData | null> {
+): Promise<DocumentData | null> {
   const usersCollectionRef = collection(db, "users");
 
   // Hardcoded user ID for testing
@@ -42,7 +39,8 @@ export default async function queryUserDocument(
     const firstDoc = querySnapshot.docs[0];
     if (firstDoc) {
       console.log("Success.");
-      return firstDoc.data() as UserDocumentData;
+      //   return firstDoc.data();
+      return firstDoc;
     } else {
       console.log("No matching documents.");
       return null;
@@ -84,8 +82,7 @@ export async function isWatched(userDocumentId: string): Promise<boolean> {
     const docSnap = await getDoc(videoDocRef);
 
     if (docSnap.exists()) {
-      const data = docSnap.data() as UserDocumentData;
-      const videoCompleted = data.videoCompleted || false;
+      const videoCompleted = docSnap.data().videoCompleted || false;
       return videoCompleted;
     } else {
       console.log("No such document!");
@@ -157,7 +154,7 @@ export async function createUserDocument(
         const progressData: {
           complete: boolean;
           topicId: string;
-          attempts?: Record<string, number>;
+          attempts?: { [key: string]: number };
         } = {
           complete: false,
           topicId: topicId,
@@ -190,6 +187,7 @@ export async function createUserDocument(
   }
 }
 
+
 export const findUserDocId = async (userId: string): Promise<string | null> => {
   if (!userId) {
     console.error("User ID is undefined");
@@ -204,7 +202,7 @@ export const findUserDocId = async (userId: string): Promise<string | null> => {
 export const updateProgress = async (
   userId: string,
   chapterId: string,
-  timeElapsed: number,
+  timeElapsed: number
 ) => {
   const progressDocRef = doc(db, "users", userId, "progress", chapterId);
 
@@ -214,13 +212,11 @@ export const updateProgress = async (
   });
 };
 
-export async function getNextChapterId(
-  order: number,
-  documentId: string,
-  userProficiency: number,
-) {
-  const topicsCollection = collection(db, "topics", documentId, "chapters");
-  const q = query(topicsCollection, where("order", "==", order + 1));
+export async function getNextChapterId(order: number, documentId: string, userProficiency: number) {
+
+
+  const topicsCollection = collection(db, 'topics', documentId, 'chapters');
+  const q = query(topicsCollection, where('order', '==', order + 1));
 
   const querySnapshot = await getDocs(q);
   let nextChapterId = null;
@@ -229,8 +225,7 @@ export async function getNextChapterId(
   querySnapshot.forEach((doc) => {
     console.log(doc.id, " => ", doc.data());
     nextChapterId = doc.id;
-    const data = doc.data() as ChapterData;
-    nextChapterProficiency = data.proficiency;
+    nextChapterProficiency = doc.data().proficiency;
   });
 
   if (nextChapterProficiency > userProficiency) {
@@ -240,30 +235,26 @@ export async function getNextChapterId(
   }
 }
 
-export async function increaseLevel(
-  userId: string,
-  topicId: string,
-): Promise<void> {
-  const userDoc = doc(db, "users", userId, "levels", topicId);
+export async function increaseLevel(topicId: string, userId: string) {
+ 
+  const userDoc = doc(db, 'users', userId, 'levels', topicId);
 
   await updateDoc(userDoc, {
-    level: increment(1),
+    level: increment(1)
   });
 }
-export async function initialSurveyComplete(
-  userId: string,
-  quizResponse: Record<string, string | number | boolean>,
-) {
+
+export async function initialSurveyComplete(userId: string, quizResponse: any) {
   const docId = await findUserDocId(userId);
-  const userDoc = doc(db, "users", docId ? docId : "");
+  const userDoc = doc(db, 'users', docId ? docId : '');
 
   await setDoc(userDoc, {
-    initialSurveyComplete: true,
+    initialSurveyComplete: true
   });
 
-  const surveyResponseCollection = collection(userDoc, "initialSurveyResponse");
+  const surveyResponseCollection = collection(userDoc, 'initialSurveyResponse');
   const surveyResponseDoc = doc(surveyResponseCollection, userId);
   await setDoc(surveyResponseDoc, {
-    response: quizResponse,
+    response: quizResponse
   });
 }

@@ -1,27 +1,26 @@
-import React, { useState } from "react";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { auth } from "../../pages/firebase/config";
-import { useRouter } from "next/router";
-import { Password } from "primereact/password";
-import { Divider } from "primereact/divider";
-import "primereact/resources/themes/lara-light-cyan/theme.css";
+import React, { useState } from 'react';
+import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { auth } from '../../pages/firebase/config';
+import { useRouter } from 'next/router';
+import { Password } from 'primereact/password';
+import { Divider } from 'primereact/divider';
+import 'primereact/resources/themes/lara-light-cyan/theme.css';
 import {
   GoogleAuthProvider,
   getAdditionalUserInfo,
   signInWithPopup,
-} from "firebase/auth";
-import { FcGoogle } from "react-icons/fc";
-import { createUserDocument } from "~/pages/firebase/firebase_functions";
+} from 'firebase/auth';
+import { FcGoogle } from 'react-icons/fc';
+import { createUserDocument } from '~/pages/firebase/firebase_functions';
 
 const SignUpForm: React.FC = () => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [name, setName] = useState<string>('');
   const [isWeak, setIsWeak] = useState<boolean>(false);
-  // const [emailError, setEmailError] = useState<string>('');
+  const [emailError, setEmailError] = useState<string>('');
 
-  const [createUserWithEmailAndPassword] =
-    useCreateUserWithEmailAndPassword(auth);
+  const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth);
   const router = useRouter();
 
   const provider = new GoogleAuthProvider();
@@ -31,36 +30,36 @@ const SignUpForm: React.FC = () => {
       const result = await signInWithPopup(auth, provider);
       const additionalUserInfo = getAdditionalUserInfo(result);
       if (additionalUserInfo?.isNewUser) {
-        console.log("User is signing up for the first time.");
+        console.log('User is signing up for the first time.');
         const user = result.user;
-        await createUserDocument(user, user.displayName ?? "");
+        await createUserDocument(user, user.displayName || '');
       } else {
-        console.log("User is an existing user.");
+        console.log('User is an existing user.');
       }
-      await router.push("/");
+      router.push('/');
     } catch (e) {
       console.error(e);
     }
   };
 
-  // const validateEmail = async (email: string): Promise<boolean> => {
-  //   const apiUrl = `https://api.hunter.io/v2/email-verifier?email=${email}&api_key=${process.env.NEXT_PUBLIC_EMAIL_VERIFIER_HUNTER_API_KEY}`;
-  //   try {
-  //     const response = await fetch(apiUrl);
-  //     const data = await response.json();
-  //     if (data.data && data.data.status === 'valid') {
-  //       setEmailError('');
-  //       return true;
-  //     } else {
-  //       setEmailError('Invalid email address');
-  //       return false;
-  //     }
-  //   } catch (error) {
-  //     console.error('Error validating email:', error);
-  //     setEmailError('Error validating email');
-  //     return false;
-  //   }
-  // };
+  const validateEmail = async (email: string): Promise<boolean> => {
+    const apiUrl = `https://api.hunter.io/v2/email-verifier?email=${email}&api_key=${process.env.NEXT_PUBLIC_EMAIL_VERIFIER_HUNTER_API_KEY}`;
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      if (data.data && data.data.status === 'valid') {
+        setEmailError('');
+        return true;
+      } else {
+        setEmailError('Invalid email address');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error validating email:', error);
+      setEmailError('Error validating email');
+      return false;
+    }
+  };
 
   const handleSignUp = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault();
@@ -73,9 +72,10 @@ const SignUpForm: React.FC = () => {
     //   return; // Exit the function if the email is not valid
     // }
 
+
+    
     try {
-      const strongRegex =
-        /^(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`\-]).{8,}$/;
+      const strongRegex = /^(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`\-]).{8,}$/;
       if (!strongRegex.test(password)) {
         setIsWeak(true);
         return;
@@ -83,10 +83,10 @@ const SignUpForm: React.FC = () => {
       const res = await createUserWithEmailAndPassword(email, password);
       if (res?.user) {
         await createUserDocument(res.user, name);
-        setEmail("");
-        setName("");
-        setPassword("");
-        await router.push("/initialsurvey/begin");
+        setEmail('');
+        setName('');
+        setPassword('');
+        router.push('/initialsurvey/begin');
       }
     } catch (e) {
       console.error(e);
@@ -128,7 +128,7 @@ const SignUpForm: React.FC = () => {
           required
           className="flex w-full justify-center rounded border-2 p-1"
         />
-        {/* {emailError && <p className="text-red-500">{emailError}</p>} */}
+        {emailError && <p className="text-red-500">{emailError}</p>}
         <label htmlFor="name" className="text-start">
           Name
         </label>

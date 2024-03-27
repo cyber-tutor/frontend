@@ -2,56 +2,35 @@ import Head from "next/head";
 import { BaseLayout } from "./layouts/baseLayout";
 import { auth } from "./firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { db } from "./firebase/config";
-import { doc, getDoc, collection } from "firebase/firestore";
+import queryUserDocument from "./firebase/firebase_functions";
+import { DocumentData } from "firebase/firestore";
 import { useRouter } from "next/router";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
-interface UserDocumentData {
-  initialSurveyComplete: boolean;
-}
-
-async function queryUserDocument(
-  uid: string,
-): Promise<UserDocumentData | null> {
-  const docRef = doc(collection(db, "users"), uid);
-  const docSnap = await getDoc(docRef);
-
-  if (!docSnap.exists()) {
-    console.log("No such document!");
-    return null;
-  } else {
-    console.log("Document data:", docSnap.data());
-    return docSnap.data() as UserDocumentData;
-  }
-}
-
 export default function Home() {
-  const [user] = useAuthState(auth);
-  const [userDocument, setUserDocument] = useState<UserDocumentData | null>(
-    null,
-  );
+  const [user, loading, error] = useAuthState(auth);
+  const [userDocument, setUserDocument] = useState<DocumentData | null>(null);
   const router = useRouter();
 
   const uid = user ? user.uid : null;
 
   console.log("User Id:", uid);
 
-  // If user is logged in, query and retrieve the reference to their document in the users collection in firestore
+  // If user is logged in, query and retreive the reference to their document in the users collection in firestore
   if (uid) {
-    void queryUserDocument(uid).then((userDocument) => {
-      console.log("User Document:", userDocument);
+    queryUserDocument(uid).then((userDocument) => {
+      console.log("User Document:", userDocument?.data());
 
       setUserDocument(userDocument);
     });
   }
 
   // Check if user completed initial survey, if not then redirect to initial survey
-  if (userDocument && !userDocument.initialSurveyComplete) {
-    void router.push("/initialsurvey/begin");
+  if (userDocument && !userDocument.data().initialSurveyComplete) {
+    router.push("/initialsurvey/begin");
   }
 
   return (
