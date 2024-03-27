@@ -22,8 +22,8 @@ type Chapter = {
   chapterType: string;
   controlGroupContent: string;
   experimentalGroupContent: string;
-  controlGroupImageURLs: string[];
-  experimentalGroupImageURLs: string[];
+  controlGroupImageURL: string;
+  experimentalGroupImageURL: string;
   order: number;
 };
 
@@ -137,10 +137,10 @@ export default function ChapterPage() {
             {userDocument?.data().id}
 
             {chapter.controlGroupContent}
-            {chapter.controlGroupImageURLs[0] && (
+            {chapter.controlGroupImageURL && (
               <img
                 className="mx-auto mt-5 w-1/3 shadow-lg"
-                src={chapter.controlGroupImageURLs[0]}
+                src={chapter.controlGroupImageURL}
                 alt={
                   chapter.chapterTitle
                     ? String(chapter.chapterTitle)
