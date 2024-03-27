@@ -1,10 +1,10 @@
 import Head from "next/head";
-import { BaseLayout } from "./layouts/baseLayout";
-import { auth } from "./firebase/config";
+import { BaseLayout } from "../components/layouts/baseLayout";
+import { auth } from "../components/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import queryUserDocument from "./firebase/firebase_functions";
+import queryUserDocument from "../components/firebase/firebase_functions";
 import { DocumentData } from "firebase/firestore";
 import { useRouter } from "next/router";
 

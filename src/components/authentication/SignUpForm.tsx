@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
-import { auth } from '../../pages/firebase/config';
+import { auth } from '../firebase/config';
 import { useRouter } from 'next/router';
 import { Password } from 'primereact/password';
 import { Divider } from 'primereact/divider';
@@ -11,7 +11,7 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 import { FcGoogle } from 'react-icons/fc';
-import { createUserDocument } from '~/pages/firebase/firebase_functions';
+import { createUserDocument } from '~/components/firebase/firebase_functions';
 
 const SignUpForm: React.FC = () => {
   const [email, setEmail] = useState<string>('');

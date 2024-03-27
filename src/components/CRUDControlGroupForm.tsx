@@ -7,7 +7,7 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
-import { db } from "../pages/firebase/config";
+import { db } from "./firebase/config";
 import InputField from "./InputField";
 
 interface Chapter {

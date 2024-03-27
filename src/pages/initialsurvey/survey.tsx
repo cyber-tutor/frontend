@@ -8,12 +8,12 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { db } from "../firebase/config";
+import { db } from "../../components/firebase/config";
 import "survey-react/survey.css";
 import { StylesManager } from "survey-react";
 import { useRouter } from "next/router";
 import { getAuth } from "firebase/auth";
-import queryUserDocument from "../firebase/firebase_functions";
+import queryUserDocument from "../../components/firebase/firebase_functions";
 
 StylesManager.applyTheme("default");
 

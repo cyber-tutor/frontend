@@ -1,4 +1,4 @@
-import { BaseLayout } from "../layouts/baseLayout";
+import { BaseLayout } from "../../components/layouts/baseLayout";
 import SignUpForm from "../../components/authentication/SignUpForm";
 
 const SignUpPage = () => {

@@ -1,4 +1,4 @@
-import { BaseLayout } from "../../../layouts/baseLayout";
+import { BaseLayout } from "../../../../components/layouts/baseLayout";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { Survey } from "survey-react-ui";
@@ -6,9 +6,9 @@ import { Model } from "survey-core";
 import "survey-core/defaultV2.min.css";
 import ReactPlayer from "react-player";
 import getVideoDuration from "~/components/youtube_data";
-import { db, auth } from "~/pages/firebase/config";
+import { db, auth } from "~/components/firebase/config";
 import { DocumentData, doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
-import { findUserDocId, handleVideoEnd, isWatched, getNextChapterId, increaseProficiency} from "~/pages/firebase/firebase_functions";
+import { findUserDocId, handleVideoEnd, isWatched, getNextChapterId, increaseProficiency} from "~/components/firebase/firebase_functions";
 import TimerComponent from "~/components/Timer";
 import DynamicSurvey from "../../../../components/DynamicSurvey";
 import { progress } from "framer-motion";

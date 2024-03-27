@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { db } from "../../firebase/config";
+import { db } from "../../../components/firebase/config";
 import { getDocs, collection, onSnapshot } from "firebase/firestore";
 import Head from "next/head";
-import { BaseLayout } from "../../layouts/baseLayout";
+import { BaseLayout } from "../../../components/layouts/baseLayout";
 import ControlGroupForm from "../../../components/CRUDControlGroupForm";
 
 export default function CRUD_ControlGroupContent() {

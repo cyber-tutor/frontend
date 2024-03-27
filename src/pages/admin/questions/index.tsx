@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { db } from "../../firebase/config";
+import { db } from "../../../components/firebase/config";
 import {
   collection,
   addDoc,
@@ -9,7 +9,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import Head from "next/head";
-import { BaseLayout } from "../../layouts/baseLayout";
+import { BaseLayout } from "../../../components/layouts/baseLayout";
 import QuestionForm, { Question } from "../../../components/QuestionForm";
 import StickyHeadTable from "../../../components/StickyHeadTable";
 

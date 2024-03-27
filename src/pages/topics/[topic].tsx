@@ -1,7 +1,7 @@
-import { BaseLayout } from "../layouts/baseLayout";
+import { BaseLayout } from "../../components/layouts/baseLayout";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { db } from "../firebase/config";
+import { db } from "../../components/firebase/config";
 import {
   doc,
   getDoc,
@@ -13,9 +13,9 @@ import {
 } from "firebase/firestore";
 import Link from "next/link";
 import CircularWithValueLabel from "~/components/ProgressCircle";
-import { auth } from "../firebase/config";
+import { auth } from "../../components/firebase/config";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import queryUserDocument from "../firebase/firebase_functions";
+import queryUserDocument from "../../components/firebase/firebase_functions";
 
 type Topic = {
   topicId: string;

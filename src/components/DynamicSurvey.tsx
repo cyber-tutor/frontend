@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Survey, Model } from "survey-react";
 import { collection, query, where, getDocs, doc, updateDoc, getDoc } from "firebase/firestore";
-import { db } from "../pages/firebase/config";
-import { findUserDocId, increaseProficiency } from "~/pages/firebase/firebase_functions";
+import { db } from "./firebase/config";
+import { findUserDocId, increaseProficiency } from "~/components/firebase/firebase_functions";
 
 interface Question {
   question: string;

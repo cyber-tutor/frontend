@@ -3,7 +3,7 @@ import {
   useAuthState,
   useSignInWithEmailAndPassword,
 } from "react-firebase-hooks/auth";
-import { auth, db } from "../../pages/firebase/config";
+import { auth, db } from "../firebase/config";
 import { useRouter } from "next/router";
 import {
   signInWithPopup,
@@ -12,7 +12,7 @@ import {
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { collection, addDoc } from "firebase/firestore";
-import { createUserDocument } from "~/pages/firebase/firebase_functions";
+import { createUserDocument } from "~/components/firebase/firebase_functions";
 
 
 const SignInForm = () => {
