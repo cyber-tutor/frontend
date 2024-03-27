@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Survey, Model } from "survey-react";
 import { collection, query, where, getDocs, doc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "./firebase/config";
-import { findUserDocId, increaseProficiency } from "~/components/firebase/firebase_functions";
+import { findUserDocId, increaseLevel } from "~/components/firebase/firebase_functions";
 
 interface Question {
   question: string;
@@ -106,7 +106,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
     if (progressDocSnapshot.exists()) {
       if (passed && !progressDocSnapshot.data().complete) {
         updateData.complete = true;
-        await increaseProficiency(userDocId, progressDocSnapshot.data().topicId);
+        await increaseLevel(userDocId, progressDocSnapshot.data().topicId);
       }
     }
   
