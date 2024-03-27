@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { db } from "../../firebase/config";
 import {
   collection,
@@ -8,13 +8,12 @@ import {
   deleteDoc,
   onSnapshot,
 } from "firebase/firestore";
+import Head from "next/head";
 import { BaseLayout } from "../../layouts/baseLayout";
-import QuestionForm from "../../../components/QuestionForm";
-import type { Question } from "../../../components/QuestionForm";
+import QuestionForm, { Question } from "../../../components/QuestionForm";
 import StickyHeadTable from "../../../components/StickyHeadTable";
 
 interface TableRowData {
-  [key: string]: string | JSX.Element | undefined;
   id?: string;
   question: string;
   choices: string;
@@ -51,7 +50,7 @@ export default function CRUD_Questions() {
   };
 
   const editQuestion = async (id: string, updatedQuestion: Question) => {
-    const { ...questionData } = updatedQuestion;
+    const { id: _, ...questionData } = updatedQuestion;
     const questionDoc = doc(db, "questions", id);
     await updateDoc(questionDoc, questionData);
   };
@@ -62,7 +61,7 @@ export default function CRUD_Questions() {
   };
 
   const startEditing = (question: Question) => {
-    setEditingId(question.id ?? null);
+    setEditingId(question.id || null);
     setEditedQuestion(question);
   };
 
@@ -163,7 +162,7 @@ export default function CRUD_Questions() {
         <div className="sticky top-0 z-10 bg-white">
           {editingId && (
             <QuestionForm
-              question={editedQuestion ?? undefined}
+              question={editedQuestion || undefined}
               onSubmit={handleEditSubmit}
             />
           )}

@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Survey, Model } from "survey-react";
-import { collection, query, getDocs } from "firebase/firestore";
+import {
+  collection,
+  query,
+  getDocs,
+  doc,
+  setDoc,
+  updateDoc,
+  addDoc,
+} from "firebase/firestore";
 import { db } from "../firebase/config";
 import "survey-react/survey.css";
 import { StylesManager } from "survey-react";
 import { useRouter } from "next/router";
 import { getAuth } from "firebase/auth";
-import { initialSurveyComplete } from "../firebase/firebase_functions";
+import queryUserDocument, { findUserDocId, initialSurveyComplete } from "../firebase/firebase_functions";
 
 StylesManager.applyTheme("default");
 
@@ -24,7 +32,7 @@ const InitialSurvey = () => {
   const router = useRouter();
   const [surveyJson, setSurveyJson] = useState<Model | null>(null);
   const [isComplete, setIsComplete] = useState<boolean>(false);
-  const [result, setResult] = useState<unknown>(null);
+  const [result, setResult] = useState<any | null>(null);
   const [incorrectCount, setIncorrectCount] = useState<string>("0/0");
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [userLevel, setUserLevel] = useState<string>("");
@@ -58,7 +66,7 @@ const InitialSurvey = () => {
               difficulty: q.data.difficulty,
               ...(q.data.questionType === "comment" && { maxLength: 400 }),
               ...(q.data.questionType === "radiogroup" && {
-                choices: Object.entries(q.data.choices ?? {}).map(
+                choices: Object.entries(q.data.choices || {}).map(
                   ([key, value]) => ({
                     value: key,
                     text: value,
@@ -71,7 +79,7 @@ const InitialSurvey = () => {
       };
     };
 
-    void fetchQuestions().then((questions) => {
+    fetchQuestions().then((questions) => {
       const formattedQuestions = formatQuestionsForSurveyJS(questions);
       setSurveyJson(new Model(formattedQuestions));
     });
@@ -79,7 +87,7 @@ const InitialSurvey = () => {
 
   useEffect(() => {
     if (surveyJson) {
-      surveyJson.onComplete.add((surveyResult: { data: unknown }) => {
+      surveyJson.onComplete.add((surveyResult: any) => {
         setIsComplete(true);
         setResult(surveyResult.data);
       });
@@ -87,30 +95,16 @@ const InitialSurvey = () => {
   }, [surveyJson]);
 
   useEffect(() => {
-    const handleSurveyCompletion = async () => {
-      if (isComplete && surveyJson) {
-        const auth = getAuth();
-        const user = auth.currentUser;
+    if (isComplete && surveyJson) {
+      const auth = getAuth();
+      const user = auth.currentUser;
 
-        if (user) {
-          const userId = user.uid;
-          try {
-            // Await the promise returned by initialSurveyComplete
-            await initialSurveyComplete(
-              userId,
-              result as Record<string, string | number | boolean>,
-            );
-            // Await the promise returned by router.push
-            await router.push("/");
-          } catch (error) {
-            // Handle any errors here
-            console.error(error);
-          }
-        }
+      if (user) {
+        const userId = user.uid;
+        initialSurveyComplete(userId, result);
+        router.push("/");
       }
-    };
-
-    void handleSurveyCompletion();
+    }
   }, [router, isComplete, surveyJson, result]);
 
   return (
@@ -126,5 +120,6 @@ const InitialSurvey = () => {
     </div>
   );
 };
+
 
 export default InitialSurvey;

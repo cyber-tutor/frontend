@@ -16,11 +16,8 @@ interface Column {
   format?: (value: number) => string;
 }
 
-type Row = Record<string, unknown>;
-
-interface Props {
-  columns: Column[];
-  rows: Row[];
+interface Row {
+  [key: string]: any;
 }
 
 interface Props {
@@ -37,7 +34,7 @@ export default function StickyHeadTable({ columns, rows }: Props) {
   };
 
   const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
@@ -66,7 +63,7 @@ export default function StickyHeadTable({ columns, rows }: Props) {
               .map((row, rowIndex) => (
                 <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
                   {columns.map((column) => {
-                    const value = row[column.id] as number;
+                    const value = row[column.id];
                     return (
                       <TableCell key={column.id} align={column.align}>
                         {column.format && typeof value === "number"

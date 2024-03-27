@@ -1,27 +1,18 @@
-import { getAuth } from "firebase/auth";
-import { doc, getDocs, collection, writeBatch } from "firebase/firestore";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import * as Survey from "survey-react";
-import "survey-react/survey.css";
-import { db } from "../firebase/config";
+import { getAuth } from 'firebase/auth';
+import { doc, getDocs, collection, getFirestore, writeBatch } from 'firebase/firestore';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import * as Survey from 'survey-react';
+import 'survey-react/survey.css';
+import { db } from '../firebase/config';
 
 Survey.StylesManager.applyTheme("default");
 
-interface QuestionData {
-  question: string;
-  choices: Record<string, string>;
-}
-
-type SurveyResultData = Record<string, string | number | boolean>;
-
-type Result = SurveyResultData;
-
 export default function SurveyComponent(): JSX.Element {
   const router = useRouter();
-  const [result, setResult] = useState<Result | null>(null);
-  const [surveyJson, setSurveyJson] = useState<Survey.Model | null>(null);
   const [isComplete, setIsComplete] = useState<boolean>(false);
+  const [result, setResult] = useState<any>(null);
+  const [surveyJson, setSurveyJson] = useState<Survey.Model | null>(null);
 
   useEffect(() => {
     const fetchSurveyJson = async () => {
@@ -29,7 +20,7 @@ export default function SurveyComponent(): JSX.Element {
       const surveyDocsSnapshot = await getDocs(surveyCollectionRef);
 
       const surveyQuestions = surveyDocsSnapshot.docs.map((docSnapshot) => {
-        const data = docSnapshot.data() as QuestionData;
+        const data = docSnapshot.data();
         const { question, choices } = data;
         return {
           type: "radiogroup",
@@ -38,27 +29,28 @@ export default function SurveyComponent(): JSX.Element {
           isRequired: true,
           choices: Object.keys(choices).map((key) => ({
             value: key,
-            text: choices[key],
-          })),
+            text: choices[key]
+          }))
         };
       });
 
       const surveyJson = {
         title: "Demographic Survey",
         showProgressBar: "bottom",
-        pages: [{ elements: surveyQuestions }],
+        pages: [{ elements: surveyQuestions }]
       };
 
       setSurveyJson(new Survey.Model(surveyJson));
     };
 
-    void fetchSurveyJson();
+    fetchSurveyJson();
   }, []);
 
   const onComplete = async (surveyResult: Survey.Model) => {
     setIsComplete(true);
-    const surveyData = surveyResult.data as SurveyResultData;
+    const surveyData = surveyResult.data;
     setResult(surveyData);
+
 
     const auth = getAuth();
     const user = auth.currentUser;
@@ -67,15 +59,19 @@ export default function SurveyComponent(): JSX.Element {
       const batch = writeBatch(db);
 
       Object.entries(surveyData).forEach(([questionId, answer]) => {
-        const userResponseDocRef = doc(
-          db,
-          "demographicSurveyQuestions",
-          questionId,
-          "users",
-          user.uid,
-        );
-        batch.set(userResponseDocRef, { answer: answer as string });
+        const userResponseDocRef = doc(db, "demographicSurveyQuestions", questionId, "users", user.uid);
+        batch.set(userResponseDocRef, { answer });
       });
+
+      try {
+        await batch.commit();
+        console.log("Survey responses successfully written to Firestore.");
+        router.push('/thank-you'); 
+      } catch (error) {
+        console.error("Error writing survey responses: ", error);
+      }
+    } else {
+      console.error("User is not authenticated.");
     }
   };
 

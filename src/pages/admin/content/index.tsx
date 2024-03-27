@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebase/config";
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, onSnapshot } from "firebase/firestore";
 import Head from "next/head";
 import { BaseLayout } from "../../layouts/baseLayout";
 import ControlGroupForm from "../../../components/CRUDControlGroupForm";
@@ -23,7 +23,7 @@ export default function CRUD_ControlGroupContent() {
         console.error("Error fetching topic ID:", error);
       }
     };
-    void fetchTopicId();
+    fetchTopicId();
   }, []);
 
   return (

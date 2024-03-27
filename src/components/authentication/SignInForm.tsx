@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { auth } from "../../pages/firebase/config";
+import {
+  useAuthState,
+  useSignInWithEmailAndPassword,
+} from "react-firebase-hooks/auth";
+import { auth, db } from "../../pages/firebase/config";
 import { useRouter } from "next/router";
 import {
   signInWithPopup,
@@ -8,16 +11,23 @@ import {
   getAdditionalUserInfo,
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
+import { collection, addDoc } from "firebase/firestore";
 import { createUserDocument } from "~/pages/firebase/firebase_functions";
+
 
 const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  // Initialize signInError state for storing sign-in error messages
   const [signInError, setSignInError] = useState("");
-  const [signInWithEmailAndPassword, , , error] =
+  // useAuthState to observe the user's sign-in state
+  const [user] = useAuthState(auth);
+  // Destructure and use the signInWithEmailAndPassword hook from react-firebase-hooks
+  const [signInWithEmailAndPassword, userCredential, , error] =
     useSignInWithEmailAndPassword(auth);
   const router = useRouter();
 
+  // Function to clear input fields
   const emptyTextBoxes = () => {
     setEmail("");
     setPassword("");
@@ -39,6 +49,7 @@ const SignInForm = () => {
 
   const provider = new GoogleAuthProvider();
 
+  // Configure Google provider and handle Google sign-in
   const handleGoogleSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
@@ -46,17 +57,18 @@ const SignInForm = () => {
       if (additionalUserInfo?.isNewUser) {
         console.log("User is signing up for the first time.");
         const user = result.user;
-
-        await createUserDocument(user, user.displayName ?? "");
+  
+        await createUserDocument(user, user.displayName || '');
       } else {
         console.log("User is an existing user.");
       }
-      await router.push("/");
+      router.push("/");
     } catch (e) {
       console.error(e);
     }
   };
 
+  // Effect hook to handle authentication error from firebase
   useEffect(() => {
     if (error) {
       setSignInError(error.message);
@@ -65,6 +77,7 @@ const SignInForm = () => {
 
   return (
     <form onSubmit={handleSignIn} className="space-y-6">
+      {/* Display sign-in error message */}
       {signInError && (
         <div className="mb-4 text-center text-red-500">{signInError}</div>
       )}

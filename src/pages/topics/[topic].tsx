@@ -9,6 +9,7 @@ import {
   getDocs,
   orderBy,
   query,
+  DocumentData,
 } from "firebase/firestore";
 import Link from "next/link";
 import CircularWithValueLabel from "~/components/ProgressCircle";
@@ -36,27 +37,28 @@ type Chapter = {
   proficiency: number;
 };
 
-interface ChapterData {
-  chapterType: string;
-  chapterTitle: string;
-  chapterDescription: string;
-  controlGroupContent: string;
-  experimentalGroupContent: string;
-  controlGroupImageURL: string;
-  experimentalGroupImageURL: string;
-  order: number;
-  proficiency: number;
-}
-
-interface TopicData {
-  topicTitle: string;
-  topicDescription: string;
-}
+// Utility function for updating chapter completion status
+const updateChapterCompletion = (
+  chapterId: string,
+  complete: boolean,
+  setChapterCompletion: React.Dispatch<
+    React.SetStateAction<Record<string, boolean>>
+  >,
+): void => {
+  setChapterCompletion((prev: Record<string, boolean>) => {
+    const updated: Record<string, boolean> = { ...prev, [chapterId]: complete };
+    if (typeof window !== "undefined") {
+      localStorage.setItem("chapterCompletion", JSON.stringify(updated));
+    }
+    return updated;
+  });
+};
 
 export default function TopicPage() {
   const [topic, setTopic] = useState<Topic | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userDocument, setUserDocument] = useState<DocumentData | null>(null);
   const [userProficiency, setUserProficiency] = useState<number | null>(null);
   const [chapterCompletion, setChapterCompletion] = useState<
     Record<string, boolean>
@@ -70,7 +72,7 @@ export default function TopicPage() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        void router.push("/users/sign-in");
+        router.push("/users/sign-in");
       }
     });
 
@@ -86,6 +88,7 @@ export default function TopicPage() {
 
       if (uid) {
         const userDoc = await queryUserDocument(uid);
+        setUserDocument(userDoc);
 
         // Fetch user proficiency for the topic
         const proficiencyRef = doc(
@@ -95,7 +98,7 @@ export default function TopicPage() {
         );
         const proficiencySnapshot = await getDoc(proficiencyRef);
         if (proficiencySnapshot.exists()) {
-          const proficiency = proficiencySnapshot.data().proficiency as number; // Add type assertion
+          const proficiency = proficiencySnapshot.data().proficiency;
           setUserProficiency(proficiency);
           if (typeof window !== "undefined") {
             localStorage.setItem("userProficiency", proficiency.toString()); // Store proficiency in local storage
@@ -110,7 +113,7 @@ export default function TopicPage() {
         const progressSnapshot = await getDocs(progressCollectionRef);
         const completionStatus: Record<string, boolean> = {};
         progressSnapshot.forEach((doc) => {
-          completionStatus[doc.id] = doc.data().complete as boolean; // Add type assertion
+          completionStatus[doc.id] = doc.data().complete;
         });
         setChapterCompletion(completionStatus);
         if (typeof window !== "undefined") {
@@ -124,8 +127,9 @@ export default function TopicPage() {
       setUserDataLoaded(true); // Set user data loaded to true once everything is fetched
     };
 
-    void fetchUserData(); // Use void to ignore the promise
+    fetchUserData();
   }, [topicId]);
+
   // Fetch topic data
   useEffect(() => {
     const fetchTopic = async () => {
@@ -138,7 +142,7 @@ export default function TopicPage() {
         const topicSnapshot = await getDoc(topicRef);
 
         if (topicSnapshot.exists()) {
-          const topicData = topicSnapshot.data() as TopicData;
+          const topicData = topicSnapshot.data();
 
           const chaptersCollectionRef = collection(
             db,
@@ -149,10 +153,18 @@ export default function TopicPage() {
           const chaptersSnapshot = await getDocs(chaptersQuery);
 
           const chapters = chaptersSnapshot.docs.map((doc) => {
-            const chapterData = doc.data() as ChapterData;
+            const chapterData = doc.data();
             return {
               chapterId: doc.id,
-              ...chapterData,
+              chapterType: chapterData.chapterType,
+              chapterTitle: chapterData.chapterTitle,
+              chapterDescription: chapterData.chapterDescription,
+              controlGroupContent: chapterData.controlGroupContent,
+              experimentalGroupContent: chapterData.experimentalGroupContent,
+              controlGroupImageURL: chapterData.controlGroupImageURL,
+              experimentalGroupImageURL: chapterData.experimentalGroupImageURL,
+              order: chapterData.order,
+              proficiency: chapterData.proficiency,
             };
           });
 
@@ -174,7 +186,7 @@ export default function TopicPage() {
       }
     };
 
-    void fetchTopic();
+    fetchTopic();
   }, [topicId]);
 
   // Load user proficiency and chapter completion from local storage when the component mounts
@@ -187,9 +199,7 @@ export default function TopicPage() {
 
       const storedCompletion = localStorage.getItem("chapterCompletion");
       if (storedCompletion) {
-        setChapterCompletion(
-          JSON.parse(storedCompletion) as Record<string, boolean>,
-        );
+        setChapterCompletion(JSON.parse(storedCompletion));
       }
     }
   }, []);
