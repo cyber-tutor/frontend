@@ -245,7 +245,23 @@ const InitialSurvey = () => {
           updateProficiencyLevels(userDocRef?.ref.id, proficiencyArray, topics);
         });
       }).catch((error) => {
+
+        // If there is an error, set all proficiencies to beginner
         console.error('Error determining proficiency:', error);
+        const proficiencyArray = ['beginner', 'beginner', 'beginner', 'beginner', 'beginner'];
+        const user = getAuth().currentUser;
+
+        const topics = [
+          'online_privacy',
+          'password_security',
+          'phishing',
+          'software_updates',
+          'two_factor_authentication',
+        ];
+
+        queryUserDocument(user?.uid ? user.uid : '').then((userDocRef) => {
+          updateProficiencyLevels(userDocRef?.ref.id, proficiencyArray, topics);
+        });
       });
     }
   }, [isComplete, result, surveyJson]);
