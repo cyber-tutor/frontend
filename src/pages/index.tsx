@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import queryUserDocument from "../components/firebase/firebase_functions";
 import { DocumentData } from "firebase/firestore";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
@@ -40,49 +41,41 @@ export default function Home() {
         <meta name="description" content="Cyber Tutor" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       {user ? (
-        <BaseLayout showSidebar={true}>
+        <BaseLayout>
           <p>Select a topic from the menu.</p>
         </BaseLayout>
       ) : (
-        <BaseLayout showSidebar={false}>
-          <div className="flex min-h-screen flex-col items-center text-black">
-            <div className="w-full max-w-4xl rounded-xl bg-white bg-opacity-90 px-4 py-8 shadow-2xl">
-              {/* Responsive container */}
-              {typeof window !== "undefined" && (
-                <ReactPlayer
-                  url="https://www.youtube.com/watch?v=8BoovULyJeg&list=PLVEnBuMmQvXukhIgRrTIwOxWBoLwYYL0A"
-                  playing={false}
-                  controls={true}
-                  width="100%"
-                  height="100%"
-                  className="aspect-video rounded-lg shadow-xl"
-                />
-              )}
-            </div>
-            <p className="mt-8 text-center text-xl font-semibold text-black md:text-2xl lg:text-3xl">
-              Welcome to CyberTutor! Dive into the world of cyber security and
-              fortify your digital life today. Explore our curated video series
-              to become a savvy internet user and protect yourself against
-              online threats.
-            </p>
-            <div className="mt-8 flex space-x-4">
-              <button
-                className="rounded-lg bg-blue-700 px-6 py-3 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-800"
-                onClick={() => router.push("/users/sign-up")}
-              >
-                Register
-              </button>
-              <button
-                className="rounded-lg bg-green-700 px-6 py-3 font-bold text-white transition duration-150 ease-in-out hover:bg-green-800"
-                onClick={() => router.push("/users/sign-in")}
-              >
-                Login
-              </button>
-            </div>
+        <div className="flex min-h-screen flex-col items-center justify-center bg-white text-gray-900">
+          {typeof window !== "undefined" && (
+            <ReactPlayer
+              url="https://www.youtube.com/watch?v=8BoovULyJeg&list=PLVEnBuMmQvXukhIgRrTIwOxWBoLwYYL0A"
+              playing={false}
+              controls={true}
+              className="max-w-full rounded-lg shadow-xl"
+            />
+          )}
+          <p className="mt-8 text-center text-xl font-semibold md:text-2xl">
+            Welcome to CyberTutor! Dive into the world of cyber security and
+            fortify your digital life today. Explore our curated video series to
+            become a savvy internet user and protect yourself against online
+            threats.
+          </p>
+          <div className="mt-8 flex space-x-4">
+            <button
+              className="rounded-lg bg-blue-700 px-6 py-3 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-800"
+              onClick={() => router.push("/users/sign-up")}
+            >
+              Register
+            </button>
+            <button
+              className="rounded-lg bg-green-700 px-6 py-3 font-bold text-white transition duration-150 ease-in-out hover:bg-green-800"
+              onClick={() => router.push("/users/sign-in")}
+            >
+              Login
+            </button>
           </div>
-        </BaseLayout>
+        </div>
       )}
     </>
   );
