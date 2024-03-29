@@ -55,7 +55,7 @@ export default function Home() {
               className="max-w-full rounded-lg shadow-xl"
             />
           )}
-          <p className="mt-8 text-center text-xl font-semibold md:text-2xl">
+          <p className="mx-auto mt-8 text-center text-xl font-semibold md:w-1/2 md:text-2xl lg:w-1/2">
             Welcome to CyberTutor! Dive into the world of cyber security and
             fortify your digital life today. Explore our curated video series to
             become a savvy internet user and protect yourself against online
