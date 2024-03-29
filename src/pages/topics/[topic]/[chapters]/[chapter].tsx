@@ -12,6 +12,7 @@ import { findUserDocId, handleVideoEnd, isWatched, getNextChapterId, increaseLev
 import TimerComponent from "~/components/Timer";
 import DynamicSurvey from "../../../../components/DynamicSurvey";
 import { progress } from "framer-motion";
+import queryUserDocument from "~/components/firebase/firebase_functions";
 
 
 
@@ -50,9 +51,13 @@ export default function ChapterPage() {
   const [isVideoWatched, setIsVideoWatched] = useState(false);
   const [secondsElapsed, setSecondsElapsed] = useState(0);
   const [progressComplete, setProgressComplete] = useState(false);
+  const [userGroup, setUserGroup] = useState<string | null>(null);
+  
 
   const router = useRouter();
   const { topic: topicId, chapter: chapterId } = router.query;
+
+  
 
   useEffect(() => {
     const fetchChapter = async () => {
@@ -102,6 +107,31 @@ export default function ChapterPage() {
     }
   }, [secondsElapsed]);
 
+  const user = auth.currentUser;
+  const uid = user ? user.uid : null;
+  console.log("User:", uid);
+
+  useEffect(() => {
+    const fetchUserGroup = async () => {
+      if (!uid) return;
+
+      try {
+        const userDocument = await queryUserDocument(uid);
+
+        if (userDocument && userDocument.exists()) {
+          setUserGroup(userDocument.data().group);
+        } else {
+          console.error("No such user!");
+        }
+      } catch (err) {
+        console.error("Error fetching user:", err);
+      }
+    };
+
+    fetchUserGroup();
+    console.log("User group:", userGroup);
+  }, [uid]);
+
   if (loading)
     return (
       <BaseLayout>
@@ -121,10 +151,6 @@ export default function ChapterPage() {
       </BaseLayout>
     );
 
-  const user = auth.currentUser;
-  const uid = user ? user.uid : null;
-  console.log("User:", uid);
-
   
 
   return (
@@ -132,50 +158,49 @@ export default function ChapterPage() {
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
       <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
       <div className="mx-auto w-full overflow-y-auto">
-        {chapter.chapterType === "text" && (
-          <div className="m-4 rounded border p-4 shadow"> 
-            {userDocument?.data().id}
+      {chapter.chapterType === "text" && (
+  <div className="m-4 rounded border p-4 shadow"> 
+    {userDocument?.data().id}
 
-            {chapter.controlGroupContent}
-            {chapter.controlGroupImageURL && (
-              <img
-                className="mx-auto mt-5 w-1/3 shadow-lg"
-                src={chapter.controlGroupImageURL}
-                alt={
-                  chapter.chapterTitle
-                    ? String(chapter.chapterTitle)
-                    : undefined
-                }
-                title={
-                  chapter.chapterTitle
-                    ? String(chapter.chapterTitle)
-                    : undefined
-                }
-              />
-            )}
-          </div>
-        )}
-        {chapter.chapterType === "video" && (
-          <div className="flex aspect-[16/9] flex-grow">
-            <ReactPlayer
-              url={chapter.controlGroupContent}
-              onProgress={(progress) => {
-                setPlayed(progress.playedSeconds);
-              }}
-              className="h-full w-full"
-              allowFullScreen
-              controls={false}
-              onEnded={() => {
-                const playedMinutes = Math.floor(played / 60);
-                console.log("video ended");
-                handleVideoEnd(playedMinutes, userDocument?.id);
-                setIsVideoWatched(true);
-              }}
-              seekTo={20}
-            />
-          </div>
-          
-        )}
+    {userGroup === "control" ? chapter.controlGroupContent : chapter.experimentalGroupContent}
+    {(userGroup === "control" ? chapter.controlGroupImageURL : chapter.experimentalGroupImageURL) && (
+      <img
+        className="mx-auto mt-5 w-1/3 shadow-lg"
+        src={userGroup === "control" ? chapter.controlGroupImageURL : chapter.experimentalGroupImageURL}
+        alt={
+          chapter.chapterTitle
+            ? String(chapter.chapterTitle)
+            : undefined
+        }
+        title={
+          chapter.chapterTitle
+            ? String(chapter.chapterTitle)
+            : undefined
+        }
+      />
+    )}
+  </div>
+)}
+{chapter.chapterType === "video" && (
+  <div className="flex aspect-[16/9] flex-grow">
+    <ReactPlayer
+      url={userGroup === "control" ? chapter.controlGroupContent : chapter.experimentalGroupContent}
+      onProgress={(progress) => {
+        setPlayed(progress.playedSeconds);
+      }}
+      className="h-full w-full"
+      allowFullScreen
+      controls={false}
+      onEnded={() => {
+        const playedMinutes = Math.floor(played / 60);
+        console.log("video ended");
+        handleVideoEnd(playedMinutes, userDocument?.id);
+        setIsVideoWatched(true);
+      }}
+      seekTo={20}
+    />
+  </div>
+)}
 
 {progressComplete && chapter.chapterType !== "assessment" && (
   <button
