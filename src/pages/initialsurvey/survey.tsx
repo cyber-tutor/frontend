@@ -25,9 +25,9 @@ interface Question {
   choices?: Record<string, string>;
   difficulty?: string;
   explanation?: string;
-  description?: string;
+  description: string;
   visibilityCondition?: string;
-  topic?: string;
+  topic: string;
 }
 
 const InitialSurvey = () => {
@@ -312,3 +312,5 @@ const InitialSurvey = () => {
     </div>
   );
 };
+
+export default InitialSurvey;
