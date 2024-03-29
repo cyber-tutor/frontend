@@ -90,18 +90,18 @@ export default function TopicPage() {
         const userDoc = await queryUserDocument(uid);
         setUserDocument(userDoc);
 
-        // Fetch user proficiency for the topic
-        const proficiencyRef = doc(
+        // Fetch user level for the topic
+        const levelRef = doc(
           db,
-          `users/${userDoc?.id}/proficiency`,
+          `users/${userDoc?.id}/levels`,
           topicId?.toString() ?? "",
         );
-        const proficiencySnapshot = await getDoc(proficiencyRef);
-        if (proficiencySnapshot.exists()) {
-          const proficiency = proficiencySnapshot.data().proficiency;
-          setUserProficiency(proficiency);
+        const levelSnapshot = await getDoc(levelRef);
+        if (levelSnapshot.exists()) {
+          const level = levelSnapshot.data().level;
+          setUserProficiency(level); // Assuming you want to use the level as the proficiency
           if (typeof window !== "undefined") {
-            localStorage.setItem("userProficiency", proficiency.toString()); // Store proficiency in local storage
+            localStorage.setItem("userLevel", level.toString()); // Store level in local storage
           }
         }
 
