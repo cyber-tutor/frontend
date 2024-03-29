@@ -23,7 +23,7 @@ export default function Home() {
   // If user is logged in, query and retreive the reference to their document in the users collection in firestore
   if (uid) {
     queryUserDocument(uid).then((userDocument) => {
-      console.log("User Document:", userDocument?.data());
+
 
       setUserDocument(userDocument);
     });

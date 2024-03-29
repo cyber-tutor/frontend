@@ -10,7 +10,7 @@ const determineProficiency = async (responses: string): Promise<string> => {
     Based on the provided responses from the user, determine the user's proficiency level. 
     Please return an array with values for each topic. There are 5 topics: 
     Two-Factor Authentication, Phishing, Password Security, Software Updates, and Online Privacy. 
-    Each value should be enclosed in square brackets and separated by commas. 
+    Each value should be separated by commas. 
     The values in the array should be ordered according to the order of the topics. 
 
     Look at the description attribute of the question to determine the proficiency.
@@ -22,7 +22,6 @@ const determineProficiency = async (responses: string): Promise<string> => {
 
 
     If the question category is knowledge, keep track of whether the user provided an expert response or intermediate or beginner response and point tally them, then assign the value.
-    If the user did not answer the questions, the value should be beginner.
     Choose only one of the following options for each topic: beginner, intermediate, or expert. 
     Responses: ${responses}
     `;
