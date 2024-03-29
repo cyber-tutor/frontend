@@ -66,7 +66,7 @@ const InitialSurvey = () => {
               questionCategory: q.data.questionCategory,
               name: q.id,
               title: q.data.question,
-              isRequired: true,
+              isRequired: false,
               ...(q.data.questionType === 'comment' && { maxLength: 400 }),
               ...(q.data.questionType === 'radiogroup' && {
                 choices: Object.entries(q.data.choices || {})
@@ -169,7 +169,6 @@ const InitialSurvey = () => {
     if (isComplete && result && surveyJson) {
       const responseString = surveyJson.pages.flatMap((page) =>
         page.elements.map((question: any) => {
-          console.log('Question:', question); // Add this line to log the question object
   
           const questionData = question as {topic: string; questionCategory: string; title: string; name: string; choices?: any[]; correctAnswer?: string; description?: string;  };
           const userResponse = result[questionData.name] ?? 'User did not answer';
@@ -199,6 +198,8 @@ const InitialSurvey = () => {
           const proficiencyLevels = proficiency.split(', ');
           const topics = ['online_privacy', 'password_security', 'phishing', 'software_updates', 'two_factor_authentication'];
           const userDocRef = queryUserDocument(getAuth().currentUser?.uid || '');
+
+          console.log('Proficiency levels:', proficiencyLevels);
 
           userDocRef.then((docRef) => {
             if (docRef) {
