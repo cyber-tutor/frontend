@@ -23,9 +23,11 @@ interface Question {
   questionCategory: string;
   questionType: string;
   choices?: Record<string, string>;
-  answer?: string;
   difficulty?: string;
   explanation?: string;
+  description?: string;
+  visibilityCondition?: string;
+  topic?: string;
 }
 
 const InitialSurvey = () => {
@@ -63,10 +65,11 @@ const InitialSurvey = () => {
               name: q.id,
               title: q.data.question,
               isRequired: false,
-              // Add the questionCategory as custom data
-              data: {
-                questionCategory: q.data.questionCategory,
-              },
+              topic: q.data.topic,
+              category: q.data.questionCategory,
+           
+              
+            
               ...(q.data.questionType === 'comment' && { maxLength: 400 }),
               ...(q.data.questionType === 'radiogroup' && {
                 choices: Object.entries(q.data.choices || {}).map(
@@ -75,7 +78,11 @@ const InitialSurvey = () => {
                     text: value,
                   }),
                 ),
-                correctAnswer: q.data.answer,
+                description: q.data.description,
+                
+              }),
+              ...(q.data.visibilityCondition && {
+                visibleIf: q.data.visibilityCondition,
               }),
             },
           ],
@@ -211,10 +218,14 @@ const InitialSurvey = () => {
           responseText = userResponse;
           correctAnswerText = question.correctAnswer ?? 'No correct answer provided';
           const allChoices = question.choices ? question.choices.map((choice: any) => choice.text).join(', ') : 'There are no choices for this question, because its open ended.';
-          return `${questionText} 
-          Choices going from a (first) alphabetically, and going to b... c... : ${allChoices} 
+          return `Question Title: ${questionText},
+          Question Category: ${question.category}, 
+          Topic: ${question.topic},
+          Question Choices: ${allChoices}, 
           User chose: ${responseText}, 
-          Correct Answer is: ${correctAnswerText}`;
+          Question description: ${question.description},
+          `;
+
         }
       })
     );
@@ -301,5 +312,3 @@ const InitialSurvey = () => {
     </div>
   );
 };
-
-export default InitialSurvey;
