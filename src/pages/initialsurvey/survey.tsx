@@ -214,7 +214,25 @@ const InitialSurvey = () => {
           });
         })
         .catch((error) => {
+
           console.error('Error determining proficiency:', error);
+          const proficiency = 'beginner, beginner, beginner, beginner, beginner';
+          const proficiencyLevels = proficiency.split(', ');
+          const topics = ['online_privacy', 'password_security', 'phishing', 'software_updates', 'two_factor_authentication'];
+          const userDocRef = queryUserDocument(getAuth().currentUser?.uid || '');
+          
+          userDocRef.then((docRef) => {
+            if (docRef) {
+              topics.forEach((topic, index) => {
+                const proficiencyRef = doc(collection(doc(db, 'users', docRef.id), 'proficiency'), topic);
+                setDoc(proficiencyRef, {
+                  level: proficiencyLevels[index]?.trim() ?? '',
+                });
+              });
+              console.log('Proficiency levels updated successfully.');
+            }
+          });
+
         });
     }
   }, [isComplete, result, surveyJson]);
