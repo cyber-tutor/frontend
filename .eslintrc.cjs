@@ -32,6 +32,8 @@ const config = {
     "@typescript-eslint/no-empty-interface": "off",
     "@next/next/no-img-element": "off",
     "react-hooks/exhaustive-deps": "off",
+    "@typescript-eslint/await-thenable": "off",
+    "@typescript-eslint/require-await": "off",
   },
 };
 
