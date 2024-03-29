@@ -176,7 +176,7 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
   const handleLogout = async () => {
     try {
       await auth.signOut();
-      router.push("/users/sign-in");
+      router.push("/");
     } catch (error) {
       console.error("Logout error:", error);
     }

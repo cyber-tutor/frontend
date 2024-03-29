@@ -47,7 +47,7 @@ export default function Home() {
         </BaseLayout>
       ) : (
         <BaseLayout showSidebar={false}>
-          <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-r from-cyan-500 to-blue-500 text-white">
+          <div className="flex min-h-screen flex-col items-center text-black">
             <div className="w-full max-w-4xl rounded-xl bg-white bg-opacity-90 px-4 py-8 shadow-2xl">
               {/* Responsive container */}
               {typeof window !== "undefined" && (
@@ -61,7 +61,7 @@ export default function Home() {
                 />
               )}
             </div>
-            <p className="mt-8 text-center text-xl font-semibold md:text-2xl lg:text-3xl">
+            <p className="mt-8 text-center text-xl font-semibold text-black md:text-2xl lg:text-3xl">
               Welcome to CyberTutor! Dive into the world of cyber security and
               fortify your digital life today. Explore our curated video series
               to become a savvy internet user and protect yourself against
