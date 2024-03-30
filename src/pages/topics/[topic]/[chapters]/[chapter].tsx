@@ -1,6 +1,6 @@
 import { BaseLayout } from "../../../../components/layouts/baseLayout";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { Survey } from "survey-react-ui";
 import { Model } from "survey-core";
 import "survey-core/defaultV2.min.css";
@@ -71,6 +71,8 @@ export default function ChapterPage() {
   const [secondsElapsed, setSecondsElapsed] = useState(0);
   const [progressComplete, setProgressComplete] = useState(false);
   const [userGroup, setUserGroup] = useState<string | null>(null);
+  const [userProficiency, setUserProficiency] = useState<string | null>(null);
+  const [progressData, setProgressData] = useState<DocumentData | null>(null);
   
 
   const router = useRouter();
@@ -128,7 +130,7 @@ export default function ChapterPage() {
 
   const user = auth.currentUser;
   const uid = user ? user.uid : null;
-  console.log("User:", uid);
+  // console.log("User:", uid);
 
   useEffect(() => {
     const fetchUserGroup = async () => {
@@ -151,6 +153,36 @@ export default function ChapterPage() {
     console.log("User group:", userGroup);
   }, [uid]);
 
+ 
+
+  useEffect(() => {
+    const fetchUserProficiency = async () => {
+
+      if (!uid) return;
+
+     
+
+
+      const userDocId = await findUserDocId(uid);
+
+      if (!userDocId) return;
+
+      
+      const userProficiencyRef = doc(db, "users", userDocId, "proficiency", String(topicId));
+      const proficiencySnapshot = await getDoc(userProficiencyRef);
+      const proficiencyData = proficiencySnapshot.data();
+      console.log("Proficiency data:", proficiencyData?.level);
+
+      if (proficiencyData && proficiencyData.level) {
+        setUserProficiency(proficiencyData.level);
+        console.log("User proficiency:", proficiencyData.level);
+      }
+    };
+
+    fetchUserProficiency();
+    // console.log("User proficiency:", userProficiency);
+  }, [uid, progressData]);
+  
   if (loading)
     return (
       <BaseLayout>
@@ -174,6 +206,7 @@ export default function ChapterPage() {
 
   return (
     <BaseLayout>
+    <div>User Proficiency: {userProficiency}</div>
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
       <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
       <div className="mx-auto w-full overflow-y-auto">
@@ -181,7 +214,7 @@ export default function ChapterPage() {
   <div className="m-4 rounded border p-4 shadow"> 
     {userDocument?.data().id}
 
-    {userGroup === "control" ? chapter.controlGroupContent.beginner : chapter.experimentalGroupContent.beginner}
+    {userProficiency && (userGroup === "control" ? chapter.controlGroupContent[userProficiency as keyof typeof chapter.controlGroupContent] : chapter.experimentalGroupContent[userProficiency as keyof typeof chapter.experimentalGroupContent])}
     {(userGroup === "control" ? chapter.controlGroupImageURLs[0] : chapter.experimentalGroupImageURLs[0]) && (
       <img
         className="mx-auto mt-5 w-1/3 shadow-lg"
@@ -257,6 +290,12 @@ export default function ChapterPage() {
           const userLevel = doc(db, "users", userDocId, "levels", progressData.topicId);
           const levelSnapshot = await getDoc(userLevel);
           const levelData = levelSnapshot.data();
+          console.log("Level data:", levelData?.level);
+
+          const userProficiency = doc(db, "users", userDocId, "proficiency", progressData.topicId);
+          const proficiencySnapshot = await getDoc(userProficiency);
+          const proficiencyData = proficiencySnapshot.data();
+          console.log("Proficiency data:", proficiencyData?.level);
 
           const topicString: String|null = await getNextChapterId(chapter.order, progressData.topicId, levelData?.level);
 
