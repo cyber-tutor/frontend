@@ -171,11 +171,11 @@ export default function ChapterPage() {
       const userProficiencyRef = doc(db, "users", userDocId, "proficiency", String(topicId));
       const proficiencySnapshot = await getDoc(userProficiencyRef);
       const proficiencyData = proficiencySnapshot.data();
-      console.log("Proficiency data:", proficiencyData?.level);
+      console.log("Proficiency data:", proficiencyData?.proficiency);
 
-      if (proficiencyData && proficiencyData.level) {
-        setUserProficiency(proficiencyData.level);
-        console.log("User proficiency:", proficiencyData.level);
+      if (proficiencyData && proficiencyData.proficiency) {
+        setUserProficiency(proficiencyData.proficiency);
+        console.log("User proficiency:", proficiencyData.proficiency);
       }
     };
 
@@ -291,11 +291,6 @@ export default function ChapterPage() {
           const levelSnapshot = await getDoc(userLevel);
           const levelData = levelSnapshot.data();
           console.log("Level data:", levelData?.level);
-
-          const userProficiency = doc(db, "users", userDocId, "proficiency", progressData.topicId);
-          const proficiencySnapshot = await getDoc(userProficiency);
-          const proficiencyData = proficiencySnapshot.data();
-          console.log("Proficiency data:", proficiencyData?.level);
 
           const topicString: String|null = await getNextChapterId(chapter.order, progressData.topicId, levelData?.level);
 

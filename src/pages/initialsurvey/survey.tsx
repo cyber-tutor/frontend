@@ -206,7 +206,7 @@ const InitialSurvey = () => {
               topics.forEach((topic, index) => {
                 const proficiencyRef = doc(collection(doc(db, 'users', docRef.id), 'proficiency'), topic);
                 setDoc(proficiencyRef, {
-                  level: proficiencyLevels[index]?.trim() ?? '',
+                  proficiency: proficiencyLevels[index]?.trim() ?? '',
                 });
               });
               console.log('Proficiency levels updated successfully.');
@@ -226,7 +226,7 @@ const InitialSurvey = () => {
               topics.forEach((topic, index) => {
                 const proficiencyRef = doc(collection(doc(db, 'users', docRef.id), 'proficiency'), topic);
                 setDoc(proficiencyRef, {
-                  level: proficiencyLevels[index]?.trim() ?? '',
+                  proficiency: proficiencyLevels[index]?.trim() ?? '',
                 });
               });
               console.log('Proficiency levels updated successfully.');
