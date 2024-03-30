@@ -21,11 +21,30 @@ type Chapter = {
   chapterTitle: string;
   chapterDescription: string;
   chapterType: string;
-  controlGroupContent: string;
-  experimentalGroupContent: string;
-  controlGroupImageURL: string;
-  experimentalGroupImageURL: string;
+  controlGroupContent: {
+    beginner: string;
+    intermediate: string;
+    expert: string;
+  };
+  controlGroupVideoURLs: {
+    beginner: string;
+    intermediate: string;
+    expert: string;
+  };
+  controlGroupImageURLs: string[];
+  experimentalGroupContent: {
+    beginner: string;
+    intermediate: string;
+    expert: string;
+  };
+  experimentalGroupVideoURLs: {
+    beginner: string;
+    intermediate: string;
+    expert: string;
+  };
+  experimentalGroupImageURLs: string[];
   order: number;
+  proficiency: string;
 };
 
 type Question = {
@@ -162,11 +181,11 @@ export default function ChapterPage() {
   <div className="m-4 rounded border p-4 shadow"> 
     {userDocument?.data().id}
 
-    {userGroup === "control" ? chapter.controlGroupContent : chapter.experimentalGroupContent}
-    {(userGroup === "control" ? chapter.controlGroupImageURL : chapter.experimentalGroupImageURL) && (
+    {userGroup === "control" ? chapter.controlGroupContent.beginner : chapter.experimentalGroupContent.beginner}
+    {(userGroup === "control" ? chapter.controlGroupImageURLs[0] : chapter.experimentalGroupImageURLs[0]) && (
       <img
         className="mx-auto mt-5 w-1/3 shadow-lg"
-        src={userGroup === "control" ? chapter.controlGroupImageURL : chapter.experimentalGroupImageURL}
+        src={userGroup === "control" ? chapter.controlGroupImageURLs[0] : chapter.experimentalGroupImageURLs[0]}
         alt={
           chapter.chapterTitle
             ? String(chapter.chapterTitle)
@@ -184,7 +203,7 @@ export default function ChapterPage() {
 {chapter.chapterType === "video" && (
   <div className="flex aspect-[16/9] flex-grow">
     <ReactPlayer
-      url={userGroup === "control" ? chapter.controlGroupContent : chapter.experimentalGroupContent}
+      url={userGroup === "control" ? chapter.controlGroupVideoURLs.beginner : chapter.experimentalGroupVideoURLs.beginner}
       onProgress={(progress) => {
         setPlayed(progress.playedSeconds);
       }}
