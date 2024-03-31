@@ -73,6 +73,7 @@ export default function ChapterPage() {
   const [userGroup, setUserGroup] = useState<string | null>(null);
   const [userProficiency, setUserProficiency] = useState<string | null>(null);
   const [progressData, setProgressData] = useState<DocumentData | null>(null);
+  const [contentPreference, setContentPreference] = useState<string | null>(null);
   
 
   const router = useRouter();
@@ -149,7 +150,25 @@ export default function ChapterPage() {
     console.log("User group:", userGroup);
   }, [uid]);
 
- 
+  useEffect(() => {
+    const fetchContentPreference = async () => {
+      if (!uid) return;
+
+      try {
+        const userDocument = await queryUserDocument(uid);
+
+        if (userDocument && userDocument.exists()) {
+          setContentPreference(userDocument.data().contentPreference);
+        } else {
+          console.error("No such user!");
+        }
+      } catch (err) {
+        console.error("Error fetching user:", err);
+      }
+    };
+
+    fetchContentPreference();
+  }, [uid]);
 
   useEffect(() => {
     const fetchUserProficiency = async () => {
@@ -202,11 +221,10 @@ export default function ChapterPage() {
 
   return (
     <BaseLayout>
-    <div>User Proficiency: {userProficiency}</div>
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
       <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
       <div className="mx-auto w-full overflow-y-auto">
-      {chapter.chapterType === "text" && (
+      {contentPreference === "text" && (
   <div className="m-4 rounded border p-4 shadow"> 
     {userDocument?.data().id}
 
@@ -229,7 +247,7 @@ export default function ChapterPage() {
     )}
   </div>
 )}
-{chapter.chapterType === "video" && (
+{contentPreference === "video" && (
   <div className="flex aspect-[16/9] flex-grow">
     <ReactPlayer
       url={userGroup === "control" ? chapter.controlGroupVideoURLs.beginner : chapter.experimentalGroupVideoURLs.beginner}
