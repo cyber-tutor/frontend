@@ -92,14 +92,10 @@ export default function ChapterPage() {
 
       setLoading(true);
       try {
-        const chapterRef = doc(
-          db,
-          "topics",
-          String(topicId),
-          "chapters",
-          String(chapterId),
-        );
+        
+        const chapterRef = doc(db, `topics/${topicId}/chapters/${chapterId}`)
         const chapterSnapshot = await getDoc(chapterRef);
+        
 
         if (chapterSnapshot.exists()) {
           setChapter({

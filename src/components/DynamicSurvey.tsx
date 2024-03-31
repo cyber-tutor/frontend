@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Survey, Model } from "survey-react";
 import { collection, query, where, getDocs, doc, updateDoc, getDoc } from "firebase/firestore";
-import { db } from "./firebase/config";
+import { auth, db } from "./firebase/config";
 import { findUserDocId, increaseLevel } from "~/components/firebase/firebase_functions";
+import { useRouter } from "next/router";
 
 interface Question {
   question: string;
   choices: Record<string, string>;
   correctAnswer: string;
   chapterId: string;
+  difficulty: string;
 }
 
 interface DynamicSurveyProps {
@@ -16,22 +18,54 @@ interface DynamicSurveyProps {
   userId: string; // Assuming you have the userId
 }
 
+
 const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
   const [surveyJson, setSurveyJson] = useState<Model>(new Model({}));
   const [correctAnswers, setCorrectAnswers] = useState<Record<string, string>>({});
   const startTimeRef = useRef<Date | null>(null);
+  
+const router = useRouter();
+const { topic: topicId } = router.query;
 
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      const questions: Question[] = [];
-      const correctAnswers: Record<string, string> = {};
+useEffect(() => {
+  const fetchQuestions = async () => {
+    const questions: Question[] = [];
+    const correctAnswers: Record<string, string> = {};
 
-      const q = query(collection(db, "quizQuestions"), where("chapterId", "==", chapterId));
+    // Fetch user's proficiency for the topic related to the chapter
+    const user = auth.currentUser;
+    const uid = user ? user.uid : null;
+
+    const userDocId = await findUserDocId(uid ? uid : "");
+    if (!userDocId) return;
+
+    
+
+    const proficiencyDocRef = doc(db, "users", userDocId, "proficiency", String(topicId));
+    const proficiencyDocSnapshot = await getDoc(proficiencyDocRef);
+    const proficiencyData = proficiencyDocSnapshot.data();
+    console.log("Proficiency data:", proficiencyData?.proficiency);
+
+    let proficiency = "beginner";
+    if (proficiencyData && proficiencyData.proficiency) {
+      proficiency = proficiencyData.proficiency;
+      console.log("User proficiency:", proficiency);
+    }
+  
+      // Fetch questions based on user's proficiency
+      const q = query(
+        collection(db, "quizQuestions"),
+        where("chapterId", "==", chapterId),
+        where("difficulty", "==", proficiency)
+      );
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         const questionData = doc.data() as Question;
         questions.push(questionData);
         correctAnswers[`question${questions.length}`] = questionData.correctAnswer;
+  
+        // Print out the difficulty assigned to each question
+        console.log(`Question: ${questionData.question}, Difficulty: ${questionData.difficulty}`);
       });
       setCorrectAnswers(correctAnswers);
       return questions;
@@ -60,11 +94,13 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
     };
 
     fetchQuestions().then((questions) => {
-      const formattedQuestions = formatQuestionsForSurveyJS(questions);
-      setSurveyJson(new Model(formattedQuestions));
-      startTimeRef.current = new Date(); // Set the start time when the survey is loaded
+      if (questions) {
+        const formattedQuestions = formatQuestionsForSurveyJS(questions);
+        setSurveyJson(new Model(formattedQuestions));
+        startTimeRef.current = new Date(); // Set the start time when the survey is loaded
+      }
     });
-  }, [chapterId]);
+  }, [chapterId, userId]);
 
   const calculateResults = (results: Record<string, string>) => {
     let correctCount = 0;
