@@ -13,12 +13,17 @@ const determineProficiency = async (responses: string): Promise<string> => {
     Each value should be separated by commas. 
     The values in the array should be ordered according to the order of the topics. 
 
-    Look at the description attribute of the question to determine the proficiency.
-    If the user answered a behavioral question the way a beginner would (No, I don't know), they should be marked as beginner for that topic.
-    If the user answers a behavioral question as yes, then keep track of the user's response to the knowledge questions for that topic.
-
     From the question choices, each choice is ordered alphabetically, like so: starting from a, to b, to c, to d, to e, and continue if more choices.
+    Look at the description attribute of the question to determine the proficiency, which maps the proficiency value to the letter of the choice.
+   
+    If the user answered a behavioral question the way a beginner would (No, I don't know), they should be marked as beginner for that topic, and not be able to answer any knowledge based questions.
+    If the user answers all behavioral question as an expert would, then keep track of the user's response to the knowledge questions for that topic.
+    When the user answers a knowledge question for a topic and chooses a certain choice that maps to a proficiency level, keep track of that proficiency level, ignoring the ones that are for behavioral questions.
 
+    If the user answers more knowledge questions for a topic as a intermediate than beginner and expert than they are intermediate for that topic.
+    If the user answers more knowledge questions for a topic as a expert than intermediate and beginner than they are expert for that topic.
+    If the user answers more knowledge questions for a topic as a beginner than intermediate and expert than they are beginner for that topic.
+    If the user equally answers knowledge questions for a topic as a beginner, intermediate, and/or expert, then they are choose the intermediate level for that topic.
 
 
     If the question category is knowledge, keep track of whether the user provided an expert response or intermediate or beginner response and point tally them, then assign the value.
