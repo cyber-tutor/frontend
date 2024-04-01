@@ -8,9 +8,9 @@ import { useRouter } from 'next/router';
 import { getAuth } from 'firebase/auth';
 import queryUserDocument from '~/components/firebase/firebase_functions';
 import determineProficiency from '~/components/ai/gemini';
-import { Serializer } from "survey-react";
+import { Serializer } from 'survey-react';
 
-
+// Apply the Tailwind CSS theme
 StylesManager.applyTheme('default');
 
 interface Question {
@@ -36,7 +36,7 @@ const InitialSurvey = () => {
 
   useEffect(() => {
     const fetchQuestions = async () => {
-      const questions: { id: string; data: Question, }[] = [];
+      const questions: { id: string; data: Question }[] = [];
       const q = query(collection(db, 'initialSurveyQuestions'));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
@@ -52,11 +52,14 @@ const InitialSurvey = () => {
       return questions;
     };
 
-    Serializer.addProperty("question", { name: "topic:string" });
-    Serializer.addProperty("question", { name: "questionCategory:string" });
+    Serializer.addProperty('question', { name: 'topic:string' });
+    Serializer.addProperty('question', { name: 'questionCategory:string' });
     const formatQuestionsForSurveyJS = (questions: { id: string; data: Question }[]) => {
       return {
         showProgressBar: 'bottom',
+        showPageNumbers: false, // Hide page numbers
+        showPrevButton: false, // Hide previous button
+        showPageTitles: false, // Hide page titles
         pages: questions.map((q, index) => ({
           name: `page${index + 1}`,
           elements: [
@@ -214,7 +217,6 @@ const InitialSurvey = () => {
           });
         })
         .catch((error) => {
-
           console.error('Error determining proficiency:', error);
           const proficiency = 'beginner, beginner, beginner, beginner, beginner';
           const proficiencyLevels = proficiency.split(', ');
@@ -232,14 +234,39 @@ const InitialSurvey = () => {
               console.log('Proficiency levels updated successfully.');
             }
           });
-
         });
     }
   }, [isComplete, result, surveyJson]);
 
   return (
     <div>
-      {surveyJson && <Survey model={surveyJson} />}
+      {surveyJson && (
+        <div className="flex justify-center items-center min-h-screen">
+        <Survey
+          model={surveyJson}
+          css={{
+            // root: 'bg-gray-100 p-4 rounded-lg shadow-md max-w-lg w-full',
+            // header: 'text-lg font-semibold text-blue-800',
+            // body: 'p-4',
+            // question: 'my-4',
+            // pageTitle: 'hidden', 
+            // row: 'flex flex-col gap-2',
+            // radiogroup: 'flex flex-col gap-2',
+            // radiogroupItem: 'flex items-center gap-2',
+            // radiogroupControl: 'h-4 w-4',
+            // radiogroupLabel: 'text-gray-700',
+            // navigationButton: 'bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600',
+
+            // page: 'bg-white p-6 rounded-lg shadow',
+            // pageDescription: 'text-sm text-gray-600',
+            // panel: 'bg-white p-4 rounded-lg shadow-sm',
+            // panelTitle: 'text-lg font-semibold text-gray-800',
+            // panelBody: 'text-sm text-gray-600',
+
+          }}
+        />
+      </div>
+      )}
       {isComplete && (
         <div>
           <div>Incorrect count: {incorrectCount}</div>
