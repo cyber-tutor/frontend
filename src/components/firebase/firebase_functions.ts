@@ -107,10 +107,11 @@ export async function createUserDocument(
     userId: user.uid,
     group: group,
     name: userName || "",
-    initialSurveyComplete: true,
+    initialSurveyComplete: false,
+    demographicSurveyComplete: false,
     isSuperuser: false,
     initialSurveyIncorrectCount: 0,
-    userLevel: "",
+    contentPreference: "text",
   });
 
   const topicsCollectionRef = collection(db, "topics");
