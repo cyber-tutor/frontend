@@ -241,7 +241,7 @@ export default function ChapterPage() {
                 {userGroup === "control" ? (
                   <div
                     dangerouslySetInnerHTML={convertNewlinesToBreaks(
-                      chapter.controlGroupContent[
+                      chapter.controlGroupContent?.[
                         userProficiency as keyof typeof chapter.controlGroupContent
                       ],
                     )}
@@ -249,7 +249,7 @@ export default function ChapterPage() {
                 ) : (
                   <div
                     dangerouslySetInnerHTML={convertNewlinesToBreaks(
-                      chapter.experimentalGroupContent[
+                      chapter.experimentalGroupContent?.[
                         userProficiency as keyof typeof chapter.experimentalGroupContent
                       ],
                     )}
@@ -258,14 +258,14 @@ export default function ChapterPage() {
               </div>
             )}
             {(userGroup === "control"
-              ? chapter.controlGroupImageURLs[0]
-              : chapter.experimentalGroupImageURLs[0]) && (
+              ? chapter.controlGroupImageURLs?.[0]
+              : chapter.experimentalGroupImageURLs?.[0]) && (
               <img
                 className="mx-auto mt-5 w-1/3 shadow-lg"
                 src={
                   userGroup === "control"
-                    ? chapter.controlGroupImageURLs[0]
-                    : chapter.experimentalGroupImageURLs[0]
+                    ? chapter.controlGroupImageURLs?.[0]
+                    : chapter.experimentalGroupImageURLs?.[0]
                 }
                 alt={
                   chapter.chapterTitle
@@ -286,8 +286,8 @@ export default function ChapterPage() {
             <ReactPlayer
               url={
                 userGroup === "control"
-                  ? chapter.controlGroupVideoURLs.beginner
-                  : chapter.experimentalGroupVideoURLs.beginner
+                  ? chapter.controlGroupVideoURLs?.beginner
+                  : chapter.experimentalGroupVideoURLs?.beginner
               }
               onProgress={(progress) => {
                 setPlayed(progress.playedSeconds);
