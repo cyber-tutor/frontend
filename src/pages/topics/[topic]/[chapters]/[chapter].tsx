@@ -363,7 +363,7 @@ export default function ChapterPage() {
                   const levelData = levelSnapshot.data();
                   console.log("Level data:", levelData?.level);
 
-                  var topicString: String | null = await getNextChapterId(
+                  const topicString: String | null = await getNextChapterId(
                     chapter.order,
                     progressData.topicId,
                     levelData?.level,
