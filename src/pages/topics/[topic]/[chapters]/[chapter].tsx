@@ -224,10 +224,10 @@ export default function ChapterPage() {
         <div>uh oh, chapter not found 🦧</div>
       </BaseLayout>
     );
-  function convertNewlinesToBreaks(text: string): { __html: string } {
-    return { __html: text.replace(/\n/g, "<br />") };
-  }
 
+  function convertNewlinesToBreaks(text: string | undefined): { __html: string } {
+    return { __html: text ? text.replace(/(\\n|\r\n|\n|\r)/g, "<br />") : "" };
+  }
   return (
     <BaseLayout>
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
