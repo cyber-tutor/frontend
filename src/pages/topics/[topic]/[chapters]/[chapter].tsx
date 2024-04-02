@@ -1,20 +1,30 @@
 import { BaseLayout } from "../../../../components/layouts/baseLayout";
 import { useRouter } from "next/router";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { Survey } from "survey-react-ui";
 import { Model } from "survey-core";
 import "survey-core/defaultV2.min.css";
 import ReactPlayer from "react-player";
 import getVideoDuration from "~/components/youtube_data";
 import { db, auth } from "~/components/firebase/config";
-import { DocumentData, doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
-import { findUserDocId, handleVideoEnd, isWatched, getNextChapterId, increaseLevel} from "~/components/firebase/firebase_functions";
+import {
+  DocumentData,
+  doc,
+  getDoc,
+  updateDoc,
+  arrayUnion,
+} from "firebase/firestore";
+import {
+  findUserDocId,
+  handleVideoEnd,
+  isWatched,
+  getNextChapterId,
+  increaseLevel,
+} from "~/components/firebase/firebase_functions";
 import TimerComponent from "~/components/Timer";
 import DynamicSurvey from "../../../../components/DynamicSurvey";
 import { progress } from "framer-motion";
 import queryUserDocument from "~/components/firebase/firebase_functions";
-
-
 
 type Chapter = {
   chapterId: string;
@@ -73,13 +83,12 @@ export default function ChapterPage() {
   const [userGroup, setUserGroup] = useState<string | null>(null);
   const [userProficiency, setUserProficiency] = useState<string | null>(null);
   const [progressData, setProgressData] = useState<DocumentData | null>(null);
-  const [contentPreference, setContentPreference] = useState<string | null>(null);
-  
+  const [contentPreference, setContentPreference] = useState<string | null>(
+    null,
+  );
 
   const router = useRouter();
   const { topic: topicId, chapter: chapterId } = router.query;
-
-  
 
   useEffect(() => {
     const fetchChapter = async () => {
@@ -93,10 +102,8 @@ export default function ChapterPage() {
 
       setLoading(true);
       try {
-        
-        const chapterRef = doc(db, `topics/${topicId}/chapters/${chapterId}`)
+        const chapterRef = doc(db, `topics/${topicId}/chapters/${chapterId}`);
         const chapterSnapshot = await getDoc(chapterRef);
-        
 
         if (chapterSnapshot.exists()) {
           setChapter({
@@ -172,18 +179,19 @@ export default function ChapterPage() {
 
   useEffect(() => {
     const fetchUserProficiency = async () => {
-
       if (!uid) return;
-
-     
-
 
       const userDocId = await findUserDocId(uid);
 
       if (!userDocId) return;
 
-      
-      const userProficiencyRef = doc(db, "users", userDocId, "proficiency", String(topicId));
+      const userProficiencyRef = doc(
+        db,
+        "users",
+        userDocId,
+        "proficiency",
+        String(topicId),
+      );
       const proficiencySnapshot = await getDoc(userProficiencyRef);
       const proficiencyData = proficiencySnapshot.data();
       console.log("Proficiency data:", proficiencyData?.proficiency);
@@ -197,7 +205,7 @@ export default function ChapterPage() {
     fetchUserProficiency();
     // console.log("User proficiency:", userProficiency);
   }, [uid, progressData]);
-  
+
   if (loading)
     return (
       <BaseLayout>
@@ -216,138 +224,178 @@ export default function ChapterPage() {
         <div>uh oh, chapter not found 🦧</div>
       </BaseLayout>
     );
-
-  
+  function convertNewlinesToBreaks(text: string): { __html: string } {
+    return { __html: text.replace(/\n/g, "<br />") };
+  }
 
   return (
     <BaseLayout>
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
       <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
       <div className="mx-auto w-full overflow-y-auto">
-      {contentPreference === "text" && (
-  <div className="m-4 rounded border p-4 shadow"> 
-    {userDocument?.data().id}
+        {contentPreference === "text" && (
+          <div className="m-4 rounded border p-4 shadow">
+            {userDocument?.data().id}
+            {userProficiency && (
+              <div>
+                {userGroup === "control" ? (
+                  <div
+                    dangerouslySetInnerHTML={convertNewlinesToBreaks(
+                      chapter.controlGroupContent[
+                        userProficiency as keyof typeof chapter.controlGroupContent
+                      ],
+                    )}
+                  />
+                ) : (
+                  <div
+                    dangerouslySetInnerHTML={convertNewlinesToBreaks(
+                      chapter.experimentalGroupContent[
+                        userProficiency as keyof typeof chapter.experimentalGroupContent
+                      ],
+                    )}
+                  />
+                )}
+              </div>
+            )}
+            {(userGroup === "control"
+              ? chapter.controlGroupImageURLs[0]
+              : chapter.experimentalGroupImageURLs[0]) && (
+              <img
+                className="mx-auto mt-5 w-1/3 shadow-lg"
+                src={
+                  userGroup === "control"
+                    ? chapter.controlGroupImageURLs[0]
+                    : chapter.experimentalGroupImageURLs[0]
+                }
+                alt={
+                  chapter.chapterTitle
+                    ? String(chapter.chapterTitle)
+                    : undefined
+                }
+                title={
+                  chapter.chapterTitle
+                    ? String(chapter.chapterTitle)
+                    : undefined
+                }
+              />
+            )}
+          </div>
+        )}
+        {contentPreference === "video" && (
+          <div className="flex aspect-[16/9] flex-grow">
+            <ReactPlayer
+              url={
+                userGroup === "control"
+                  ? chapter.controlGroupVideoURLs.beginner
+                  : chapter.experimentalGroupVideoURLs.beginner
+              }
+              onProgress={(progress) => {
+                setPlayed(progress.playedSeconds);
+              }}
+              className="h-full w-full"
+              allowFullScreen
+              controls={false}
+              onEnded={() => {
+                const playedMinutes = Math.floor(played / 60);
+                console.log("video ended");
+                handleVideoEnd(playedMinutes, userDocument?.id);
+                setIsVideoWatched(true);
+              }}
+              seekTo={20}
+            />
+          </div>
+        )}
+        {progressComplete && chapter.chapterType !== "assessment" && (
+          <button
+            className="rounded bg-blue-500 px-4 py-2 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-700"
+            onClick={async () => {
+              const userDocId = await findUserDocId(uid ?? "");
+              if (typeof chapterId === "string" && userDocId) {
+                const userDocRef = doc(db, "users", userDocId);
+                const minutes = Math.floor(secondsElapsed / 60);
+                const seconds = secondsElapsed % 60;
+                const timeElapsed = `${minutes}:${String(seconds).padStart(2, "0")}`;
+                await updateDoc(userDocRef, {
+                  timeOnPage: timeElapsed,
+                });
+                console.log(
+                  "User time watched pushed successfully to firestore:",
+                  timeElapsed,
+                );
 
-    {userProficiency && (userGroup === "control" ? chapter.controlGroupContent[userProficiency as keyof typeof chapter.controlGroupContent] : chapter.experimentalGroupContent[userProficiency as keyof typeof chapter.experimentalGroupContent])}
-    {(userGroup === "control" ? chapter.controlGroupImageURLs[0] : chapter.experimentalGroupImageURLs[0]) && (
-      <img
-        className="mx-auto mt-5 w-1/3 shadow-lg"
-        src={userGroup === "control" ? chapter.controlGroupImageURLs[0] : chapter.experimentalGroupImageURLs[0]}
-        alt={
-          chapter.chapterTitle
-            ? String(chapter.chapterTitle)
-            : undefined
-        }
-        title={
-          chapter.chapterTitle
-            ? String(chapter.chapterTitle)
-            : undefined
-        }
-      />
-    )}
-  </div>
-)}
-{contentPreference === "video" && (
-  <div className="flex aspect-[16/9] flex-grow">
-    <ReactPlayer
-      url={userGroup === "control" ? chapter.controlGroupVideoURLs.beginner : chapter.experimentalGroupVideoURLs.beginner}
-      onProgress={(progress) => {
-        setPlayed(progress.playedSeconds);
-      }}
-      className="h-full w-full"
-      allowFullScreen
-      controls={false}
-      onEnded={() => {
-        const playedMinutes = Math.floor(played / 60);
-        console.log("video ended");
-        handleVideoEnd(playedMinutes, userDocument?.id);
-        setIsVideoWatched(true);
-      }}
-      seekTo={20}
-    />
-  </div>
-)}
+                const progressRef = doc(
+                  db,
+                  "users",
+                  userDocId,
+                  "progress",
+                  chapterId,
+                );
+                const progressSnapshot = await getDoc(progressRef);
 
-{progressComplete && chapter.chapterType !== "assessment" && (
-  <button
-    className="rounded bg-blue-500 px-4 py-2 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-700"
-    onClick={async () => {
-      const userDocId = await findUserDocId(uid ?? "");
-      if (typeof chapterId === 'string' && userDocId) {
-        const userDocRef = doc(db, "users", userDocId);
-        const minutes = Math.floor(secondsElapsed / 60);
-        const seconds = secondsElapsed % 60;
-        const timeElapsed = `${minutes}:${String(seconds).padStart(2, "0")}`;
-        await updateDoc(userDocRef, {
-          timeOnPage: timeElapsed,
-        });
-        console.log(
-          "User time watched pushed successfully to firestore:",
-          timeElapsed,
-        );
+                if (progressSnapshot.exists()) {
+                  const progressData = progressSnapshot.data();
+                  const attempts = progressData.attempts ?? {};
+                  const nextAttemptNumber = Object.keys(attempts).length + 1;
+                  const updatedAttempts = {
+                    ...attempts,
+                    [nextAttemptNumber]: {
+                      timeElapsed,
+                    },
+                  };
 
-        const progressRef = doc(db, "users", userDocId, "progress", chapterId);
-        const progressSnapshot = await getDoc(progressRef);
+                  if (progressData.complete === false) {
+                    await updateDoc(progressRef, {
+                      complete: true,
+                      attempts: updatedAttempts,
+                    });
 
-        if (progressSnapshot.exists()) {
-          const progressData = progressSnapshot.data();
-          const attempts = progressData.attempts ?? {};
-          const nextAttemptNumber = Object.keys(attempts).length + 1;
-          const updatedAttempts = {
-            ...attempts,
-            [nextAttemptNumber]: {
-              timeElapsed,
-            },
-          };
+                    await increaseLevel(progressData.topicId, userDocId);
+                  }
 
+                  const userLevel = doc(
+                    db,
+                    "users",
+                    userDocId,
+                    "levels",
+                    progressData.topicId,
+                  );
+                  const levelSnapshot = await getDoc(userLevel);
+                  const levelData = levelSnapshot.data();
+                  console.log("Level data:", levelData?.level);
 
-          const userLevel = doc(db, "users", userDocId, "levels", progressData.topicId);
-          const levelSnapshot = await getDoc(userLevel);
-          const levelData = levelSnapshot.data();
-          console.log("Level data:", levelData?.level);
+                  var topicString: String | null = await getNextChapterId(
+                    chapter.order,
+                    progressData.topicId,
+                    levelData?.level,
+                  );
 
-          const topicString: String|null = await getNextChapterId(chapter.order, progressData.topicId, levelData?.level);
-
-          
-
-          if(progressData.complete === false){
-          await updateDoc(progressRef, {
-            complete: true,
-            attempts: updatedAttempts,
-          });
-
-          await increaseLevel(progressData.topicId, userDocId);
-          
-        }
-
-        if (topicString === null){
-          alert("Your knowledge level is too low to access the next chapter. Please complete some other chapters to raise it.");
-          router.push(`/topics/${progressData.topicId}`);
-        }
-        else if (topicString !== null){
-            router.push(`/topics/${progressData.topicId}/chapters/${topicString}`);
-          } 
-        } else {
-          // If no progress document exists, create the first attempt
-          await updateDoc(progressRef, {
-            complete: true,
-            attempts: {
-              1: {
-                timeElapsed,
-              },
-            },
-          });
-        }
-      }
-    }}
-  >
-    Next
-  </button>
-)}
-
-
-
-
+                  if (topicString === null) {
+                    alert(
+                      "Your knowledge level is too low to access the next chapter. Please complete some other chapters to raise it.",
+                    );
+                    router.push(`/topics/${progressData.topicId}`);
+                  } else if (topicString !== null) {
+                    router.push(
+                      `/topics/${progressData.topicId}/chapters/${topicString}`,
+                    );
+                  }
+                } else {
+                  // If no progress document exists, create the first attempt
+                  await updateDoc(progressRef, {
+                    complete: true,
+                    attempts: {
+                      1: {
+                        timeElapsed,
+                      },
+                    },
+                  });
+                }
+              }
+            }}
+          >
+            Next
+          </button>
+        )}
         <br />
         video progress: {Math.floor(played / 60)}:
         {String(Math.floor(played % 60)).padStart(2, "0")}
@@ -359,7 +407,10 @@ export default function ChapterPage() {
         />
         {chapter && chapter.chapterType === "assessment" && (
           <div className="w-full px-4 md:px-0">
-            <DynamicSurvey chapterId={chapter.chapterId} userId={userDocument?.data().userId} />
+            <DynamicSurvey
+              chapterId={chapter.chapterId}
+              userId={userDocument?.data().userId}
+            />
           </div>
         )}
       </div>
