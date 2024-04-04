@@ -259,11 +259,12 @@ export async function initialSurveyComplete(userId: string, quizResponse: any) {
     response: quizResponse
   });
 }
+
 export async function demographicSurveyComplete(userId: string, quizResponse: any) {
   const docId = await findUserDocId(userId);
   const userDoc = doc(db, 'users', docId ? docId : '');
 
-  await setDoc(userDoc, {
+  await updateDoc(userDoc, {
     demographicSurveyComplete: true
   });
 
