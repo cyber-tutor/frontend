@@ -37,7 +37,7 @@ type Chapter = {
   proficiency: number;
 };
 
-// Utility function for updating chapter completion status
+
 const updateChapterCompletion = (
   chapterId: string,
   complete: boolean,
@@ -63,12 +63,11 @@ export default function TopicPage() {
   const [chapterCompletion, setChapterCompletion] = useState<
     Record<string, boolean>
   >({});
-  const [userDataLoaded, setUserDataLoaded] = useState(false); // New state variable to track user data loading
+  const [userDataLoaded, setUserDataLoaded] = useState(false); 
 
   const router = useRouter();
   const { topic: topicId } = router.query;
 
-  // Check authentication state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
@@ -79,58 +78,56 @@ export default function TopicPage() {
     return () => unsubscribe();
   }, [router]);
 
-  // Fetch user data (proficiency and chapter completion status)
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      const uid = user ? user.uid : null;
 
-      if (uid) {
-        const userDoc = await queryUserDocument(uid);
-        setUserDocument(userDoc);
+useEffect(() => {
+  const fetchUserData = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const uid = user ? user.uid : null;
 
-        // Fetch user level for the topic
-        const levelRef = doc(
-          db,
-          `users/${userDoc?.id}/levels`,
-          topicId?.toString() ?? "",
-        );
-        const levelSnapshot = await getDoc(levelRef);
-        if (levelSnapshot.exists()) {
-          const level = levelSnapshot.data().level;
-          setUserProficiency(level); // Assuming you want to use the level as the proficiency
+    if (uid) {
+      const userDoc = await queryUserDocument(uid);
+      setUserDocument(userDoc);
+
+
+      const levelRef = doc(
+        db,
+        `users/${userDoc?.id}/levels`,
+        topicId?.toString() ?? "",
+      );
+      const levelSnapshot = await getDoc(levelRef);
+      if (levelSnapshot.exists()) {
+        const userLevel = levelSnapshot.data().level;
+        setUserProficiency(userLevel); 
+        if (typeof window !== "undefined") {
+          localStorage.setItem("userLevel", userLevel.toString()); 
+        }
+
+        if (topic && userLevel) {
+          const completionStatus: Record<string, boolean> = {};
+          topic.chapters.forEach((chapter) => {
+            completionStatus[chapter.chapterId] = userLevel >= chapter.proficiency;
+          });
+
+          setChapterCompletion(completionStatus);
           if (typeof window !== "undefined") {
-            localStorage.setItem("userLevel", level.toString()); // Store level in local storage
+            localStorage.setItem(
+              "chapterCompletion",
+              JSON.stringify(completionStatus),
+            ); 
           }
         }
-
-        // Fetch chapter completion status
-        const progressCollectionRef = collection(
-          db,
-          `users/${userDoc?.id}/progress`,
-        );
-        const progressSnapshot = await getDocs(progressCollectionRef);
-        const completionStatus: Record<string, boolean> = {};
-        progressSnapshot.forEach((doc) => {
-          completionStatus[doc.id] = doc.data().complete;
-        });
-        setChapterCompletion(completionStatus);
-        if (typeof window !== "undefined") {
-          localStorage.setItem(
-            "chapterCompletion",
-            JSON.stringify(completionStatus),
-          ); // Store completion status in local storage
-        }
       }
+    }
 
-      setUserDataLoaded(true); // Set user data loaded to true once everything is fetched
-    };
+    setUserDataLoaded(true); 
+  };
 
-    fetchUserData();
-  }, [topicId]);
+  fetchUserData();
+}, [topicId, topic]);
 
-  // Fetch topic data
+
+
   useEffect(() => {
     const fetchTopic = async () => {
       if (!topicId || Array.isArray(topicId)) return;
@@ -189,7 +186,7 @@ export default function TopicPage() {
     fetchTopic();
   }, [topicId]);
 
-  // Load user proficiency and chapter completion from local storage when the component mounts
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedProficiency = localStorage.getItem("userProficiency");
