@@ -90,8 +90,13 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
       queryUserDocument(uid).then((userDocument) => {
         setUserDocument(userDocument);
         // Check if user completed initial survey, if not then redirect to initial survey
-        if (userDocument && !userDocument.data().initialSurveyComplete) {
+        if (userDocument && !userDocument.data().initialSurveyComplete && !userDocument.data().demographicSurveyComplete) {
+          if(!userDocument.data().initialSurveyComplete){
           router.push("/initialsurvey/begin");
+          }
+          else {
+            router.push("/demographicsurvey/survey");
+          }
         }
       });
     }
