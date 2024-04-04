@@ -102,13 +102,14 @@ const SignUpForm: React.FC = () => {
   const passwordFooter = (
     <>
       <Divider />
-      <ul className="text-sm">
+      <p className="mt-2">Suggestions</p>
+      <ul className="line-height-3 ml-2 mt-0 pl-2">
         <li>At least one lowercase</li>
         <li>At least one uppercase</li>
         <li>At least one numeric</li>
         <li>At least one special character</li>
         <li>Minimum 8 characters</li>
-        <li className="text-green-600">Strong password ex: 7h!sI$C0oL</li>
+        <li>Strong password ex: 7h!sI$C0oL</li>
       </ul>
     </>
   );
@@ -149,6 +150,7 @@ const SignUpForm: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               toggleMask
+              footer={passwordFooter}
               className="w-full rounded border px-3 py-2 leading-tight focus:border-blue-500 focus:outline-none"
             />
             {isWeak && <p className="text-red-600">Password is weak</p>}
