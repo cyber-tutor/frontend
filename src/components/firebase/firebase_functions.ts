@@ -267,9 +267,9 @@ export async function demographicSurveyComplete(userId: string, quizResponse: an
     demographicSurveyComplete: true
   });
 
-  const surveyResponseCollection = collection(userDoc, 'demographicSurveyResponse');
-  const surveyResponseDoc = doc(surveyResponseCollection, userId);
-  await setDoc(surveyResponseDoc, {
-    response: quizResponse
-  });
+  // const surveyResponseCollection = collection(userDoc, 'demographicSurveyResponse');
+  // const surveyResponseDoc = doc(surveyResponseCollection, userId);
+  // await setDoc(surveyResponseDoc, {
+  //   response: quizResponse
+  // });
 }

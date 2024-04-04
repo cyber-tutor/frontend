@@ -20,7 +20,7 @@ export default function Home() {
 
   console.log("User Id:", uid);
 
-  // If user is logged in, query and retreive the reference to their document in the users collection in firestore
+  // If user is logged in, query and retrieve the reference to their document in the users collection in firestore
   if (uid) {
     queryUserDocument(uid).then((userDocument) => {
       setUserDocument(userDocument);
@@ -73,6 +73,17 @@ export default function Home() {
               Login
             </button>
           </div>
+
+          <footer className="mt-auto w-full border-t border-gray-300 bg-white py-4 text-center text-gray-900">
+            <div className="container mx-auto flex flex-col items-center justify-between space-y-4 px-4 md:flex-row md:space-y-0">
+              <p>&copy; 2024 Cyber Tutor. All rights reserved.</p>
+              <nav>
+                <ul className="flex space-x-4">
+                 
+                </ul>
+              </nav>
+            </div>
+          </footer>
         </div>
       )}
     </>

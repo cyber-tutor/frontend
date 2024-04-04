@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import * as Survey from 'survey-react';
 import 'survey-react/survey.css';
 import { db } from '../../components/firebase/config';
+import { demographicSurveyComplete } from '~/components/firebase/firebase_functions';
 
 Survey.StylesManager.applyTheme("default");
 
@@ -50,23 +51,28 @@ export default function SurveyComponent(): JSX.Element {
     setIsComplete(true);
     const surveyData = surveyResult.data;
     setResult(surveyData);
-
-
+  
+    // Construct the user response string
+    const userResponseString = Object.entries(surveyData)
+      .map(([questionId, answer]) => `Question ID: ${questionId}, Answer: ${answer}`)
+      .join('; ');
+  
     const auth = getAuth();
     const user = auth.currentUser;
-
+  
     if (user) {
       const batch = writeBatch(db);
-
+  
       Object.entries(surveyData).forEach(([questionId, answer]) => {
         const userResponseDocRef = doc(db, "demographicSurveyQuestions", questionId, "users", user.uid);
         batch.set(userResponseDocRef, { answer });
       });
-
+  
       try {
         await batch.commit();
         console.log("Survey responses successfully written to Firestore.");
-        router.push('/thank-you'); 
+        await demographicSurveyComplete(user.uid, userResponseString); 
+        router.push('/'); 
       } catch (error) {
         console.error("Error writing survey responses: ", error);
       }
@@ -74,6 +80,7 @@ export default function SurveyComponent(): JSX.Element {
       console.error("User is not authenticated.");
     }
   };
+  
 
   return (
     <div>
