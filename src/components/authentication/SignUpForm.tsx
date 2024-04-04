@@ -98,84 +98,92 @@ const SignUpForm: React.FC = () => {
     setEmail(emailValue);
   };
 
-  const header = <div className="mb-3 font-bold">Pick a password</div>;
-  const footer = (
+  const passwordHeader = <h6 className="text-white">Pick a password</h6>;
+  const passwordFooter = (
     <>
       <Divider />
-      <p className="mt-2">Suggestions</p>
-      <ul className="line-height-3 ml-2 mt-0 pl-2">
+      <ul className="text-sm">
         <li>At least one lowercase</li>
         <li>At least one uppercase</li>
         <li>At least one numeric</li>
         <li>At least one special character</li>
         <li>Minimum 8 characters</li>
-        <li>Strong password ex: 7h!sI$C0oL</li>
+        <li className="text-green-600">Strong password ex: 7h!sI$C0oL</li>
       </ul>
     </>
   );
 
   return (
-    <form onSubmit={handleSignUp} className="space-y-6">
-      <div>
-        <label htmlFor="email" className="text-start">
-          Email
-        </label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={handleEmailChange}
-          required
-          className="flex w-full justify-center rounded border-2 p-1"
-        />
-        {emailError && <p className="text-red-500">{emailError}</p>}
-        <label htmlFor="name" className="text-start">
-          Name
-        </label>
-        <input
-          type="text"
-          id="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          className="flex w-full justify-center rounded border-2 p-1"
-        />
-      </div>
-      <div>
-        <label htmlFor="password" className="text-start">
-          Password
-        </label>
-        <Password
-          className="card flex w-full justify-center rounded border-2 p-1"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          header={header}
-          footer={footer}
-        />
-      </div>
-      <button
-        type="submit"
-        className="flex w-full justify-center rounded bg-blue-500 py-1 text-white"
-        style={{ marginTop: "20rem" }}
-      >
-        Sign Up
-      </button>
+    <div className="flex flex-col h-screen">
+    <div className="flex h-screen w-screen items-center justify-center bg-transparent">
 
-      <div className="my-4 flex items-center justify-center">
-        <div className="flex-grow border-t border-gray-300"></div>
-        <span className="mx-4 flex-shrink text-gray-600">or</span>
-        <div className="flex-grow border-t border-gray-300"></div>
+      <div className="w-full max-w-xs bg-white rounded-lg shadow-md p-8 m-4">
+        <h1 className="text-2xl font-bold mb-8 text-center">Create Account</h1>
+        <form onSubmit={handleSignUp} className="space-y-6">
+          <div className="mb-4">
+            <label htmlFor="email" className="block mb-1 font-bold">Email</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={handleEmailChange}
+              required
+              className="w-full rounded border px-3 py-2 leading-tight focus:border-blue-500 focus:outline-none"
+            />
+            {emailError && <p className="text-red-600">{emailError}</p>}
+          </div>
+          <div className="mb-4">
+            <label htmlFor="name" className="block mb-1 font-bold">Name</label>
+            <input
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full rounded border px-3 py-2 leading-tight focus:border-blue-500 focus:outline-none"
+            />
+          </div>
+          <div className="mb-6">
+            <label htmlFor="password" className="block mb-1 font-bold">Password</label>
+            <Password
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              toggleMask
+              className="w-full rounded border px-3 py-2 leading-tight focus:border-blue-500 focus:outline-none"
+            />
+            {isWeak && <p className="text-red-600">Password is weak</p>}
+          </div>
+          <button
+            type="submit"
+            className="w-full rounded bg-green-500 py-2 font-bold text-white hover:bg-green-600"
+          >
+            Sign Up
+          </button>
+
+          <div className="flex items-center justify-between my-6">
+            <span className="w-1/5 border-b border-gray-300"></span>
+            <p className="mx-4 text-xs text-gray-700 uppercase">or sign up with</p>
+            <span className="w-1/5 border-b border-gray-300"></span>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            className="flex items-center justify-center w-full rounded border border-gray-300 bg-white px-4 py-2 text-gray-700 shadow-sm hover:bg-gray-50"
+          >
+            <FcGoogle className="text-2xl" />
+            <span className="ml-2">Google</span>
+          </button>
+        </form>
       </div>
-
-      <button
-        onClick={handleGoogleSignIn}
-        className="flex w-full items-center justify-center rounded border border-gray-300 bg-white px-4 py-2 shadow-sm hover:bg-gray-50"
-      >
-        <FcGoogle className="mr-2" /> Sign up with Google
-      </button>
-
-      {isWeak && <p className="text-red-500">Password is weak</p>}
-    </form>
+      
+    </div>
+    <footer className="w-full bg-white py-4 text-center text-gray-900">
+        <div className="mx-auto">
+          <p>&copy; 2024 Cyber Tutor. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
   );
 };
 

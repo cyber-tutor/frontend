@@ -3,7 +3,7 @@ import {
   useAuthState,
   useSignInWithEmailAndPassword,
 } from "react-firebase-hooks/auth";
-import { auth, db } from "../firebase/config";
+import { auth } from "../firebase/config";
 import { useRouter } from "next/router";
 import {
   signInWithPopup,
@@ -11,23 +11,18 @@ import {
   getAdditionalUserInfo,
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
-import { collection, addDoc } from "firebase/firestore";
 import { createUserDocument } from "~/components/firebase/firebase_functions";
-
+import { Password } from "primereact/password";
 
 const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // Initialize signInError state for storing sign-in error messages
   const [signInError, setSignInError] = useState("");
-  // useAuthState to observe the user's sign-in state
   const [user] = useAuthState(auth);
-  // Destructure and use the signInWithEmailAndPassword hook from react-firebase-hooks
   const [signInWithEmailAndPassword, userCredential, , error] =
     useSignInWithEmailAndPassword(auth);
   const router = useRouter();
 
-  // Function to clear input fields
   const emptyTextBoxes = () => {
     setEmail("");
     setPassword("");
@@ -42,25 +37,19 @@ const SignInForm = () => {
       emptyTextBoxes();
     } catch (e) {
       console.error(e);
-
       setSignInError("An unexpected error occurred. Please try again.");
     }
   };
 
   const provider = new GoogleAuthProvider();
 
-  // Configure Google provider and handle Google sign-in
   const handleGoogleSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const additionalUserInfo = getAdditionalUserInfo(result);
       if (additionalUserInfo?.isNewUser) {
-        console.log("User is signing up for the first time.");
         const user = result.user;
-  
         await createUserDocument(user, user.displayName || '');
-      } else {
-        console.log("User is an existing user.");
       }
       router.push("/");
     } catch (e) {
@@ -68,66 +57,74 @@ const SignInForm = () => {
     }
   };
 
-  // Effect hook to handle authentication error from firebase
   useEffect(() => {
     if (error) {
       setSignInError(error.message);
     }
   }, [error]);
 
+
   return (
-    <form onSubmit={handleSignIn} className="space-y-6">
-      {/* Display sign-in error message */}
-      {signInError && (
-        <div className="mb-4 text-center text-red-500">{signInError}</div>
-      )}
-      <div>
-        <label htmlFor="email" className="text-start">
-          Email
-        </label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="flex w-full justify-center rounded border-2 p-1"
-        />
+    <div className="flex flex-col h-screen">
+      <div className="flex-grow flex items-center justify-center">
+        <div className="w-full max-w-sm p-6 bg-white rounded shadow-md">
+          <h2 className="mb-6 text-3xl font-bold text-center">Sign In</h2>
+          {signInError && (
+            <p className="mb-4 text-sm text-center text-red-500">{signInError}</p>
+          )}
+          <form onSubmit={handleSignIn} className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full px-3 py-2 mt-1 border rounded-md"
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              <Password
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                toggleMask
+                className="w-full rounded border px-3 py-2 leading-tight focus:border-blue-500 focus:outline-none"
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600 focus:outline-none"
+            >
+              Sign In
+            </button>
+            <div className="my-4 flex items-center justify-between">
+              <div className="flex-grow border-t border-gray-300"></div>
+              <span className="mx-4 flex-shrink text-gray-600 uppercase">or</span>
+              <div className="flex-grow border-t border-gray-300"></div>
+            </div>
+            <button
+              onClick={handleGoogleSignIn}
+              className="w-full px-4 py-2 text-sm text-gray-700 bg-white border rounded hover:bg-gray-50 flex items-center justify-center"
+            >
+              <FcGoogle className="text-xl" />
+              <span className="ml-2">Login with Google</span>
+            </button>
+          </form>
+        </div>
       </div>
-      <div>
-        <label htmlFor="password" className="text-start">
-          Password
-        </label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="flex w-full justify-center rounded border-2 p-1"
-        />
-      </div>
-      <button
-        type="submit"
-        className="flex w-full justify-center rounded bg-blue-500 py-1 text-white"
-      >
-        Sign In
-      </button>
-
-      <div className="my-4 flex items-center justify-center">
-        <div className="flex-grow border-t border-gray-300"></div>
-        <span className="mx-4 flex-shrink text-gray-600">or</span>
-        <div className="flex-grow border-t border-gray-300"></div>
-      </div>
-
-      <button
-        onClick={handleGoogleSignIn}
-        className="flex w-full items-center justify-center rounded border border-gray-300 bg-white px-4 py-2 shadow-sm hover:bg-gray-50"
-      >
-        <FcGoogle className="mr-2" /> Login with Google
-      </button>
-    </form>
-  );
+      <footer className="w-full bg-white py-4 text-center text-gray-900">
+        <div className="mx-auto">
+          <p>&copy; 2024 Cyber Tutor. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
+  );  
 };
 
 export default SignInForm;
