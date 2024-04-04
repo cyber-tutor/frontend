@@ -25,6 +25,20 @@ interface Question {
   topic: string;
 }
 
+const customCss = {
+  root: 'survey-root',
+  header: 'text-3xl font-bold text-gray-100 bg-gradient-to-r from-blue-700 to-gray-800 p-5 border-b-2 border-blue-800',
+  body: 'survey-body',
+  question: 'font-bold text-xl my-4 p-3',
+  questionTitle: 'text-2xl text-white p-3', 
+  answerRow: 'flex flex-col items-start p-3',
+  radiogroupItem: 'my-4 p-3 bg-gray-700 rounded-lg',
+  radiogroupControl: 'form-radio text-blue-500 mr-3',
+  radiogroupLabel: 'text-gray-300 ml-2 text-lg',
+  navigationButton: 'bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-500 focus:outline-none focus:shadow-outline',
+};
+
+
 const InitialSurvey = () => {
   const router = useRouter();
   const [surveyJson, setSurveyJson] = useState<Model | null>(null);
@@ -239,43 +253,24 @@ const InitialSurvey = () => {
   }, [isComplete, result, surveyJson]);
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-800 flex justify-center items-center">
       {surveyJson && (
-        <div className="flex justify-center items-center min-h-screen">
-        <Survey
-          model={surveyJson}
-          css={{
-            // root: 'bg-gray-100 p-4 rounded-lg shadow-md max-w-lg w-full',
-            // header: 'text-lg font-semibold text-blue-800',
-            // body: 'p-4',
-            // question: 'my-4',
-            // pageTitle: 'hidden', 
-            // row: 'flex flex-col gap-2',
-            // radiogroup: 'flex flex-col gap-2',
-            // radiogroupItem: 'flex items-center gap-2',
-            // radiogroupControl: 'h-4 w-4',
-            // radiogroupLabel: 'text-gray-700',
-            // navigationButton: 'bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600',
-
-            // page: 'bg-white p-6 rounded-lg shadow',
-            // pageDescription: 'text-sm text-gray-600',
-            // panel: 'bg-white p-4 rounded-lg shadow-sm',
-            // panelTitle: 'text-lg font-semibold text-gray-800',
-            // panelBody: 'text-sm text-gray-600',
-
-          }}
-        />
-      </div>
+        <div className="w-full max-w-4xl p-10 bg-gray-900 text-white rounded-lg shadow-lg">
+          <Survey
+            model={surveyJson}
+            css={customCss}
+          />
+        </div>
       )}
       {isComplete && (
-        <div>
-          <div>Incorrect count: {incorrectCount}</div>
-          <div>Total points: {totalPoints}</div>
-          <div>User level: {userLevel}</div>
+        <div className="text-white text-center mt-4">
+          <div className="text-lg">Incorrect count: {incorrectCount}</div>
+          <div className="text-lg">Total points: {totalPoints}</div>
+          <div className="text-lg">User level: {userLevel}</div>
         </div>
       )}
     </div>
   );
-};
+      };
 
 export default InitialSurvey;
