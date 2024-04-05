@@ -10,6 +10,7 @@ import queryUserDocument from '~/components/firebase/firebase_functions';
 import determineProficiency from '~/components/ai/gemini';
 import { Serializer } from 'survey-react';
 
+
 // Apply the Tailwind CSS theme
 StylesManager.applyTheme('default');
 
@@ -71,7 +72,7 @@ const InitialSurvey = () => {
     const formatQuestionsForSurveyJS = (questions: { id: string; data: Question }[]) => {
       return {
         showProgressBar: 'bottom',
-        showPageNumbers: false, // Hide page numbers
+        showPageNumbers: true, // Hide page numbers
         showPrevButton: false, // Hide previous button
         showPageTitles: false, // Hide page titles
         pages: questions.map((q, index) => ({

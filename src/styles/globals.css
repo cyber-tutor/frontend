@@ -3,3 +3,6 @@
 @tailwind utilities;
 
 
+.sv-hidden {
+  display: none;
+}
