@@ -18,7 +18,7 @@ export default function Home() {
 
   const uid = user ? user.uid : null;
 
-  console.log("User Id:", uid);
+  // console.log("User Id:", uid);
 
   // If user is logged in, query and retrieve the reference to their document in the users collection in firestore
   if (uid) {

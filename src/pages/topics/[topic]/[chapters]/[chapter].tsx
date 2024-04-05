@@ -128,11 +128,11 @@ export default function ChapterPage() {
             ...chapterSnapshot.data(),
           } as Chapter);
         } else {
-          console.error("No such chapter!");
+          // console.error("No such chapter!");
           setError("Chapter not found");
         }
       } catch (err) {
-        console.error("Error fetching chapter:", err);
+        // console.error("Error fetching chapter:", err);
         setError("Failed to fetch chapter");
       } finally {
         setLoading(false);
@@ -151,7 +151,6 @@ export default function ChapterPage() {
 
   const user = auth.currentUser;
   const uid = user ? user.uid : null;
-  // console.log("User:", uid);
 
   useEffect(() => {
     const fetchUserGroup = async () => {
@@ -163,15 +162,14 @@ export default function ChapterPage() {
         if (userDocument && userDocument.exists()) {
           setUserGroup(userDocument.data().group);
         } else {
-          console.error("No such user!");
+          // console.error("No such user!");
         }
       } catch (err) {
-        console.error("Error fetching user:", err);
+        // console.error("Error fetching user:", err);
       }
     };
 
     fetchUserGroup();
-    console.log("User group:", userGroup);
   }, [uid]);
 
   useEffect(() => {
@@ -184,10 +182,10 @@ export default function ChapterPage() {
         if (userDocument && userDocument.exists()) {
           setContentPreference(userDocument.data().contentPreference);
         } else {
-          console.error("No such user!");
+          // console.error("No such user!");
         }
       } catch (err) {
-        console.error("Error fetching user:", err);
+        // console.error("Error fetching user:", err);
       }
     };
 
@@ -211,16 +209,13 @@ export default function ChapterPage() {
       );
       const proficiencySnapshot = await getDoc(userProficiencyRef);
       const proficiencyData = proficiencySnapshot.data();
-      console.log("Proficiency data:", proficiencyData?.proficiency);
 
       if (proficiencyData && proficiencyData.proficiency) {
         setUserProficiency(proficiencyData.proficiency);
-        console.log("User proficiency:", proficiencyData.proficiency);
       }
     };
 
     fetchUserProficiency();
-    // console.log("User proficiency:", userProficiency);
   }, [uid, progressData]);
 
   if (loading)
@@ -325,7 +320,6 @@ export default function ChapterPage() {
               controls={false}
               onEnded={() => {
                 const playedMinutes = Math.floor(played / 60);
-                console.log("video ended");
                 handleVideoEnd(playedMinutes, userDocument?.id);
                 setIsVideoWatched(true);
               }}
@@ -346,10 +340,6 @@ export default function ChapterPage() {
                 await updateDoc(userDocRef, {
                   timeOnPage: timeElapsed,
                 });
-                console.log(
-                  "User time watched pushed successfully to firestore:",
-                  timeElapsed,
-                );
 
                 const progressRef = doc(
                   db,
@@ -389,7 +379,6 @@ export default function ChapterPage() {
                   );
                   const levelSnapshot = await getDoc(userLevel);
                   const levelData = levelSnapshot.data();
-                  console.log("Level data:", levelData?.level);
 
                   const topicString: String | null = await getNextChapterId(
                     chapter.order,
@@ -425,14 +414,14 @@ export default function ChapterPage() {
           </button>
         )}
         <br />
-        video progress: {Math.floor(played / 60)}:
+        {/* video progress: {Math.floor(played / 60)}:
         {String(Math.floor(played % 60)).padStart(2, "0")}
         <br />
         <p>User's time spent on this chapter:</p>
         <TimerComponent
           secondsElapsed={secondsElapsed}
           setSecondsElapsed={setSecondsElapsed}
-        />
+        /> */}
         {chapter && chapter.chapterType === "assessment" && (
           <div className="w-full px-4 md:px-0">
             <DynamicSurvey

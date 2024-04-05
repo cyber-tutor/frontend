@@ -31,15 +31,15 @@ const SignUpForm: React.FC = () => {
       const result = await signInWithPopup(auth, provider);
       const additionalUserInfo = getAdditionalUserInfo(result);
       if (additionalUserInfo?.isNewUser) {
-        console.log("User is signing up for the first time.");
+        // console.log("User is signing up for the first time.");
         const user = result.user;
         await createUserDocument(user, user.displayName || "");
       } else {
-        console.log("User is an existing user.");
+        // console.log("User is an existing user.");
       }
       router.push("/");
     } catch (e) {
-      console.error(e);
+      // console.error(e);
     }
   };
 
@@ -56,7 +56,7 @@ const SignUpForm: React.FC = () => {
         return false;
       }
     } catch (error) {
-      console.error("Error validating email:", error);
+      // console.error("Error validating email:", error);
       setEmailError("Error validating email");
       return false;
     }
@@ -89,7 +89,7 @@ const SignUpForm: React.FC = () => {
         router.push("/initialsurvey/begin");
       }
     } catch (e) {
-      console.error(e);
+      // console.error(e);
     }
   };
 
@@ -115,7 +115,7 @@ const SignUpForm: React.FC = () => {
   );
 
   return (
-    <div className="flex h-screen flex-col lg:pl-64">
+    <div className="flex h-screen flex-col lg:pl-64" style={{marginTop: "-4rem"}}>
       <div className="flex h-screen w-screen items-center justify-center bg-transparent">
         <div className="m-4 w-full max-w-xs rounded-lg bg-white p-8 shadow-md">
           <h1 className="mb-8 text-center text-2xl font-bold">

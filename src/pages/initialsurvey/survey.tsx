@@ -59,8 +59,8 @@ const InitialSurvey = () => {
         questionData.topic = doc.data().topic.toString();
         questionData.questionCategory = doc.data().questionCategory.toString();
 
-        console.log('Question Category:', questionData.questionCategory);
-        console.log('Question Topic:', questionData.topic);
+        // console.log('Question Category:', questionData.questionCategory);
+        // console.log('Question Topic:', questionData.topic);
 
         questions.push({ id: doc.id, data: questionData });
       });
@@ -171,13 +171,13 @@ const InitialSurvey = () => {
               userLevel: level,
             });
           } else {
-            console.log('No user document found');
+            // console.log('No user document found');
           }
         }).then(() => {
-          console.log('User document successfully updated');
+          // console.log('User document successfully updated');
           router.push('/demographicsurvey/survey');
         }).catch((error) => {
-          console.error('Error updating documents: ', error);
+          // console.error('Error updating documents: ', error);
         });
       }
     }
@@ -217,7 +217,7 @@ const InitialSurvey = () => {
           const topics = ['online_privacy', 'password_security', 'phishing', 'software_updates', 'two_factor_authentication'];
           const userDocRef = queryUserDocument(getAuth().currentUser?.uid || '');
 
-          console.log('Proficiency levels:', proficiencyLevels);
+          // console.log('Proficiency levels:', proficiencyLevels);
 
           userDocRef.then((docRef) => {
             if (docRef) {
@@ -227,12 +227,12 @@ const InitialSurvey = () => {
                   proficiency: proficiencyLevels[index]?.trim() ?? '',
                 });
               });
-              console.log('Proficiency levels updated successfully.');
+              // console.log('Proficiency levels updated successfully.');
             }
           });
         })
         .catch((error) => {
-          console.error('Error determining proficiency:', error);
+          // console.error('Error determining proficiency:', error);
           const proficiency = ['beginner', 'beginner', 'beginner', 'beginner', 'beginner'];
           const topics = ['online_privacy', 'password_security', 'phishing', 'software_updates', 'two_factor_authentication'];
           const userDocRef = queryUserDocument(getAuth().currentUser?.uid || '');
@@ -245,7 +245,7 @@ const InitialSurvey = () => {
                   proficiency: proficiency[index]?.trim() ?? '',
                 });
               });
-              console.log('Proficiency levels updated successfully.');
+              // console.log('Proficiency levels updated successfully.');
             }
           });
         });
@@ -262,13 +262,13 @@ const InitialSurvey = () => {
           />
         </div>
       )}
-      {isComplete && (
+      {/* {isComplete && (
         <div className="text-white text-center mt-4">
           <div className="text-lg">Incorrect count: {incorrectCount}</div>
           <div className="text-lg">Total points: {totalPoints}</div>
           <div className="text-lg">User level: {userLevel}</div>
         </div>
-      )}
+      )} */}
     </div>
   );
       };

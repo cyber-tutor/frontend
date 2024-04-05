@@ -18,7 +18,7 @@ export default async function getVideoDuration(videoUrl: string) {
 
     return duration; 
   } catch (error) {
-    console.error('Error fetching video duration:', error);
+    // console.error('Error fetching video duration:', error);
     throw error;
   }
 }

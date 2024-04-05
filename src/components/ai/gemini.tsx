@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const determineProficiency = async (responses: string): Promise<string> => {
   const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_API_KEY ? process.env.NEXT_PUBLIC_GOOGLE_API_KEY : "");
 
-  console.log("User responses: ",responses);
+  // console.log("User responses: ",responses);
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
     const prompt = `
@@ -35,11 +35,11 @@ const determineProficiency = async (responses: string): Promise<string> => {
     const textContent = await response.response.text();
     const proficiency = textContent.trim().toLowerCase();
 
-    console.log("User Level: ", proficiency);
+    // console.log("User Level: ", proficiency);
 
     return proficiency;
   } catch (error) {
-    console.error("Error determining proficiency:", error);
+    // console.error("Error determining proficiency:", error);
     return "error"; 
   }
 };

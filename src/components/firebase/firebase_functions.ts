@@ -38,15 +38,15 @@ export default async function queryUserDocument(
 
     const firstDoc = querySnapshot.docs[0];
     if (firstDoc) {
-      console.log("Success.");
+      // console.log("Success.");
       //   return firstDoc.data();
       return firstDoc;
     } else {
-      console.log("No matching documents.");
+      // console.log("No matching documents.");
       return null;
     }
   } catch (error) {
-    console.error("Error fetching user document:", error);
+    // console.error("Error fetching user document:", error);
     return null;
   }
 }
@@ -57,7 +57,7 @@ export async function handleVideoEnd(
 ): Promise<void> {
   try {
     if (!userDocumentId) {
-      console.error("User document ID is undefined.");
+      // console.error("User document ID is undefined.");
       return;
     }
 
@@ -67,14 +67,14 @@ export async function handleVideoEnd(
       videoCompleted: true,
     });
   } catch (error) {
-    console.error("Error updating video progress:", error);
+    // console.error("Error updating video progress:", error);
   }
 }
 
 export async function isWatched(userDocumentId: string): Promise<boolean> {
   try {
     if (!userDocumentId) {
-      console.error("User document ID is undefined.");
+      // console.error("User document ID is undefined.");
       return false;
     }
 
@@ -85,7 +85,7 @@ export async function isWatched(userDocumentId: string): Promise<boolean> {
       const videoCompleted = docSnap.data().videoCompleted || false;
       return videoCompleted;
     } else {
-      console.log("No such document!");
+      // console.log("No such document!");
       return false;
     }
   } catch (error) {
@@ -176,22 +176,22 @@ export async function createUserDocument(
     }
 
     await batch.commit();
-    console.log(
-      "User document and subcollections created with ID: ",
-      userRef.id,
-    );
+    // console.log(
+    //   "User document and subcollections created with ID: ",
+    //   userRef.id,
+    // );
   } catch (error) {
-    console.error(
-      "Error fetching topics or chapters, or error in batch write:",
-      error,
-    );
+    // console.error(
+    //   "Error fetching topics or chapters, or error in batch write:",
+    //   error,
+    // );
   }
 }
 
 
 export const findUserDocId = async (userId: string): Promise<string | null> => {
   if (!userId) {
-    console.error("User ID is undefined");
+    // console.error("User ID is undefined");
     return null;
   }
   const q = query(collection(db, "users"), where("userId", "==", userId));
@@ -224,7 +224,7 @@ export async function getNextChapterId(order: number, documentId: string, userPr
   let nextChapterProficiency = 0;
 
   querySnapshot.forEach((doc) => {
-    console.log(doc.id, " => ", doc.data());
+    // console.log(doc.id, " => ", doc.data());
     nextChapterId = doc.id;
     nextChapterProficiency = doc.data().proficiency;
   });

@@ -177,11 +177,11 @@ export default function TopicPage() {
             chapters,
           });
         } else {
-          console.error("uh oh, topic not found 🦧");
+          // console.error("uh oh, topic not found 🦧");
           setError("uh oh, topic not found 🦧");
         }
       } catch (err) {
-        console.error("uh oh, error fetching topic 🦧:", err);
+        // console.error("uh oh, error fetching topic 🦧:", err);
         setError("uh oh, error fetching topic 🦧");
       } finally {
         setLoading(false);

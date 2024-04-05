@@ -70,14 +70,14 @@ export default function SurveyComponent(): JSX.Element {
   
       try {
         await batch.commit();
-        console.log("Survey responses successfully written to Firestore.");
+        // console.log("Survey responses successfully written to Firestore.");
         await demographicSurveyComplete(user.uid, userResponseString); 
         router.push('/'); 
       } catch (error) {
-        console.error("Error writing survey responses: ", error);
+        // console.error("Error writing survey responses: ", error);
       }
     } else {
-      console.error("User is not authenticated.");
+      // console.error("User is not authenticated.");
     }
   };
   
