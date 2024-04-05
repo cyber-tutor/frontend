@@ -10,6 +10,7 @@ import {
   orderBy,
   query,
   DocumentData,
+  where,
 } from "firebase/firestore";
 import Link from "next/link";
 import CircularWithValueLabel from "~/components/ProgressCircle";
@@ -37,7 +38,6 @@ type Chapter = {
   proficiency: number;
 };
 
-
 const updateChapterCompletion = (
   chapterId: string,
   complete: boolean,
@@ -63,7 +63,7 @@ export default function TopicPage() {
   const [chapterCompletion, setChapterCompletion] = useState<
     Record<string, boolean>
   >({});
-  const [userDataLoaded, setUserDataLoaded] = useState(false); 
+  const [userDataLoaded, setUserDataLoaded] = useState(false);
 
   const router = useRouter();
   const { topic: topicId } = router.query;
@@ -78,55 +78,60 @@ export default function TopicPage() {
     return () => unsubscribe();
   }, [router]);
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      const uid = user ? user.uid : null;
 
-useEffect(() => {
-  const fetchUserData = async () => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    const uid = user ? user.uid : null;
+      if (uid) {
+        const userDoc = await queryUserDocument(uid);
+        setUserDocument(userDoc);
 
-    if (uid) {
-      const userDoc = await queryUserDocument(uid);
-      setUserDocument(userDoc);
-
-
-      const levelRef = doc(
-        db,
-        `users/${userDoc?.id}/levels`,
-        topicId?.toString() ?? "",
-      );
-      const levelSnapshot = await getDoc(levelRef);
-      if (levelSnapshot.exists()) {
-        const userLevel = levelSnapshot.data().level;
-        setUserProficiency(userLevel); 
-        if (typeof window !== "undefined") {
-          localStorage.setItem("userLevel", userLevel.toString()); 
-        }
-
-        if (topic && userLevel) {
-          const completionStatus: Record<string, boolean> = {};
-          topic.chapters.forEach((chapter) => {
-            completionStatus[chapter.chapterId] = userLevel >= chapter.proficiency;
-          });
-
-          setChapterCompletion(completionStatus);
+        const levelRef = doc(
+          db,
+          `users/${userDoc?.id}/levels`,
+          topicId?.toString() ?? "",
+        );
+        const levelSnapshot = await getDoc(levelRef);
+        if (levelSnapshot.exists()) {
+          const userLevel = levelSnapshot.data().level;
+          setUserProficiency(userLevel);
           if (typeof window !== "undefined") {
-            localStorage.setItem(
-              "chapterCompletion",
-              JSON.stringify(completionStatus),
-            ); 
+            localStorage.setItem("userLevel", userLevel.toString());
           }
         }
+
+
+        const progressCollectionRef = collection(
+          db,
+          `users/${userDoc?.id}/progress`,
+        );
+        const progressQuery = query(
+          progressCollectionRef,
+          where("topicId", "==", topicId?.toString() ?? ""),
+        );
+        const progressSnapshot = await getDocs(progressQuery);
+
+        const completionStatus: Record<string, boolean> = {};
+        progressSnapshot.forEach((doc) => {
+          completionStatus[doc.id] = doc.data().complete;
+        });
+
+        setChapterCompletion(completionStatus);
+        if (typeof window !== "undefined") {
+          localStorage.setItem(
+            "chapterCompletion",
+            JSON.stringify(completionStatus),
+          );
+        }
       }
-    }
 
-    setUserDataLoaded(true); 
-  };
+      setUserDataLoaded(true);
+    };
 
-  fetchUserData();
-}, [topicId, topic]);
-
-
+    fetchUserData();
+  }, [topicId, topic]);
 
   useEffect(() => {
     const fetchTopic = async () => {
@@ -185,7 +190,6 @@ useEffect(() => {
 
     fetchTopic();
   }, [topicId]);
-
 
   useEffect(() => {
     if (typeof window !== "undefined") {
