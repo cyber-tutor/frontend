@@ -86,6 +86,23 @@ export default function ChapterPage() {
   const [contentPreference, setContentPreference] = useState<string | null>(
     null,
   );
+  const [controlGroupImageIndex, setControlGroupImageIndex] =
+    useState<number>();
+  const [experimentalGroupImageIndex, setExperimentalGroupImageIndex] =
+    useState<number>();
+
+  useEffect(() => {
+    if (chapter) {
+      setControlGroupImageIndex(
+        Math.floor(Math.random() * chapter.controlGroupImageURLs.length),
+      );
+    }
+    if (chapter) {
+      setExperimentalGroupImageIndex(
+        Math.floor(Math.random() * chapter.experimentalGroupImageURLs.length),
+      );
+    }
+  }, [chapter]);
 
   const router = useRouter();
   const { topic: topicId, chapter: chapterId } = router.query;
@@ -225,7 +242,9 @@ export default function ChapterPage() {
       </BaseLayout>
     );
 
-  function convertNewlinesToBreaks(text: string | undefined): { __html: string } {
+  function convertNewlinesToBreaks(text: string | undefined): {
+    __html: string;
+  } {
     return { __html: text ? text.replace(/(\\n|\r\n|\n|\r)/g, "<br />") : "" };
   }
   return (
@@ -255,29 +274,38 @@ export default function ChapterPage() {
                     )}
                   />
                 )}
+                {(userGroup === "control"
+                  ? chapter.controlGroupImageURLs
+                  : chapter.experimentalGroupImageURLs
+                )?.length > 0 && (
+                  <img
+                    className="mx-auto mt-5 w-1/3 shadow-lg"
+                    src={
+                      userGroup === "control" &&
+                      chapter.controlGroupImageURLs.length > 0
+                        ? chapter.controlGroupImageURLs[
+                            controlGroupImageIndex ?? 0
+                          ]
+                        : userGroup === "experimental" &&
+                            chapter.experimentalGroupImageURLs.length > 0
+                          ? chapter.experimentalGroupImageURLs[
+                              experimentalGroupImageIndex ?? 0
+                            ]
+                          : undefined
+                    }
+                    alt={
+                      chapter.chapterTitle
+                        ? String(chapter.chapterTitle)
+                        : undefined
+                    }
+                    title={
+                      chapter.chapterTitle
+                        ? String(chapter.chapterTitle)
+                        : undefined
+                    }
+                  />
+                )}
               </div>
-            )}
-            {(userGroup === "control"
-              ? chapter.controlGroupImageURLs?.[0]
-              : chapter.experimentalGroupImageURLs?.[0]) && (
-              <img
-                className="mx-auto mt-5 w-1/3 shadow-lg"
-                src={
-                  userGroup === "control"
-                    ? chapter.controlGroupImageURLs?.[0]
-                    : chapter.experimentalGroupImageURLs?.[0]
-                }
-                alt={
-                  chapter.chapterTitle
-                    ? String(chapter.chapterTitle)
-                    : undefined
-                }
-                title={
-                  chapter.chapterTitle
-                    ? String(chapter.chapterTitle)
-                    : undefined
-                }
-              />
             )}
           </div>
         )}
