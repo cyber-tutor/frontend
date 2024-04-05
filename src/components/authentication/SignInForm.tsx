@@ -65,7 +65,7 @@ const SignInForm = () => {
 
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen lg:pl-64">
       <div className="flex-grow flex items-center justify-center">
         <div className="w-full max-w-sm p-6 bg-white rounded shadow-md">
           <h2 className="mb-6 text-3xl font-bold text-center">Sign In</h2>
