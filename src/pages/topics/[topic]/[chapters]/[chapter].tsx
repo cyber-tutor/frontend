@@ -92,12 +92,12 @@ export default function ChapterPage() {
     useState<number>();
 
   useEffect(() => {
-    if (chapter) {
+    if (chapter && chapter.controlGroupImageURLs) {
       setControlGroupImageIndex(
         Math.floor(Math.random() * chapter.controlGroupImageURLs.length),
       );
     }
-    if (chapter) {
+    if (chapter && chapter.controlGroupImageURLs) {
       setExperimentalGroupImageIndex(
         Math.floor(Math.random() * chapter.experimentalGroupImageURLs.length),
       );
