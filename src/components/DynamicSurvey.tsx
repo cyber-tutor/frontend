@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
 import { Survey, Model } from "survey-react";
-import { collection, query, where, getDocs, doc, updateDoc, getDoc } from "firebase/firestore";
+import "survey-react/modern.min.css";
+import { useEffect, useRef, useState } from "react";
 import { auth, db } from "./firebase/config";
+import { collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { findUserDocId, increaseLevel } from "~/components/firebase/firebase_functions";
 import { useRouter } from "next/router";
 
@@ -18,41 +19,36 @@ interface DynamicSurveyProps {
   userId: string; // Assuming you have the userId
 }
 
-
 const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
   const [surveyJson, setSurveyJson] = useState<Model>(new Model({}));
   const [correctAnswers, setCorrectAnswers] = useState<Record<string, string>>({});
   const startTimeRef = useRef<Date | null>(null);
-  
-const router = useRouter();
-const { topic: topicId } = router.query;
 
-useEffect(() => {
-  const fetchQuestions = async () => {
-    const questions: Question[] = [];
-    const correctAnswers: Record<string, string> = {};
+  const router = useRouter();
+  const { topic: topicId } = router.query;
 
-    // Fetch user's proficiency for the topic related to the chapter
-    const user = auth.currentUser;
-    const uid = user ? user.uid : null;
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      const questions: Question[] = [];
+      const correctAnswers: Record<string, string> = {};
 
-    const userDocId = await findUserDocId(uid ? uid : "");
-    if (!userDocId) return;
+      const user = auth.currentUser;
+      const uid = user ? user.uid : null;
 
-    
+      const userDocId = await findUserDocId(uid ? uid : "");
+      if (!userDocId) return;
 
-    const proficiencyDocRef = doc(db, "users", userDocId, "proficiency", String(topicId));
-    const proficiencyDocSnapshot = await getDoc(proficiencyDocRef);
-    const proficiencyData = proficiencyDocSnapshot.data();
-    console.log("Proficiency data:", proficiencyData?.proficiency);
+      const proficiencyDocRef = doc(db, "users", userDocId, "proficiency", String(topicId));
+      const proficiencyDocSnapshot = await getDoc(proficiencyDocRef);
+      const proficiencyData = proficiencyDocSnapshot.data();
+      console.log("Proficiency data:", proficiencyData?.proficiency);
 
-    let proficiency = "beginner";
-    if (proficiencyData && proficiencyData.proficiency) {
-      proficiency = proficiencyData.proficiency;
-      console.log("User proficiency:", proficiency);
-    }
-  
-      // Fetch questions based on user's proficiency
+      let proficiency = "beginner";
+      if (proficiencyData && proficiencyData.proficiency) {
+        proficiency = proficiencyData.proficiency;
+        console.log("User proficiency:", proficiency);
+      }
+
       const q = query(
         collection(db, "quizQuestions"),
         where("chapterId", "==", chapterId),
@@ -63,8 +59,7 @@ useEffect(() => {
         const questionData = doc.data() as Question;
         questions.push(questionData);
         correctAnswers[`question${questions.length}`] = questionData.correctAnswer;
-  
-        // Print out the difficulty assigned to each question
+
         console.log(`Question: ${questionData.question}, Difficulty: ${questionData.difficulty}`);
       });
       setCorrectAnswers(correctAnswers);
@@ -90,6 +85,22 @@ useEffect(() => {
             })),
           },
         ],
+        cssClasses: {
+          root: "bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4",
+          header: "text-xl font-bold mb-4",
+          question: {
+            title: "font-semibold",
+            mainRoot: "mb-4",
+          },
+          radiogroup: {
+            root: "flex flex-col",
+            item: "mb-2",
+          },
+          progressBar: "h-2 bg-blue-200",
+          page: {
+            description: "text-sm mb-2",
+          },
+        },
       };
     };
 
@@ -97,7 +108,7 @@ useEffect(() => {
       if (questions) {
         const formattedQuestions = formatQuestionsForSurveyJS(questions);
         setSurveyJson(new Model(formattedQuestions));
-        startTimeRef.current = new Date(); // Set the start time when the survey is loaded
+        startTimeRef.current = new Date();
       }
     });
   }, [chapterId, userId]);
@@ -120,17 +131,16 @@ useEffect(() => {
     if (userDocId) {
       const progressDocRef = doc(db, "users", userDocId, "progress", chapterId);
       const progressDocSnapshot = await getDoc(progressDocRef);
-  
+
       let currentAttempts = 0;
       if (progressDocSnapshot.exists()) {
         currentAttempts = Object.keys(progressDocSnapshot.data().attempts || {}).length;
       }
-  
-      // Convert timeElapsed to minutes:seconds format
+
       const minutes = Math.floor(timeElapsed / 60);
       const seconds = Math.floor(timeElapsed % 60);
       const formattedTimeElapsed = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  
+
       const newAttemptKey = `attempt${currentAttempts + 1}`;
       const updateData: Record<string, any> = {
         [`attempts.${newAttemptKey}`]: {
@@ -138,43 +148,54 @@ useEffect(() => {
           timeElapsed: formattedTimeElapsed,
         },
       };
-  
-    if (progressDocSnapshot.exists()) {
-      if (passed && !progressDocSnapshot.data().complete) {
-        updateData.complete = true;
-        await increaseLevel(userDocId, progressDocSnapshot.data().topicId);
+
+      if (progressDocSnapshot.exists()) {
+        if (passed && !progressDocSnapshot.data().complete) {
+          updateData.complete = true;
+          await increaseLevel(userDocId, progressDocSnapshot.data().topicId);
+        }
       }
-    }
-  
+
       await updateDoc(progressDocRef, updateData);
     } else {
       console.error("User document not found");
     }
   };
-  
 
   return (
-    <Survey
-      model={surveyJson}
-      onComplete={(result: Model) => {
-        console.log("Survey results: ", result.data);
-        const { percentage, resultMessage } = calculateResults(result.data);
-        console.log(`Survey results: ${resultMessage} (${percentage.toFixed(2)}%)`);
-
-        // Calculate the time elapsed in seconds
-        const endTime = new Date();
-        const timeElapsed = (endTime.getTime() - (startTimeRef.current?.getTime() || endTime.getTime())) / 1000;
-
-        if (resultMessage === "User passed") {
-          alert(`You passed with a score of ${percentage.toFixed(2)}%`);
-          updateUserProgress(percentage, true, timeElapsed); // Update user progress in Firebase
-        } else {
-          alert(`You failed with a score of ${percentage.toFixed(2)}%`);
-          updateUserProgress(percentage, false, timeElapsed); // Update user progress in Firebase
-        }
-      }}
-    />
+    <div className="flex justify-center items-center p-4 bg-white rounded-lg shadow-xl border border-gray-200">
+      <div className="w-full max-w-2xl p-6 bg-white rounded-md">
+        <Survey
+          model={surveyJson}
+          onComplete={(result: Model) => {
+            const { percentage, resultMessage } = calculateResults(result.data);
+            const endTime = new Date();
+            const timeElapsed = (endTime.getTime() - (startTimeRef.current?.getTime() || endTime.getTime())) / 1000;
+  
+            if (resultMessage === "User passed") {
+              alert(`You passed with a score of ${percentage.toFixed(2)}%`);
+              updateUserProgress(percentage, true, timeElapsed);
+            } else {
+              alert(`You failed with a score of ${percentage.toFixed(2)}%`);
+              updateUserProgress(percentage, false, timeElapsed);
+            }
+          }}
+          css={{
+            root: "text-gray-800",
+            header: "text-xl font-semibold mb-4",
+            body: "flex flex-col gap-4",
+            question: {
+              title: "font-semibold text-lg",
+              description: "text-sm text-gray-600",
+            },
+            navigationButton: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded",
+            progressBar: "h-2 bg-blue-600 rounded",
+          }}
+        />
+      </div>
+    </div>
   );
+  
 };
 
 export default DynamicSurvey;
