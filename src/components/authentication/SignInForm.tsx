@@ -35,6 +35,7 @@ const SignInForm = () => {
     try {
       await signInWithEmailAndPassword(email, password);
       emptyTextBoxes();
+      router.push("/");
     } catch (e) {
       console.error(e);
       setSignInError("An unexpected error occurred. Please try again.");
@@ -49,7 +50,7 @@ const SignInForm = () => {
       const additionalUserInfo = getAdditionalUserInfo(result);
       if (additionalUserInfo?.isNewUser) {
         const user = result.user;
-        await createUserDocument(user, user.displayName || '');
+        await createUserDocument(user, user.displayName || "");
       }
       router.push("/");
     } catch (e) {
@@ -63,18 +64,22 @@ const SignInForm = () => {
     }
   }, [error]);
 
-
   return (
     <div className="flex flex-col h-screen lg:pl-64">
       <div className="flex-grow flex items-center justify-center">
         <div className="w-full max-w-sm p-6 bg-white rounded shadow-md">
           <h2 className="mb-6 text-3xl font-bold text-center">Sign In</h2>
           {signInError && (
-            <p className="mb-4 text-sm text-center text-red-500">{signInError}</p>
+            <p className="mb-4 text-center text-sm text-red-500">
+              {signInError}
+            </p>
           )}
           <form onSubmit={handleSignIn} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email
               </label>
               <input
@@ -83,11 +88,14 @@ const SignInForm = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-3 py-2 mt-1 border rounded-md"
+                className="mt-1 w-full rounded-md border px-3 py-2"
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Password
               </label>
               <Password
@@ -99,18 +107,20 @@ const SignInForm = () => {
             </div>
             <button
               type="submit"
-              className="w-full px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600 focus:outline-none"
+              className="w-full rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600 focus:outline-none"
             >
               Sign In
             </button>
             <div className="my-4 flex items-center justify-between">
               <div className="flex-grow border-t border-gray-300"></div>
-              <span className="mx-4 flex-shrink text-gray-600 uppercase">or</span>
+              <span className="mx-4 flex-shrink uppercase text-gray-600">
+                or
+              </span>
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
             <button
               onClick={handleGoogleSignIn}
-              className="w-full px-4 py-2 text-sm text-gray-700 bg-white border rounded hover:bg-gray-50 flex items-center justify-center"
+              className="flex w-full items-center justify-center rounded border bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
             >
               <FcGoogle className="text-xl" />
               <span className="ml-2">Login with Google</span>
@@ -124,7 +134,7 @@ const SignInForm = () => {
         </div>
       </footer>
     </div>
-  );  
+  );
 };
 
 export default SignInForm;
