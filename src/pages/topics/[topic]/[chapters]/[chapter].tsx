@@ -417,11 +417,11 @@ export default function ChapterPage() {
         {/* video progress: {Math.floor(played / 60)}:
         {String(Math.floor(played % 60)).padStart(2, "0")}
         <br />
-        <p>User's time spent on this chapter:</p>
+        <p>User's time spent on this chapter:</p> */}
         <TimerComponent
           secondsElapsed={secondsElapsed}
           setSecondsElapsed={setSecondsElapsed}
-        /> */}
+        />
         {chapter && chapter.chapterType === "assessment" && (
           <div className="w-full px-4 md:px-0">
             <DynamicSurvey

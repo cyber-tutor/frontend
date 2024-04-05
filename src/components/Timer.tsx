@@ -36,7 +36,7 @@ const TimerComponent: React.FC<TimerProps> = ({ secondsElapsed, setSecondsElapse
 
   return (
     <div>
-      <p>Time Elapsed: {formatTime(secondsElapsed)}</p>
+      <p className='hidden'>Time Elapsed: {formatTime(secondsElapsed)}</p>
     </div>
   );
 }
