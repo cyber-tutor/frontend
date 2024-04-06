@@ -13,8 +13,31 @@ import InputField from "./InputField";
 interface Chapter {
   chapterId: string;
   chapterTitle: string;
-  controlGroupContent: string;
-  controlGroupImageURL: string;
+  chapterDescription: string;
+  order: number;
+  proficiency: number;
+  controlGroupContent: {
+    beginner: string;
+    intermediate: string;
+    expert: string;
+  };
+  controlGroupVideoURLs: {
+    beginner: string;
+    intermediate: string;
+    expert: string;
+  };
+  controlGroupImageURLs: string[];
+  experimentalGroupContent: {
+    beginner: string;
+    intermediate: string;
+    expert: string;
+  };
+  experimentalGroupVideoURLs: {
+    beginner: string;
+    intermediate: string;
+    expert: string;
+  };
+  experimentalGroupImageURLs: string[];
 }
 
 interface Topic {
@@ -22,15 +45,31 @@ interface Topic {
   topicTitle: string;
 }
 
+interface Chapter {
+  chapterId: string;
+  chapterTitle: string;
+  chapterType: string;
+}
+
 interface ControlGroupFormProps {
   topicId: string;
 }
+
+type Proficiency = "beginner" | "intermediate" | "expert";
 
 const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [selectedTopicId, setSelectedTopicId] = useState("");
   const [chapters, setChapters] = useState<Chapter[]>([]);
-  const [updatedContent, setUpdatedContent] = useState("");
+  const [updatedContent, setUpdatedContent] = useState<{
+    beginner: string;
+    intermediate: string;
+    expert: string;
+  }>({
+    beginner: "",
+    intermediate: "",
+    expert: "",
+  });
   const [selectedChapterId, setSelectedChapterId] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
 
@@ -77,9 +116,13 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
   }, [selectedTopicId]);
 
   const handleContentChange = (
+    proficiency: Proficiency,
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setUpdatedContent(e.target.value);
+    setUpdatedContent((prevContent) => ({
+      ...prevContent,
+      [proficiency]: e.target.value,
+    }));
   };
 
   const handleChapterChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -90,27 +133,35 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
       (chapter) => chapter.chapterId === selectedChapterId,
     );
 
-    if (selectedChapter) {
+    if (selectedChapter && selectedChapter.controlGroupContent) {
       setUpdatedContent(selectedChapter.controlGroupContent);
     } else {
-      setUpdatedContent("");
+      setUpdatedContent({
+        beginner: "",
+        intermediate: "",
+        expert: "",
+      });
     }
   };
 
-  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUrlChange = (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const newUrl = e.target.value;
     setChapters((prevChapters) =>
       prevChapters.map((chapter) =>
         chapter.chapterId === selectedChapterId
           ? {
               ...chapter,
-              controlGroupImageURL: newUrl,
+              controlGroupImageURLs: chapter.controlGroupImageURLs.map(
+                (url, i) => (i === index ? newUrl : url),
+              ),
             }
           : chapter,
       ),
     );
   };
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!selectedChapterId) return;
@@ -167,11 +218,13 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
               className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm sm:text-sm"
             >
               <option value="">Select a Chapter</option>
-              {chapters.map((chapter) => (
-                <option key={chapter.chapterId} value={chapter.chapterId}>
-                  {chapter.chapterTitle}
-                </option>
-              ))}
+              {chapters
+                .filter((chapter) => chapter.chapterType !== "assessment")
+                .map((chapter) => (
+                  <option key={chapter.chapterId} value={chapter.chapterId}>
+                    {chapter.chapterTitle}
+                  </option>
+                ))}
             </select>
           </div>
           <button
@@ -183,37 +236,43 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
         </div>
         {selectedChapterId && (
           <div className="col-span-3 flex-grow">
-            <label
-              htmlFor="content"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Control Group Content:
-            </label>
-            <textarea
-              id="content"
-              name="content"
-              value={updatedContent}
-              onChange={handleContentChange}
-              placeholder="Enter control group content"
-              className="w-full resize-y rounded-md border p-2 text-sm text-gray-500"
-              rows={1}
-            />
+            {(["beginner", "intermediate", "expert"] as Proficiency[]).map(
+              (proficiency) => (
+                <div key={proficiency}>
+                  <label
+                    htmlFor={`content-${proficiency}`}
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Control Group Content ({proficiency}):
+                  </label>
+                  <textarea
+                    id={`content-${proficiency}`}
+                    name={`content-${proficiency}`}
+                    value={updatedContent[proficiency]}
+                    onChange={(e) => handleContentChange(proficiency, e)}
+                    placeholder={`Enter control group content (${proficiency})`}
+                    className="w-full resize-y rounded-md border p-2 text-sm text-gray-500"
+                    rows={1}
+                  />
+                </div>
+              ),
+            )}
             <div className="mt-4">
-              <h3 className="text-sm font-medium">Control Group Image URL:</h3>
-              <div className="mt-2 flex items-center space-x-2">
-                <input
-                  id={`imageUrl`}
-                  name={`imageUrl`}
-                  value={
-                    chapters.find(
-                      (chapter) => chapter.chapterId === selectedChapterId,
-                    )?.controlGroupImageURL
-                  }
-                  onChange={handleImageUrlChange}
-                  placeholder="Enter image URL"
-                  className="flex-grow rounded-md border p-2 text-sm text-gray-500"
-                />
-              </div>
+              <h3 className="text-sm font-medium">Control Group Image URLs:</h3>
+              {chapters
+                .find((chapter) => chapter.chapterId === selectedChapterId)
+                ?.controlGroupImageURLs?.map((url, index) => (
+                  <div key={index} className="mt-2 flex items-center space-x-2">
+                    <input
+                      id={`imageUrl-${index}`}
+                      name={`imageUrl-${index}`}
+                      value={url}
+                      onChange={(e) => handleImageUrlChange(index, e)}
+                      placeholder="Enter image URL"
+                      className="flex-grow rounded-md border p-2 text-sm text-gray-500"
+                    />
+                  </div>
+                ))}
             </div>
           </div>
         )}
