@@ -144,6 +144,24 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
     }
   };
 
+  const handleAddImageUrl = () => {
+    setChapters((prevChapters) =>
+      prevChapters.map((chapter) =>
+        chapter.chapterId === selectedChapterId
+          ? {
+              ...chapter,
+              controlGroupImageURLs: [
+                ...(Array.isArray(chapter.controlGroupImageURLs)
+                  ? chapter.controlGroupImageURLs
+                  : []),
+                "",
+              ],
+            }
+          : chapter,
+      ),
+    );
+  };
+
   const handleImageUrlChange = (
     index: number,
     e: React.ChangeEvent<HTMLInputElement>,
@@ -166,10 +184,15 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
     e.preventDefault();
     if (!selectedChapterId) return;
     try {
+      const updatedChapter = chapters.find(
+        (chapter) => chapter.chapterId === selectedChapterId,
+      );
+      if (!updatedChapter) return;
       await updateDoc(
         doc(db, `topics/${selectedTopicId}/chapters`, selectedChapterId),
         {
           controlGroupContent: updatedContent,
+          controlGroupImageURLs: updatedChapter.controlGroupImageURLs,
         },
       );
       setFeedbackMessage("Control group content updated successfully");
@@ -264,6 +287,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
                 ?.controlGroupImageURLs?.map((url, index) => (
                   <div key={index} className="mt-2 flex items-center space-x-2">
                     <input
+                      key={url}
                       id={`imageUrl-${index}`}
                       name={`imageUrl-${index}`}
                       value={url}
@@ -273,6 +297,9 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
                     />
                   </div>
                 ))}
+              <button onClick={handleAddImageUrl} type="button">
+                Add Image URL
+              </button>
             </div>
           </div>
         )}
