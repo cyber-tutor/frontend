@@ -309,8 +309,12 @@ export default function ChapterPage() {
             <ReactPlayer
               url={
                 userGroup === "control"
-                  ? chapter.controlGroupVideoURLs?.beginner
-                  : chapter.experimentalGroupVideoURLs?.beginner
+                  ? chapter.controlGroupVideoURLs?.[
+                      userProficiency as keyof typeof chapter.controlGroupVideoURLs
+                    ]
+                  : chapter.experimentalGroupVideoURLs?.[
+                      userProficiency as keyof typeof chapter.experimentalGroupVideoURLs
+                    ]
               }
               onProgress={(progress) => {
                 setPlayed(progress.playedSeconds);
