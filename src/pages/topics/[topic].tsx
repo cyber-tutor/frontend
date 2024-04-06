@@ -257,9 +257,11 @@ export default function TopicPage() {
                 <div>
                   <div className="grid grid-cols-6 items-center">
                     <h3 className="col-span-5 text-xl font-bold">
-                      <p className="text-xs font-bold">
-                        {chapter.chapterType.toUpperCase()}
-                      </p>
+                      {chapter.chapterType.toLowerCase() === "assessment" && (
+                        <p className="text-xs font-bold">
+                          {chapter.chapterType.toUpperCase()}
+                        </p>
+                      )}
                       {chapter.chapterTitle}
                       {chapterCompletion[chapter.chapterId] ? " ✅" : ""}
                     </h3>
