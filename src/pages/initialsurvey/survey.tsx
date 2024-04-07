@@ -9,10 +9,16 @@ import { getAuth } from 'firebase/auth';
 import queryUserDocument from '~/components/firebase/firebase_functions';
 import determineProficiency from '~/components/ai/gemini';
 import { Serializer } from 'survey-react';
+import 'survey-react/survey.css';
+
 
 
 // Apply the Tailwind CSS theme
 StylesManager.applyTheme('default');
+
+
+
+
 
 interface Question {
   question: string;
@@ -24,6 +30,7 @@ interface Question {
   description: string;
   visibilityCondition: string;
   topic: string;
+  isRequired: boolean;
 }
 
 
@@ -73,8 +80,9 @@ const InitialSurvey = () => {
               questionCategory: q.data.questionCategory,
               name: q.id,
               title: q.data.question,
-              isRequired: false,
               geminiDescription: q.data.description,
+              isRequired: true,
+
               ...(q.data.questionType === 'comment' && { maxLength: 400 }),
               ...(q.data.questionType === 'radiogroup' && {
                 choices: Object.entries(q.data.choices || {})
@@ -92,6 +100,7 @@ const InitialSurvey = () => {
         })),
       };
     };
+    
 
     fetchQuestions().then((questions) => {
       const formattedQuestions = formatQuestionsForSurveyJS(questions);
@@ -101,12 +110,18 @@ const InitialSurvey = () => {
 
   useEffect(() => {
     if (surveyJson) {
+      surveyJson.onValidateQuestion.add((sender, options) => {
+        if (options.question.isRequired && !options.value) {
+          options.error = "This question is required.";
+        }
+      });
       surveyJson.onComplete.add((surveyResult: any) => {
         setIsComplete(true);
         setResult(surveyResult.data);
       });
     }
   }, [surveyJson]);
+  
 
   useEffect(() => {
     if (isComplete && surveyJson) {
@@ -250,7 +265,7 @@ const InitialSurvey = () => {
           <Survey
             model={surveyJson}
             className="font-sans"
-            css={tailwindCustomCss}
+            
           />
         </div>
       )}
@@ -260,13 +275,4 @@ const InitialSurvey = () => {
 
 export default InitialSurvey;
 
-const tailwindCustomCss = {
-  header: 'text-4xl font-bold text-gray-800 bg-gradient-to-r from-purple-500 to-pink-500 p-5 rounded-t-lg',
-  question: 'font-semibold text-xl my-4 p-3',
-  questionTitle: 'text-2xl text-gray-800 p-3',
-  answerRow: 'flex flex-col items-start p-3',
-  radiogroupItem: 'my-4 p-3 bg-gray-200 rounded-lg',
-  radiogroupControl: 'form-radio text-purple-500 mr-3',
-  radiogroupLabel: 'text-gray-800 ml-2 text-lg',
-  navigationButton: 'bg-purple-500 text-white font-bold py-2 px-4 rounded hover:bg-purple-400 focus:outline-none focus:shadow-outline',
-};
+
