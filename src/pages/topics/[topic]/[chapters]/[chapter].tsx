@@ -249,59 +249,61 @@ export default function ChapterPage() {
       <div className="mx-auto w-full overflow-y-auto">
         {contentPreference === "text" && (
           <div className="m-4 rounded border p-4 shadow">
-            {userDocument?.data().id}
-            {userProficiency && (
-              <div>
-                {userGroup === "control" ? (
-                  <div
-                    dangerouslySetInnerHTML={convertNewlinesToBreaks(
-                      chapter.controlGroupContent?.[
-                        userProficiency as keyof typeof chapter.controlGroupContent
-                      ],
-                    )}
-                  />
-                ) : (
-                  <div
-                    dangerouslySetInnerHTML={convertNewlinesToBreaks(
-                      chapter.experimentalGroupContent?.[
-                        userProficiency as keyof typeof chapter.experimentalGroupContent
-                      ],
-                    )}
-                  />
-                )}
-                {(userGroup === "control"
-                  ? chapter.controlGroupImageURLs
-                  : chapter.experimentalGroupImageURLs
-                )?.length > 0 && (
-                  <img
-                    className="mx-auto mt-5 w-1/3 shadow-lg"
-                    src={
-                      userGroup === "control" &&
-                      chapter.controlGroupImageURLs.length > 0
-                        ? chapter.controlGroupImageURLs[
-                            controlGroupImageIndex ?? 0
+            <div className="overflow-auto">
+              {(userGroup === "control"
+                ? chapter.controlGroupImageURLs
+                : chapter.experimentalGroupImageURLs
+              )?.length > 0 && (
+                <img
+                  className="float-right ml-5 mt-5 w-1/3 shadow-lg"
+                  src={
+                    userGroup === "control" &&
+                    chapter.controlGroupImageURLs.length > 0
+                      ? chapter.controlGroupImageURLs[
+                          controlGroupImageIndex ?? 0
+                        ]
+                      : userGroup === "experimental" &&
+                          chapter.experimentalGroupImageURLs.length > 0
+                        ? chapter.experimentalGroupImageURLs[
+                            experimentalGroupImageIndex ?? 0
                           ]
-                        : userGroup === "experimental" &&
-                            chapter.experimentalGroupImageURLs.length > 0
-                          ? chapter.experimentalGroupImageURLs[
-                              experimentalGroupImageIndex ?? 0
-                            ]
-                          : undefined
-                    }
-                    alt={
-                      chapter.chapterTitle
-                        ? String(chapter.chapterTitle)
                         : undefined
-                    }
-                    title={
-                      chapter.chapterTitle
-                        ? String(chapter.chapterTitle)
-                        : undefined
-                    }
-                  />
-                )}
-              </div>
-            )}
+                  }
+                  alt={
+                    chapter.chapterTitle
+                      ? String(chapter.chapterTitle)
+                      : undefined
+                  }
+                  title={
+                    chapter.chapterTitle
+                      ? String(chapter.chapterTitle)
+                      : undefined
+                  }
+                />
+              )}
+              {userDocument?.data().id}
+              {userProficiency && (
+                <div>
+                  {userGroup === "control" ? (
+                    <div
+                      dangerouslySetInnerHTML={convertNewlinesToBreaks(
+                        chapter.controlGroupContent?.[
+                          userProficiency as keyof typeof chapter.controlGroupContent
+                        ],
+                      )}
+                    />
+                  ) : (
+                    <div
+                      dangerouslySetInnerHTML={convertNewlinesToBreaks(
+                        chapter.experimentalGroupContent?.[
+                          userProficiency as keyof typeof chapter.experimentalGroupContent
+                        ],
+                      )}
+                    />
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         )}
         {contentPreference === "video" && (
