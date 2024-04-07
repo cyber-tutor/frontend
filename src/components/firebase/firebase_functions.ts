@@ -274,3 +274,49 @@ export async function demographicSurveyComplete(userId: string, quizResponse: an
   //   response: quizResponse
   // });
 }
+
+// Topic Methods
+
+export async function numberOfTopicsCompleted(userId: string) {
+  const docId = await findUserDocId(userId);
+  const userDoc = doc(db, 'users', docId ? docId : '');
+
+  const topicsCollection = collection(db, 'topics');
+  const topicsSnapshot = await getDocs(topicsCollection);
+
+  let completedTopicsCount = 0;
+
+  for (const topicDoc of topicsSnapshot.docs) {
+    const topicId = topicDoc.id;
+
+    const progressCollection = collection(userDoc, 'progress');
+    const q = query(progressCollection, where('topicId', '==', topicId));
+
+    const progressSnapshot = await getDocs(q);
+
+    if (progressSnapshot.docs.every(doc => doc.data().complete)) {
+      completedTopicsCount++;
+    }
+  }
+
+  return completedTopicsCount;
+}
+
+export async function isTopicComplete(userId: string, topicId: string) {
+  const docId = await findUserDocId(userId);
+  const userDoc = doc(db, 'users', docId ? docId : '');
+
+  const progressCollection = collection(userDoc, 'progress');
+  const q = query(progressCollection, where('topicId', '==', topicId));
+
+  const querySnapshot = await getDocs(q);
+  
+  let allComplete = true;
+  querySnapshot.forEach((doc) => {
+    if (!doc.data().complete) {
+      allComplete = false;
+    }
+  });
+
+  return allComplete;
+}
