@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const determineProficiency = async (responses: string): Promise<string> => {
   const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_API_KEY ? process.env.NEXT_PUBLIC_GOOGLE_API_KEY : "");
 
-  // console.log("User responses: ",responses);
+  console.log("User responses: ",responses);
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
     const prompt = `

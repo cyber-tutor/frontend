@@ -228,7 +228,7 @@ export async function getNextChapterId(order: number, documentId: string, userPr
   let nextChapterProficiency = 0;
 
   querySnapshot.forEach((doc) => {
-    // console.log(doc.id, " => ", doc.data());
+    console.log(doc.id, " => ", doc.data());
     nextChapterId = doc.id;
     nextChapterProficiency = doc.data().proficiency;
   });
