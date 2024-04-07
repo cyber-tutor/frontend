@@ -303,8 +303,14 @@ export async function numberOfTopicsCompleted(userId: string) {
 }
 
 export async function isTopicComplete(userId: string, topicId: string) {
+  
   const docId = await findUserDocId(userId);
   const userDoc = doc(db, 'users', docId ? docId : '');
+
+  if (!docId) {
+    // console.error('User document ID not found');
+    return false;
+  }
 
   const progressCollection = collection(userDoc, 'progress');
   const q = query(progressCollection, where('topicId', '==', topicId));
