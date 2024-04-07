@@ -143,8 +143,8 @@ export default function ChapterPage() {
   }, [topicId, chapterId]);
 
   useEffect(() => {
-    // Check if 1 minute has passed
-    if (secondsElapsed >= 3) {
+    // Check if 1 minute and 30 seconds has passed
+    if (secondsElapsed >= 90) {
       setProgressComplete(true);
     }
   }, [secondsElapsed]);
