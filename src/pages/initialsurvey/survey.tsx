@@ -26,18 +26,6 @@ interface Question {
   topic: string;
 }
 
-const customCss = {
-  root: 'survey-root',
-  header: 'text-3xl font-bold text-gray-100 bg-gradient-to-r from-blue-700 to-gray-800 p-5 border-b-2 border-blue-800',
-  body: 'survey-body',
-  question: 'font-bold text-xl my-4 p-3',
-  questionTitle: 'text-2xl text-white p-3', 
-  answerRow: 'flex flex-col items-start p-3',
-  radiogroupItem: 'my-4 p-3 bg-gray-700 rounded-lg',
-  radiogroupControl: 'form-radio text-blue-500 mr-3',
-  radiogroupLabel: 'text-gray-300 ml-2 text-lg',
-  navigationButton: 'bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-500 focus:outline-none focus:shadow-outline',
-};
 
 
 const InitialSurvey = () => {
@@ -255,22 +243,27 @@ const InitialSurvey = () => {
   return (
     <div className="min-h-screen bg-gray-800 flex justify-center items-center">
       {surveyJson && (
-        <div className="w-full max-w-4xl p-10 bg-gray-900 text-white rounded-lg shadow-lg">
+        <div className="w-full max-w-4xl p-10 bg-white text-gray-800 rounded-lg shadow-lg">
           <Survey
             model={surveyJson}
-            css={customCss}
+            className="font-sans"
+            css={tailwindCustomCss}
           />
         </div>
       )}
-      {/* {isComplete && (
-        <div className="text-white text-center mt-4">
-          <div className="text-lg">Incorrect count: {incorrectCount}</div>
-          <div className="text-lg">Total points: {totalPoints}</div>
-          <div className="text-lg">User level: {userLevel}</div>
-        </div>
-      )} */}
     </div>
   );
-      };
+};
 
 export default InitialSurvey;
+
+const tailwindCustomCss = {
+  header: 'text-4xl font-bold text-gray-800 bg-gradient-to-r from-purple-500 to-pink-500 p-5 rounded-t-lg',
+  question: 'font-semibold text-xl my-4 p-3',
+  questionTitle: 'text-2xl text-gray-800 p-3',
+  answerRow: 'flex flex-col items-start p-3',
+  radiogroupItem: 'my-4 p-3 bg-gray-200 rounded-lg',
+  radiogroupControl: 'form-radio text-purple-500 mr-3',
+  radiogroupLabel: 'text-gray-800 ml-2 text-lg',
+  navigationButton: 'bg-purple-500 text-white font-bold py-2 px-4 rounded hover:bg-purple-400 focus:outline-none focus:shadow-outline',
+};
