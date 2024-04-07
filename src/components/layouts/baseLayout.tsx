@@ -426,7 +426,9 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
                         </button>
                       </MenuItem>
                     )}
-                    {userDocument ? userDocument.id : ""}
+                    
+                    {/* User ID for testing */}
+                    {/* {userDocument ? userDocument.id : ""} */}
 
                     {user && (
                       <MenuItem>
