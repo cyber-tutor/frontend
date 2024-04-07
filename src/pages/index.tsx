@@ -75,7 +75,11 @@ export default function Home() {
     if (userDocument) {
       if (!userDocument.data().initialSurveyComplete) {
         router.push("/initialsurvey/begin");
-      } else {
+      }
+      else if (!userDocument.data().demographicSurveyComplete){
+        router.push("/demographicsurvey/survey");
+      }
+       else {
         updateUserStreak(uid, userDocument.data().lastLoginDate);
       }
     }
