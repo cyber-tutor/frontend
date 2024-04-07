@@ -57,6 +57,7 @@ const InitialSurvey = () => {
 
     Serializer.addProperty('question', { name: 'topic:string' });
     Serializer.addProperty('question', { name: 'questionCategory:string' });
+    Serializer.addProperty('question', { name: 'geminiDescription:string' });
     const formatQuestionsForSurveyJS = (questions: { id: string; data: Question }[]) => {
       return {
         showProgressBar: 'bottom',
@@ -73,6 +74,7 @@ const InitialSurvey = () => {
               name: q.id,
               title: q.data.question,
               isRequired: false,
+              geminiDescription: q.data.description,
               ...(q.data.questionType === 'comment' && { maxLength: 400 }),
               ...(q.data.questionType === 'radiogroup' && {
                 choices: Object.entries(q.data.choices || {})
@@ -81,7 +83,6 @@ const InitialSurvey = () => {
                     value: key,
                     text: value,
                   })),
-                description: q.data.description,
               }),
               ...(q.data.visibilityCondition && {
                 visibleIf: q.data.visibilityCondition,
@@ -176,7 +177,9 @@ const InitialSurvey = () => {
       const responseString = surveyJson.pages.flatMap((page) =>
         page.elements.map((question: any) => {
   
-          const questionData = question as {topic: string; questionCategory: string; title: string; name: string; choices?: any[]; correctAnswer?: string; description?: string;  };
+          const questionData = question as {
+            geminiDescription: any;topic: string; questionCategory: string; title: string; name: string; choices?: any[]; correctAnswer?: string; description?: string;  
+};
           const userResponse = result[questionData.name] ?? 'User did not answer';
           let responseText;
           let correctAnswerText;
@@ -195,7 +198,7 @@ const InitialSurvey = () => {
             Topic: ${questionData.topic},
             User Response: ${responseText},
             Question Choices: ${questionData.choices ? Object.values(questionData.choices).map((choice: any) => choice.text).join(', ') : 'None'},
-            Question Description: ${questionData.description}`;
+            Question Description: ${questionData.geminiDescription}`;
         })
       ).join('\n');
 
