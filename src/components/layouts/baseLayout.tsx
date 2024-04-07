@@ -90,11 +90,14 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
       queryUserDocument(uid).then((userDocument) => {
         setUserDocument(userDocument);
         // Check if user completed initial survey, if not then redirect to initial survey
-        if (userDocument && !userDocument.data().initialSurveyComplete && !userDocument.data().demographicSurveyComplete) {
-          if(!userDocument.data().initialSurveyComplete){
-          router.push("/initialsurvey/begin");
-          }
-          else {
+        if (
+          userDocument &&
+          !userDocument.data().initialSurveyComplete &&
+          !userDocument.data().demographicSurveyComplete
+        ) {
+          if (!userDocument.data().initialSurveyComplete) {
+            router.push("/initialsurvey/begin");
+          } else {
             router.push("/demographicsurvey/survey");
           }
         }
@@ -282,7 +285,12 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
             {user && (
               <>
                 <NavbarItem>
-                  <p className="text-sm">Hi {user.displayName}</p>
+                  <p className="text-sm">Hi {userDocument?.data().name }</p>
+                </NavbarItem>
+                <NavbarItem>
+                  <Button className="text-sm" onClick={() => router.push("/")}>
+                    Home
+                  </Button>
                 </NavbarItem>
                 <NavbarItem>
                   <Button className="text-sm" onClick={handleLogout}>
@@ -396,9 +404,19 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
 
                     {user && (
                       <MenuItem>
+                      <br />
                         <p>
                           Welcome {userDocument ? userDocument.data().name : ""}
                         </p>
+                        <button
+                          onClick={() => router.push("/")}
+                          type="button"
+                          className="pointer-events-auto rounded px-3 hover:bg-blue-500"
+                        >
+                          {collapsed ? "H" : "Home"}
+                        </button>
+                        <br />
+
                         <button
                           type="button"
                           className="pointer-events-auto rounded px-3 hover:bg-blue-500"
