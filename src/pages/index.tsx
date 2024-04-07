@@ -17,6 +17,7 @@ import {
 import { useRouter } from "next/router";
 import CircularWithValueLabel from "~/components/ProgressCircle";
 import { set } from "firebase/database";
+import { jsPDF } from "jspdf";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
@@ -137,6 +138,28 @@ export default function Home() {
     }
   }
 
+  function downloadCertificate(userName: any) {
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+    });
+
+    doc.setFontSize(30);
+    doc.setTextColor(60, 60, 60);
+    doc.text("Certificate of Completion", 105, 40, { align: "center" });
+
+    doc.setFontSize(20);
+    doc.text(`Congratulations, ${userName}!`, 105, 60, { align: "center" });
+
+    doc.setFontSize(16);
+    doc.text("You have successfully completed Cyber Tutor.", 105, 80, {
+      align: "center",
+    });
+
+    doc.save("CyberTutor_Certificate.pdf");
+  }
+
   return (
     <>
       <Head>
@@ -174,6 +197,23 @@ export default function Home() {
                   <br />
                   <CircularWithValueLabel value={proficiencyRatio} size={80} />
                 </div>
+
+                {topicsCompleted === 5 && (
+                  <div className="text-center">
+                    <p>
+                      Congratulations on completing Cyber Tutor!!! You can now
+                      download your certificate.
+                    </p>
+                    <button
+                      className="mt-4 rounded-lg bg-blue-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-blue-800"
+                      onClick={() =>
+                        downloadCertificate(userDocument?.data().name || "User")
+                      }
+                    >
+                      Download Certificate
+                    </button>
+                  </div>
+                )}
 
                 <div className="mt-4 text-center">
                   {streakCount > 0 ? (

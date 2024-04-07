@@ -24,6 +24,7 @@
     "firebase-functions": "^4.7.0",
     "firebase-tools": "^13.3.0",
     "framer-motion": "^11.0.8",
+    "jspdf": "^2.5.1",
     "next": "^14.0.4",
     "primereact": "^10.5.1",
     "react": "18.2.0",
