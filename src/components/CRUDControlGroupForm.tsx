@@ -79,6 +79,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
     intermediate: "",
     expert: "",
   });
+  const [updatedImageURLs, setUpdatedImageURLs] = useState<string[]>([]);
   const [selectedChapterId, setSelectedChapterId] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
 
@@ -160,24 +161,16 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
         expert: "",
       });
     }
+
+    if (selectedChapter && selectedChapter.controlGroupImageURLs) {
+      setUpdatedImageURLs(selectedChapter.controlGroupImageURLs);
+    } else {
+      setUpdatedImageURLs([]);
+    }
   };
 
   const handleAddImageUrl = () => {
-    setChapters((prevChapters) =>
-      prevChapters.map((chapter) =>
-        chapter.chapterId === selectedChapterId
-          ? {
-              ...chapter,
-              controlGroupImageURLs: [
-                ...(Array.isArray(chapter.controlGroupImageURLs)
-                  ? chapter.controlGroupImageURLs
-                  : []),
-                "",
-              ],
-            }
-          : chapter,
-      ),
-    );
+    setUpdatedImageURLs((prevUrls) => [...prevUrls, ""]);
   };
 
   const handleImageUrlChange = (
@@ -185,19 +178,11 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const newUrl = e.target.value;
-    setChapters((prevChapters) =>
-      prevChapters.map((chapter) =>
-        chapter.chapterId === selectedChapterId
-          ? {
-              ...chapter,
-              controlGroupImageURLs: chapter.controlGroupImageURLs.map(
-                (url, i) => (i === index ? newUrl : url),
-              ),
-            }
-          : chapter,
-      ),
+    setUpdatedImageURLs((prevUrls) =>
+      prevUrls.map((url, i) => (i === index ? newUrl : url)),
     );
   };
+
   const handleVideoUrlChange = (
     proficiency: Proficiency,
     e: ChangeEvent<HTMLInputElement>,
@@ -207,6 +192,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
       [proficiency]: e.target.value,
     }));
   };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!selectedChapterId) return;
@@ -219,7 +205,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
         doc(db, `topics/${selectedTopicId}/chapters`, selectedChapterId),
         {
           controlGroupContent: updatedContent,
-          controlGroupImageURLs: updatedChapter.controlGroupImageURLs,
+          controlGroupImageURLs: updatedImageURLs,
           controlGroupVideoURLs: updatedVideoURLs,
         },
       );
@@ -324,22 +310,23 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
             )}
             <div className="mt-4">
               <h3 className="text-sm font-medium">Control Group Image URLs:</h3>
-              {chapters
-                .find((chapter) => chapter.chapterId === selectedChapterId)
-                ?.controlGroupImageURLs?.map((url, index) => (
-                  <div key={index} className="mt-2 flex items-center space-x-2">
-                    <input
-                      key={url}
-                      id={`imageUrl-${index}`}
-                      name={`imageUrl-${index}`}
-                      value={url}
-                      onChange={(e) => handleImageUrlChange(index, e)}
-                      placeholder="Enter image URL"
-                      className="flex-grow rounded-md border p-2 text-sm text-gray-500"
-                    />
-                  </div>
-                ))}
-              <button onClick={handleAddImageUrl} type="button">
+              {updatedImageURLs.map((url, index) => (
+                <div key={index} className="mt-2 flex items-center space-x-2">
+                  <input
+                    id={`imageUrl-${index}`}
+                    name={`imageUrl-${index}`}
+                    value={url}
+                    onChange={(e) => handleImageUrlChange(index, e)}
+                    placeholder="Enter image URL"
+                    className="flex-grow rounded-md border p-2 text-sm text-gray-500"
+                  />
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={handleAddImageUrl}
+                className="mt-2 text-sm text-blue-500 hover:text-blue-700"
+              >
                 Add Image URL
               </button>
             </div>
