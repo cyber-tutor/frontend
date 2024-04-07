@@ -1,11 +1,11 @@
 import { getAuth } from 'firebase/auth';
-import { doc, getDocs, collection, getFirestore, writeBatch } from 'firebase/firestore';
+import { doc, getDocs, collection, getFirestore, writeBatch, setDoc, updateDoc, query, where, getDoc } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import * as Survey from 'survey-react';
 import 'survey-react/survey.css';
 import { db } from '../../components/firebase/config';
-import { demographicSurveyComplete } from '~/components/firebase/firebase_functions';
+import queryUserDocument, { demographicSurveyComplete } from '~/components/firebase/firebase_functions';
 
 Survey.StylesManager.applyTheme("default");
 
@@ -52,27 +52,50 @@ export default function SurveyComponent(): JSX.Element {
     const surveyData = surveyResult.data;
     setResult(surveyData);
   
-    // Construct the user response string
-    const userResponseString = Object.entries(surveyData)
-      .map(([questionId, answer]) => `Question ID: ${questionId}, Answer: ${answer}`)
-      .join('; ');
-  
     const auth = getAuth();
     const user = auth.currentUser;
   
     if (user) {
       const batch = writeBatch(db);
   
-      Object.entries(surveyData).forEach(([questionId, answer]) => {
+      Object.entries(surveyData).forEach(([questionId, answerKey]) => {
         const userResponseDocRef = doc(db, "demographicSurveyQuestions", questionId, "users", user.uid);
-        batch.set(userResponseDocRef, { answer });
+        batch.set(userResponseDocRef, { answer: answerKey });
       });
   
       try {
         await batch.commit();
         // console.log("Survey responses successfully written to Firestore.");
-        await demographicSurveyComplete(user.uid, userResponseString); 
-        router.push('/'); 
+  
+
+        const lastQuestionId = Object.keys(surveyData).pop();
+        const answerKey = lastQuestionId ? surveyData[lastQuestionId] : null;
+        
+
+        let contentPreference = null;
+        if (lastQuestionId && answerKey) {
+          const questionDocRef = doc(db, "demographicSurveyQuestions", lastQuestionId);
+          const questionDocSnapshot = await getDoc(questionDocRef);
+          if (questionDocSnapshot.exists()) {
+            const questionData = questionDocSnapshot.data();
+            contentPreference = questionData.choices[answerKey];
+          }
+        }
+
+
+        const userQuery = query(collection(db, "users"), where("userId", "==", user.uid));
+        const querySnapshot = await getDocs(userQuery);
+        let userDocRef = null;
+        querySnapshot.forEach((doc) => {
+          userDocRef = doc.ref; 
+        });
+
+        if (userDocRef && contentPreference) {
+          await updateDoc(userDocRef, { contentPreference });
+        }
+
+        await demographicSurveyComplete(user.uid, surveyData);
+        router.push('/');
       } catch (error) {
         // console.error("Error writing survey responses: ", error);
       }
@@ -80,8 +103,9 @@ export default function SurveyComponent(): JSX.Element {
       // console.error("User is not authenticated.");
     }
   };
-  
 
+  
+  
   return (
     <div>
       {surveyJson ? (
