@@ -102,6 +102,9 @@ export async function createUserDocument(
 
   const batch = writeBatch(db);
 
+  const currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+
   const userRef = doc(collection(db, "users"));
   batch.set(userRef, {
     userId: user.uid,
@@ -112,6 +115,7 @@ export async function createUserDocument(
     isSuperuser: false,
     initialSurveyIncorrectCount: 0,
     contentPreference: "text",
+    lastLoginDate: currentDate,
   });
 
   const topicsCollectionRef = collection(db, "topics");
