@@ -5,47 +5,99 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import queryUserDocument from "../components/firebase/firebase_functions";
-import { DocumentData, collection, getDocs } from "firebase/firestore";
+import {
+  DocumentData,
+  collection,
+  getDocs,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import CircularWithValueLabel from "~/components/ProgressCircle";
+
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
+interface UserDocument extends DocumentData {
+  initialSurveyComplete?: boolean;
+  lastLoginDate?: { seconds: number };
+  streakCount?: number;
+}
+
 export default function Home() {
   const [user, loading, error] = useAuthState(auth);
-  const [userDocument, setUserDocument] = useState<DocumentData | null>(null);
-  const [proficiencyRatio, setProficiencyRatio] = useState(0);
+  const [userDocument, setUserDocument] = useState<UserDocument | null>(null);
+  const [proficiencyRatio, setProficiencyRatio] = useState<number>(0);
+  const [streakCount, setStreakCount] = useState<number>(0);
   const router = useRouter();
 
   const uid = user ? user.uid : null;
 
   useEffect(() => {
     if (uid) {
-
-      queryUserDocument(uid).then((userDocument) => {
-        setUserDocument(userDocument);
-  
+      queryUserDocument(uid).then((userDoc: DocumentData | null) => {
+        setUserDocument(userDoc as UserDocument);
 
         const progressRef = collection(db, `users/${userDocument?.id}/progress`);
         getDocs(progressRef).then((snapshot) => {
           const totalDocuments = snapshot.size;
-          const completedDocumentsCount = snapshot.docs.filter(doc => doc.data().complete === true).length;
-          console.log("completedDocumentsCount", completedDocumentsCount);
-          const ratio = totalDocuments > 0 ? (completedDocumentsCount / totalDocuments) * 100 : 0;
+          const completedDocumentsCount = snapshot.docs.filter(
+            (doc) => doc.data().complete === true,
+          ).length;
+          const ratio =
+            totalDocuments > 0
+              ? (completedDocumentsCount / totalDocuments) * 100
+              : 0;
           setProficiencyRatio(ratio);
         });
       });
     }
   }, [uid]);
-  
 
 
-  useEffect(() => {
-    if (userDocument && !userDocument.data().initialSurveyComplete) {
-      router.push("/initialsurvey/begin");
+    if (userDocument) {
+      if (!userDocument.data().initialSurveyComplete) {
+        router.push("/initialsurvey/begin");
+      } else {
+        updateUserStreak(uid, userDocument.data().lastLoginDate);
+      }
     }
-  }, [userDocument, router]);
+
+
+
+
+    async function updateUserStreak(
+      uid: string | null,
+      lastLoginDate: { seconds: number } | undefined,
+    ) {
+      if (!uid) return;
+    
+      const userDocRef = doc(db, "users", userDocument?.id);
+      const currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0); 
+    
+      let newStreakCount = userDocument?.streakCount || 0;
+      if (lastLoginDate) {
+        const lastLogin = new Date(lastLoginDate.seconds * 1000);
+        lastLogin.setHours(0, 0, 0, 0); 
+        const diffInDays = (currentDate.getTime() - lastLogin.getTime()) / (1000 * 3600 * 24);
+    
+        if (diffInDays > 1 && diffInDays < 2) {
+          newStreakCount += 1;
+        } else if (diffInDays >= 2) {
+          newStreakCount = 0;
+        }
+      } else {
+        newStreakCount = 1;
+      }
+
+      await updateDoc(userDocRef, {
+        lastLoginDate: currentDate,
+        streakCount: newStreakCount,
+      });
+    
+      setStreakCount(newStreakCount);
+    }
 
   return (
     <>
@@ -53,15 +105,45 @@ export default function Home() {
         <title>Cyber Tutor</title>
         <meta name="description" content="Cyber Tutor" />
         <link rel="icon" href="/favicon.ico" />
-      </Head>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+        </Head>
       <div className="flex min-h-screen w-full flex-col">
         {user ? (
           <BaseLayout>
-            <p>Ready to fortify your digital life and stay protected?</p>
-            <p>Select a topic from the menu.</p>
-            Progress:
-            <CircularWithValueLabel value={proficiencyRatio} />
-          </BaseLayout>
+          <div className="bg-white">
+            <div className="max-w-xl mx-auto pt-12 pb-8 px-4">
+              <h1 className="text-2xl font-bold text-gray-800 text-center">
+                <i className="fas fa-shield-alt mr-2 text-indigo-500"></i>
+                Ready to fortify your digital life and stay protected?
+              </h1>
+              <p className="mt-4 text-lg text-gray-600 text-center">
+                <i className="fas fa-list-ul mr-2 text-gray-400"></i>
+                Select a topic from the menu.
+              </p>
+              <div className="mt-6 text-center">
+                <span className="text-xl font-semibold text-gray-800">
+                  <i className="fas fa-chart-line mr-2 text-green-500"></i>
+                  Progress:
+                </span>
+                <CircularWithValueLabel value={proficiencyRatio} />
+              </div>
+              <div className="mt-4 text-center">
+                {streakCount > 0 ? (
+                  <span className="text-xl font-semibold text-green-600">
+                    <i className="fas fa-fire mr-2"></i>
+                    Streak: {streakCount} day(s)
+                  </span>
+                ) : (
+                  <span className="text-lg text-gray-600">
+                    <i className="fas fa-clock mr-2 text-blue-500"></i>
+                    Start your streak by logging in daily.
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </BaseLayout>
+               
         ) : (
           <div className="flex grow flex-col items-center justify-center bg-gray-200 p-4 text-gray-900">
             {typeof window !== "undefined" && (
