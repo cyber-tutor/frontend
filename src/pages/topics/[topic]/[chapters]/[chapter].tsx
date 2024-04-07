@@ -307,7 +307,7 @@ export default function ChapterPage() {
           </div>
         )}
         {contentPreference === "video" && (
-          <div className="flex aspect-[16/9] flex-grow">
+          <div className="flex h-screen flex-grow justify-center">
             <ReactPlayer
               url={
                 userGroup === "control"
