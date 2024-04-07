@@ -65,10 +65,13 @@ const SignInForm = () => {
   }, [error]);
 
   return (
-    <div className="flex flex-col h-screen lg:pl-64" style={{marginTop: "-4rem"}}>
-      <div className="flex-grow flex items-center justify-center">
-        <div className="w-full max-w-sm p-6 bg-white rounded shadow-md">
-          <h2 className="mb-6 text-3xl font-bold text-center">Sign In</h2>
+    <div
+      className="flex h-screen flex-col lg:pl-64"
+      style={{ marginTop: "-4rem" }}
+    >
+      <div className="flex flex-grow items-center justify-center">
+        <div className="w-full max-w-sm rounded bg-white p-6 shadow-md">
+          <h2 className="mb-6 text-center text-3xl font-bold">Sign In</h2>
           {signInError && (
             <p className="mb-4 text-center text-sm text-red-500">
               {signInError}
@@ -102,6 +105,7 @@ const SignInForm = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 toggleMask
+                feedback={false} // Add this line
                 className="w-full rounded border px-3 py-2 leading-tight focus:border-blue-500 focus:outline-none"
               />
             </div>
