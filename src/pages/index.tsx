@@ -4,6 +4,7 @@ import { auth, db } from "../components/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
 import queryUserDocument, {
   numberOfTopicsCompleted,
 } from "../components/firebase/firebase_functions";
@@ -83,8 +84,6 @@ export default function Home() {
     localStorage.setItem("proficiencyRatio", proficiencyRatio.toString());
   }, [proficiencyRatio]);
 
-  
-
   // Fetch the progress of the user for number of chapters completed
   useEffect(() => {
     if (userDocument && userDocument.id) {
@@ -104,8 +103,6 @@ export default function Home() {
       });
     }
   }, [userDocument]);
-
-  
 
   async function updateUserStreak(
     uid: string | null,
@@ -151,7 +148,6 @@ export default function Home() {
   // Function to create the UI of the certificate and download it as a PDF
 
   function downloadCertificate(userName: any) {
-
     // Create the UI of the certificate
     const doc = new jsPDF({
       orientation: "portrait",
@@ -188,24 +184,28 @@ export default function Home() {
       </Head>
       <div className="flex min-h-screen w-full flex-col">
         {user ? (
-
           // If user is logged in, show the dashboard with their progress information
           <BaseLayout>
-            <div className="bg-white">
-              <div className="mx-auto max-w-xl px-4 pb-8 pt-12">
-                <h1 className="text-center text-2xl font-bold text-gray-800">
+            <motion.div
+              className="bg-white"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1.5 }}
+            >
+              <motion.div className="mx-auto max-w-xl px-4 pb-8 pt-12">
+                <motion.h1 className="text-center text-2xl font-bold text-gray-800">
                   <i className="fas fa-shield-alt mr-2 text-indigo-500"></i>
                   Ready to fortify your digital life and stay protected?
-                </h1>
-                <p className="mt-4 text-center text-lg text-gray-600">
+                </motion.h1>
+                <motion.p className="mt-4 text-center text-lg text-gray-600">
                   <i className="fas fa-list-ul mr-2 text-gray-400"></i>
                   Select a topic from the menu.
-                </p>
-                <div className="mt-6 text-center">
-                  <span className="text-xl font-semibold text-gray-800">
+                </motion.p>
+                <motion.div className="mt-6 text-center">
+                  <motion.span className="text-xl font-semibold text-gray-800">
                     <i className="fas fa-chart-line mr-2 text-green-500"></i>
                     Progress:
-                  </span>
+                  </motion.span>
                   <br />
                   Topics Complete: {topicsCompleted} / 5
                   <br />
@@ -213,45 +213,50 @@ export default function Home() {
                   <br />
                   <br />
                   <CircularWithValueLabel value={proficiencyRatio} size={80} />
-                </div>
+                </motion.div>
 
                 {topicsCompleted === 5 && (
-                  <div className="text-center">
-                    <p>
+                  <motion.div className="text-center">
+                    <motion.p>
                       Congratulations on completing Cyber Tutor!!! You can now
                       download your certificate.
-                    </p>
-                    <button
+                    </motion.p>
+                    <motion.button
                       className="mt-4 rounded-lg bg-blue-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-blue-800"
                       onClick={() =>
                         downloadCertificate(userDocument?.data().name || "User")
                       }
                     >
                       Download Certificate
-                    </button>
-                  </div>
+                    </motion.button>
+                  </motion.div>
                 )}
 
-                <div className="mt-4 text-center">
+                <motion.div className="mt-4 text-center">
                   {streakCount > 0 ? (
-                    <span className="text-xl font-semibold text-green-600">
+                    <motion.span className="text-xl font-semibold text-green-600">
                       <i className="fas fa-fire mr-2"></i>
                       Streak: {streakCount} day(s)
-                    </span>
+                    </motion.span>
                   ) : (
-                    <span className="text-lg text-gray-600">
+                    <motion.span className="text-lg text-gray-600">
                       <i className="fas fa-clock mr-2 text-blue-500"></i>
                       Start your streak by logging in daily.
-                    </span>
+                    </motion.span>
                   )}
-                </div>
-              </div>
-            </div>
+                </motion.div>
+              </motion.div>
+            </motion.div>
           </BaseLayout>
         ) : (
-
           // If user is not logged in, show the landing page with the introduction video
-          <div className="flex grow flex-col items-center justify-center bg-gray-200 p-4 text-gray-900">
+
+          <motion.div
+            className="flex grow flex-col items-center justify-center bg-gray-200 p-4 text-gray-900"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
             {typeof window !== "undefined" && (
               <ReactPlayer
                 url="https://youtu.be/027hGcCeoHc"
@@ -260,13 +265,23 @@ export default function Home() {
                 className="mb-8 max-w-full rounded-lg shadow-2xl"
               />
             )}
-            <p className="mx-auto mt-8 rounded-lg bg-white p-4 text-center text-xl font-semibold shadow-lg md:text-2xl lg:w-1/2">
+            <motion.p
+              className="mx-auto mt-8 rounded-lg bg-white p-4 text-center text-xl font-semibold shadow-lg md:text-2xl lg:w-1/2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
               Welcome to CyberTutor! Dive into the world of cyber security and
               fortify your digital life today. Explore our curated video series
               to become a savvy internet user and protect yourself against
               online threats.
-            </p>
-            <div className="mt-10 flex space-x-6">
+            </motion.p>
+            <motion.div
+              className="mt-10 flex space-x-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
               <button
                 className="rounded-lg bg-blue-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-blue-800"
                 onClick={() => router.push("/users/sign-up")}
@@ -279,8 +294,8 @@ export default function Home() {
               >
                 Login
               </button>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
         <footer className="w-full border-t border-gray-300 bg-white py-4 text-center text-gray-900">
           <div className="mx-auto px-4">
