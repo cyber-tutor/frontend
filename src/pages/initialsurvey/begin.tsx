@@ -1,25 +1,40 @@
-import React from 'react';
+import React from "react";
 import { useRouter } from "next/router";
+import { motion } from 'framer-motion';
 
 export default function InitialSurvey() {
-    
+  const router = useRouter();
 
-    const router = useRouter();
+  const handleRouter = () => {
+    router.push("/initialsurvey/survey");
+  };
 
-    const handleRouter = () => {
-        router.push('/initialsurvey/survey');
-    };
-
-    return (
-        <div className="bg-gray-800 flex justify-center items-center h-screen">
-            <div className="text-center animate-fadeIn">
-                <h1 className="text-white text-3xl mb-4">Let's start by assessing how much cyber security you know</h1>
-                <button onClick={handleRouter} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
-                    Start Survey
-                </button>
-            </div>
-        </div>
-    );
+  return (
+    <motion.div
+      className="flex h-screen items-center justify-center bg-gray-800"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div
+        className="animate-fadeIn text-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
+      >
+        <h1 className="mb-4 text-3xl text-white">
+          Let's start by assessing how much cyber security you know
+        </h1>
+        <motion.button
+          onClick={handleRouter}
+          className="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
+          type="button"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          Start Survey
+        </motion.button>
+      </motion.div>
+    </motion.div>
+  );
 }
-
-
