@@ -34,27 +34,44 @@ export default function Home() {
   const uid = user ? user.uid : null;
 
   useEffect(() => {
+
+    const savedRatio = localStorage.getItem('proficiencyRatio');
+    if (savedRatio) {
+      setProficiencyRatio(parseFloat(savedRatio));
+    }
+  }, []);
+
+  useEffect(() => {
+
+    localStorage.setItem('proficiencyRatio', proficiencyRatio.toString());
+  }, [proficiencyRatio]);
+
+  useEffect(() => {
     if (uid) {
       queryUserDocument(uid).then((userDoc: DocumentData | null) => {
         setUserDocument(userDoc as UserDocument);
-
-        const progressRef = collection(db, `users/${userDocument?.id}/progress`);
-        getDocs(progressRef).then((snapshot) => {
-          const totalDocuments = snapshot.size;
-          const completedDocumentsCount = snapshot.docs.filter(
-            (doc) => doc.data().complete === true,
-          ).length;
-          const ratio =
-            totalDocuments > 0
-              ? (completedDocumentsCount / totalDocuments) * 100
-              : 0;
-          setProficiencyRatio(ratio);
-        });
       });
     }
   }, [uid]);
 
+  useEffect(() => {
+    if (userDocument && userDocument.id) {
+      const progressRef = collection(db, `users/${userDocument.id}/progress`);
+      getDocs(progressRef).then((snapshot) => {
+        const totalDocuments = snapshot.size;
+        const completedDocumentsCount = snapshot.docs.filter(
+          (doc) => doc.data().complete === true,
+        ).length;
+        const ratio =
+          totalDocuments > 0
+            ? (completedDocumentsCount / totalDocuments) * 100
+            : 0;
+        setProficiencyRatio(ratio);
+      });
+    }
+  }, [userDocument]);
 
+  useEffect(() => {
     if (userDocument) {
       if (!userDocument.data().initialSurveyComplete) {
         router.push("/initialsurvey/begin");
@@ -62,42 +79,47 @@ export default function Home() {
         updateUserStreak(uid, userDocument.data().lastLoginDate);
       }
     }
+  }, [userDocument, uid, router]);
 
+  async function updateUserStreak(
+    uid: string | null,
+    lastLoginDate: { seconds: number } | undefined,
+  ) {
+    if (!uid || !userDocument) return;
 
+    const userDocRef = doc(db, "users", userDocument.id);
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); 
 
+    let newStreakCount = userDocument.streakCount || 0;
+    let shouldUpdateFirebase = false;
 
-    async function updateUserStreak(
-      uid: string | null,
-      lastLoginDate: { seconds: number } | undefined,
-    ) {
-      if (!uid) return;
-    
-      const userDocRef = doc(db, "users", userDocument?.id);
-      const currentDate = new Date();
-      currentDate.setHours(0, 0, 0, 0); 
-    
-      let newStreakCount = userDocument?.streakCount || 0;
-      if (lastLoginDate) {
-        const lastLogin = new Date(lastLoginDate.seconds * 1000);
-        lastLogin.setHours(0, 0, 0, 0); 
-        const diffInDays = (currentDate.getTime() - lastLogin.getTime()) / (1000 * 3600 * 24);
-    
-        if (diffInDays > 1 && diffInDays < 2) {
-          newStreakCount += 1;
-        } else if (diffInDays >= 2) {
-          newStreakCount = 0;
-        }
-      } else {
-        newStreakCount = 1;
+    if (lastLoginDate) {
+      const lastLogin = new Date(lastLoginDate.seconds * 1000);
+      lastLogin.setHours(0, 0, 0, 0); 
+      const diffInDays = (currentDate.getTime() - lastLogin.getTime()) / (1000 * 3600 * 24);
+
+      if (diffInDays >= 1 && diffInDays < 2) {
+        newStreakCount += 1;
+        shouldUpdateFirebase = true;
+      } else if (diffInDays >= 2) {
+        newStreakCount = 0;
+        shouldUpdateFirebase = true;
       }
+    } else {
+      newStreakCount = 1;
+      shouldUpdateFirebase = true;
+    }
 
+    setStreakCount(newStreakCount);
+
+    if (shouldUpdateFirebase) {
       await updateDoc(userDocRef, {
         lastLoginDate: currentDate,
         streakCount: newStreakCount,
       });
-    
-      setStreakCount(newStreakCount);
     }
+  }
 
   return (
     <>
@@ -125,7 +147,9 @@ export default function Home() {
                   <i className="fas fa-chart-line mr-2 text-green-500"></i>
                   Progress:
                 </span>
-                <CircularWithValueLabel value={proficiencyRatio} />
+                <br />
+                <br />
+                <CircularWithValueLabel value={proficiencyRatio} size={80} />
               </div>
               <div className="mt-4 text-center">
                 {streakCount > 0 ? (
