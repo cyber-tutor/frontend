@@ -37,8 +37,32 @@ export default function Home() {
   const [completedChapters, setCompletedChapters] = useState(0);
   const router = useRouter();
 
+  // Get the user ID
   const uid = user ? user.uid : null;
 
+  // Query for the user document from Firestore
+  useEffect(() => {
+    if (uid) {
+      queryUserDocument(uid).then((userDoc: DocumentData | null) => {
+        setUserDocument(userDoc as UserDocument);
+      });
+    }
+  }, [uid]);
+
+  // Check if the user has completed the initial survey, demographic survey and update the streak count. If not, redirect to the respective survey page
+  useEffect(() => {
+    if (userDocument) {
+      if (!userDocument.data().initialSurveyComplete) {
+        router.push("/initialsurvey/begin");
+      } else if (!userDocument.data().demographicSurveyComplete) {
+        router.push("/demographicsurvey/survey");
+      } else {
+        updateUserStreak(uid, userDocument.data().lastLoginDate);
+      }
+    }
+  }, [userDocument, uid, router]);
+
+  // Fetch the number of topics completed by the user by calling the function numberOfTopicsCompleted from firebase_functions.ts
   if (uid) {
     const getTopicsCompleted = async () => {
       const topicsNum = await numberOfTopicsCompleted(uid);
@@ -47,6 +71,7 @@ export default function Home() {
     getTopicsCompleted();
   }
 
+  // Load the proficiency ratio from local storage
   useEffect(() => {
     const savedRatio = localStorage.getItem("proficiencyRatio");
     if (savedRatio) {
@@ -58,14 +83,9 @@ export default function Home() {
     localStorage.setItem("proficiencyRatio", proficiencyRatio.toString());
   }, [proficiencyRatio]);
 
-  useEffect(() => {
-    if (uid) {
-      queryUserDocument(uid).then((userDoc: DocumentData | null) => {
-        setUserDocument(userDoc as UserDocument);
-      });
-    }
-  }, [uid]);
+  
 
+  // Fetch the progress of the user for number of chapters completed
   useEffect(() => {
     if (userDocument && userDocument.id) {
       const progressRef = collection(db, `users/${userDocument.id}/progress`);
@@ -85,17 +105,7 @@ export default function Home() {
     }
   }, [userDocument]);
 
-  useEffect(() => {
-    if (userDocument) {
-      if (!userDocument.data().initialSurveyComplete) {
-        router.push("/initialsurvey/begin");
-      } else if (!userDocument.data().demographicSurveyComplete) {
-        router.push("/demographicsurvey/survey");
-      } else {
-        updateUserStreak(uid, userDocument.data().lastLoginDate);
-      }
-    }
-  }, [userDocument, uid, router]);
+  
 
   async function updateUserStreak(
     uid: string | null,
@@ -138,7 +148,11 @@ export default function Home() {
     }
   }
 
+  // Function to create the UI of the certificate and download it as a PDF
+
   function downloadCertificate(userName: any) {
+
+    // Create the UI of the certificate
     const doc = new jsPDF({
       orientation: "portrait",
       unit: "mm",
@@ -157,6 +171,7 @@ export default function Home() {
       align: "center",
     });
 
+    // Save the Certificate as a PDF
     doc.save("CyberTutor_Certificate.pdf");
   }
 
@@ -173,6 +188,8 @@ export default function Home() {
       </Head>
       <div className="flex min-h-screen w-full flex-col">
         {user ? (
+
+          // If user is logged in, show the dashboard with their progress information
           <BaseLayout>
             <div className="bg-white">
               <div className="mx-auto max-w-xl px-4 pb-8 pt-12">
@@ -232,6 +249,8 @@ export default function Home() {
             </div>
           </BaseLayout>
         ) : (
+
+          // If user is not logged in, show the landing page with the introduction video
           <div className="flex grow flex-col items-center justify-center bg-gray-200 p-4 text-gray-900">
             {typeof window !== "undefined" && (
               <ReactPlayer
