@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { db } from "../../../components/firebase/config";
+import { auth, db } from "../../../components/firebase/config";
 import { getDocs, collection, onSnapshot } from "firebase/firestore";
 import Head from "next/head";
 import { BaseLayout } from "../../../components/layouts/baseLayout";
 import ControlGroupForm from "../../../components/CRUDControlGroupForm";
+import queryUserDocument from "~/components/firebase/firebase_functions";
 
 export default function CRUD_ControlGroupContent() {
   const [topicId, setTopicId] = useState<string>("");
+
+  const user = auth.currentUser;
+  const isSuperUser = queryUserDocument(user ? user.uid : "");
+
+  if (!isSuperUser || !user) {
+    return <div>Unauthorized</div>;
+  }
 
   useEffect(() => {
     const fetchTopicId = async () => {

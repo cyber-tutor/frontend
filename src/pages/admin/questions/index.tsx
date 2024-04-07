@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { db } from "../../../components/firebase/config";
+import { auth, db } from "../../../components/firebase/config";
 import {
   collection,
   addDoc,
@@ -12,6 +12,7 @@ import Head from "next/head";
 import { BaseLayout } from "../../../components/layouts/baseLayout";
 import QuestionForm, { Question } from "../../../components/QuestionForm";
 import StickyHeadTable from "../../../components/StickyHeadTable";
+import queryUserDocument from "~/components/firebase/firebase_functions";
 
 interface TableRowData {
   id?: string;
@@ -30,6 +31,13 @@ export default function CRUD_Questions() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedQuestion, setEditedQuestion] = useState<Question | null>(null);
+
+  const user = auth.currentUser;
+  const isSuperUser = queryUserDocument(user ? user.uid : "");
+
+  if (!isSuperUser || !user) {
+    return <div>Unauthorized</div>;
+  }
 
   useEffect(() => {
     const unsubscribe = onSnapshot(

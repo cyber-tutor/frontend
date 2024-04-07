@@ -116,6 +116,7 @@ export async function createUserDocument(
     initialSurveyIncorrectCount: 0,
     contentPreference: "text",
     lastLoginDate: currentDate,
+    isSuperUser: false,
   });
 
   const topicsCollectionRef = collection(db, "topics");
