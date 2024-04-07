@@ -5,12 +5,17 @@ import CircularProgress, {
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
-function CircularProgressWithLabel(
-  props: CircularProgressProps & { value: number },
-) {
+interface CircularProgressWithLabelProps extends CircularProgressProps {
+  value: number;
+  size?: number; 
+}
+
+function CircularProgressWithLabel(props: CircularProgressWithLabelProps) {
+  const { size = 40, ...otherProps } = props; 
+
   return (
     <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-      <CircularProgress variant="determinate" {...props} value={props.value} />
+      <CircularProgress variant="determinate" {...otherProps} size={size} />
       <Box
         sx={{
           top: 0,
@@ -33,6 +38,11 @@ function CircularProgressWithLabel(
   );
 }
 
-export default function CircularWithValueLabel({ value }: { value: number }) {
-  return <CircularProgressWithLabel value={value} />;
+interface CircularWithValueLabelProps {
+  value: number;
+  size?: number;
+}
+
+export default function CircularWithValueLabel({ value, size }: CircularWithValueLabelProps) {
+  return <CircularProgressWithLabel value={value} size={size} />;
 }
