@@ -1,36 +1,51 @@
 import Head from "next/head";
 import { BaseLayout } from "../components/layouts/baseLayout";
-import { auth } from "../components/firebase/config";
+import { auth, db } from "../components/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import queryUserDocument from "../components/firebase/firebase_functions";
-import { DocumentData } from "firebase/firestore";
+import { DocumentData, collection, getDocs } from "firebase/firestore";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import CircularWithValueLabel from "~/components/ProgressCircle";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
 export default function Home() {
   const [user, loading, error] = useAuthState(auth);
   const [userDocument, setUserDocument] = useState<DocumentData | null>(null);
+  const [proficiencyRatio, setProficiencyRatio] = useState(0);
   const router = useRouter();
 
   const uid = user ? user.uid : null;
 
-  // console.log("User Id:", uid);
+  useEffect(() => {
+    if (uid) {
 
-  // If user is logged in, query and retrieve the reference to their document in the users collection in firestore
-  if (uid) {
-    queryUserDocument(uid).then((userDocument) => {
-      setUserDocument(userDocument);
-    });
-  }
+      queryUserDocument(uid).then((userDocument) => {
+        setUserDocument(userDocument);
+  
 
-  // Check if user completed initial survey, if not then redirect to initial survey
-  if (userDocument && !userDocument.data().initialSurveyComplete) {
-    router.push("/initialsurvey/begin");
-  }
+        const progressRef = collection(db, `users/${userDocument?.id}/progress`);
+        getDocs(progressRef).then((snapshot) => {
+          const totalDocuments = snapshot.size;
+          const completedDocumentsCount = snapshot.docs.filter(doc => doc.data().complete === true).length;
+          console.log("completedDocumentsCount", completedDocumentsCount);
+          const ratio = totalDocuments > 0 ? (completedDocumentsCount / totalDocuments) * 100 : 0;
+          setProficiencyRatio(ratio);
+        });
+      });
+    }
+  }, [uid]);
+  
+
+
+  useEffect(() => {
+    if (userDocument && !userDocument.data().initialSurveyComplete) {
+      router.push("/initialsurvey/begin");
+    }
+  }, [userDocument, router]);
 
   return (
     <>
@@ -39,13 +54,16 @@ export default function Home() {
         <meta name="description" content="Cyber Tutor" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex flex-col min-h-screen w-full">
+      <div className="flex min-h-screen w-full flex-col">
         {user ? (
           <BaseLayout>
+            <p>Ready to fortify your digital life and stay protected?</p>
             <p>Select a topic from the menu.</p>
+            Progress:
+            <CircularWithValueLabel value={proficiencyRatio} />
           </BaseLayout>
         ) : (
-          <div className="flex flex-col items-center justify-center bg-gray-200 p-4 text-gray-900 grow">
+          <div className="flex grow flex-col items-center justify-center bg-gray-200 p-4 text-gray-900">
             {typeof window !== "undefined" && (
               <ReactPlayer
                 url="https://www.youtube.com/watch?v=8BoovULyJeg&list=PLVEnBuMmQvXukhIgRrTIwOxWBoLwYYL0A"
@@ -56,9 +74,9 @@ export default function Home() {
             )}
             <p className="mx-auto mt-8 rounded-lg bg-white p-4 text-center text-xl font-semibold shadow-lg md:text-2xl lg:w-1/2">
               Welcome to CyberTutor! Dive into the world of cyber security and
-              fortify your digital life today. Explore our curated video series to
-              become a savvy internet user and protect yourself against online
-              threats.
+              fortify your digital life today. Explore our curated video series
+              to become a savvy internet user and protect yourself against
+              online threats.
             </p>
             <div className="mt-10 flex space-x-6">
               <button
