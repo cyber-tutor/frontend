@@ -309,16 +309,22 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
                 <NavbarItem>
                   <p className="text-sm">Hi {userDocument?.data().name }</p>
                 </NavbarItem>
-                <NavbarItem>
-                  <Button className="text-sm" onClick={() => router.push("/")}>
-                    Home
-                  </Button>
-                </NavbarItem>
-                <NavbarItem>
-                  <Button className="text-sm" onClick={handleLogout}>
-                    Logout
-                  </Button>
-                </NavbarItem>
+                <Dropdown>
+  <DropdownTrigger>
+    <Button className="text-sm" radius="sm">
+      Menu↓
+    </Button>
+  </DropdownTrigger>
+  <DropdownMenu>
+    <DropdownItem onClick={() => router.push("/")}>
+      Home
+    </DropdownItem>
+    <DropdownItem onClick={handleLogout}>
+      Logout
+    </DropdownItem>
+  </DropdownMenu>
+</Dropdown>
+
               </>
             )}
           </NavbarContent>
