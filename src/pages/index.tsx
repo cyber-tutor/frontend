@@ -254,7 +254,7 @@ export default function Home() {
           <div className="flex grow flex-col items-center justify-center bg-gray-200 p-4 text-gray-900">
             {typeof window !== "undefined" && (
               <ReactPlayer
-                url="https://www.youtube.com/watch?v=8BoovULyJeg&list=PLVEnBuMmQvXukhIgRrTIwOxWBoLwYYL0A"
+                url="https://youtu.be/027hGcCeoHc"
                 playing={false}
                 controls={true}
                 className="mb-8 max-w-full rounded-lg shadow-2xl"
