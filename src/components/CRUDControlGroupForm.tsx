@@ -70,6 +70,15 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
     intermediate: "",
     expert: "",
   });
+  const [updatedVideoURLs, setUpdatedVideoURLs] = useState<{
+    beginner: string;
+    intermediate: string;
+    expert: string;
+  }>({
+    beginner: "",
+    intermediate: "",
+    expert: "",
+  });
   const [selectedChapterId, setSelectedChapterId] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
 
@@ -142,6 +151,15 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
         expert: "",
       });
     }
+    if (selectedChapter && selectedChapter.controlGroupVideoURLs) {
+      setUpdatedVideoURLs(selectedChapter.controlGroupVideoURLs);
+    } else {
+      setUpdatedVideoURLs({
+        beginner: "",
+        intermediate: "",
+        expert: "",
+      });
+    }
   };
 
   const handleAddImageUrl = () => {
@@ -180,6 +198,15 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
       ),
     );
   };
+  const handleVideoUrlChange = (
+    proficiency: Proficiency,
+    e: ChangeEvent<HTMLInputElement>,
+  ) => {
+    setUpdatedVideoURLs((prevUrls) => ({
+      ...prevUrls,
+      [proficiency]: e.target.value,
+    }));
+  };
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!selectedChapterId) return;
@@ -193,6 +220,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
         {
           controlGroupContent: updatedContent,
           controlGroupImageURLs: updatedChapter.controlGroupImageURLs,
+          controlGroupVideoURLs: updatedVideoURLs,
         },
       );
       setFeedbackMessage("Control group content updated successfully");
@@ -276,6 +304,20 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
                     placeholder={`Enter control group content (${proficiency})`}
                     className="w-full resize-y rounded-md border p-2 text-sm text-gray-500"
                     rows={1}
+                  />
+                  <label
+                    htmlFor={`videoUrl-${proficiency}`}
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Control Group Video URL ({proficiency}):
+                  </label>
+                  <input
+                    id={`videoUrl-${proficiency}`}
+                    name={`videoUrl-${proficiency}`}
+                    value={updatedVideoURLs[proficiency]}
+                    onChange={(e) => handleVideoUrlChange(proficiency, e)}
+                    placeholder={`Enter control group video URL (${proficiency})`}
+                    className="w-full resize-y rounded-md border p-2 text-sm text-gray-500"
                   />
                 </div>
               ),
