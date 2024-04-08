@@ -25,8 +25,7 @@ import TimerComponent from "~/components/Timer";
 import DynamicSurvey from "../../../../components/DynamicSurvey";
 import { progress } from "framer-motion";
 import queryUserDocument from "~/components/firebase/firebase_functions";
-import { motion } from 'framer-motion';
-
+import { motion } from "framer-motion";
 
 type Chapter = {
   chapterId: string;
@@ -246,95 +245,94 @@ export default function ChapterPage() {
   }
   return (
     <BaseLayout>
-    
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
       <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
       {progressComplete && chapter.chapterType !== "assessment" && (
-          <button
-            className="rounded bg-blue-500 px-4 py-2 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-700"
-            onClick={async () => {
-              const userDocId = await findUserDocId(uid ?? "");
-              if (typeof chapterId === "string" && userDocId) {
-                const userDocRef = doc(db, "users", userDocId);
-                const minutes = Math.floor(secondsElapsed / 60);
-                const seconds = secondsElapsed % 60;
-                const timeElapsed = `${minutes}:${String(seconds).padStart(2, "0")}`;
-                await updateDoc(userDocRef, {
-                  timeOnPage: timeElapsed,
-                });
+        <button
+          className="rounded bg-blue-500 px-4 py-2 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-700"
+          onClick={async () => {
+            const userDocId = await findUserDocId(uid ?? "");
+            if (typeof chapterId === "string" && userDocId) {
+              const userDocRef = doc(db, "users", userDocId);
+              const minutes = Math.floor(secondsElapsed / 60);
+              const seconds = secondsElapsed % 60;
+              const timeElapsed = `${minutes}:${String(seconds).padStart(2, "0")}`;
+              await updateDoc(userDocRef, {
+                timeOnPage: timeElapsed,
+              });
 
-                const progressRef = doc(
+              const progressRef = doc(
+                db,
+                "users",
+                userDocId,
+                "progress",
+                chapterId,
+              );
+              const progressSnapshot = await getDoc(progressRef);
+
+              if (progressSnapshot.exists()) {
+                const progressData = progressSnapshot.data();
+                const attempts = progressData.attempts ?? {};
+                const nextAttemptNumber = Object.keys(attempts).length + 1;
+                const updatedAttempts = {
+                  ...attempts,
+                  [nextAttemptNumber]: {
+                    timeElapsed,
+                  },
+                };
+
+                if (progressData.complete === false) {
+                  await updateDoc(progressRef, {
+                    complete: true,
+                    attempts: updatedAttempts,
+                  });
+
+                  await increaseLevel(progressData.topicId, userDocId);
+                }
+
+                const userLevel = doc(
                   db,
                   "users",
                   userDocId,
-                  "progress",
-                  chapterId,
+                  "levels",
+                  progressData.topicId,
                 );
-                const progressSnapshot = await getDoc(progressRef);
+                const levelSnapshot = await getDoc(userLevel);
+                const levelData = levelSnapshot.data();
 
-                if (progressSnapshot.exists()) {
-                  const progressData = progressSnapshot.data();
-                  const attempts = progressData.attempts ?? {};
-                  const nextAttemptNumber = Object.keys(attempts).length + 1;
-                  const updatedAttempts = {
-                    ...attempts,
-                    [nextAttemptNumber]: {
+                const topicString: String | null = await getNextChapterId(
+                  chapter.order,
+                  progressData.topicId,
+                  levelData?.level,
+                );
+
+                if (topicString === null) {
+                  alert(
+                    "Your knowledge level is too low to access the next chapter. Please complete some other chapters to raise it.",
+                  );
+                  router.push(`/topics/${progressData.topicId}`);
+                } else if (topicString !== null) {
+                  router.push(
+                    `/topics/${progressData.topicId}/chapters/${topicString}`,
+                  );
+                }
+              } else {
+                // If no progress document exists, create the first attempt
+                await updateDoc(progressRef, {
+                  complete: true,
+                  attempts: {
+                    1: {
                       timeElapsed,
                     },
-                  };
-
-                  if (progressData.complete === false) {
-                    await updateDoc(progressRef, {
-                      complete: true,
-                      attempts: updatedAttempts,
-                    });
-
-                    await increaseLevel(progressData.topicId, userDocId);
-                  }
-
-                  const userLevel = doc(
-                    db,
-                    "users",
-                    userDocId,
-                    "levels",
-                    progressData.topicId,
-                  );
-                  const levelSnapshot = await getDoc(userLevel);
-                  const levelData = levelSnapshot.data();
-
-                  const topicString: String | null = await getNextChapterId(
-                    chapter.order,
-                    progressData.topicId,
-                    levelData?.level,
-                  );
-
-                  if (topicString === null) {
-                    alert(
-                      "Your knowledge level is too low to access the next chapter. Please complete some other chapters to raise it.",
-                    );
-                    router.push(`/topics/${progressData.topicId}`);
-                  } else if (topicString !== null) {
-                    router.push(
-                      `/topics/${progressData.topicId}/chapters/${topicString}`,
-                    );
-                  }
-                } else {
-                  // If no progress document exists, create the first attempt
-                  await updateDoc(progressRef, {
-                    complete: true,
-                    attempts: {
-                      1: {
-                        timeElapsed,
-                      },
-                    },
-                  });
-                }
+                  },
+                });
               }
-            }}
-          >
-            Next
-          </button>
-        )}
+            }
+          }}
+        >
+          Next
+        </button>
+      )}
       <div className="mx-auto w-full overflow-y-auto">
         {contentPreference === "text" && (
           <div className="m-4 rounded border p-4 shadow">
@@ -395,34 +393,35 @@ export default function ChapterPage() {
             </div>
           </div>
         )}
-        {contentPreference === "video" && chapter.chapterType !== "assessment" && (
-          <div className="flex h-screen flex-grow justify-center">
-            <ReactPlayer
-              url={
-                userGroup === "control"
-                  ? chapter.controlGroupVideoURLs?.[
-                      userProficiency as keyof typeof chapter.controlGroupVideoURLs
-                    ]
-                  : chapter.experimentalGroupVideoURLs?.[
-                      userProficiency as keyof typeof chapter.experimentalGroupVideoURLs
-                    ]
-              }
-              onProgress={(progress) => {
-                setPlayed(progress.playedSeconds);
-              }}
-              className="h-full w-full"
-              allowFullScreen
-              controls={false}
-              onEnded={() => {
-                const playedMinutes = Math.floor(played / 60);
-                handleVideoEnd(playedMinutes, userDocument?.id);
-                setIsVideoWatched(true);
-              }}
-              seekTo={20}
-            />
-          </div>
-        )}
-        
+        {contentPreference === "video" &&
+          chapter.chapterType !== "assessment" && (
+            <div className="flex h-screen flex-grow justify-center">
+              <ReactPlayer
+                url={
+                  userGroup === "control"
+                    ? chapter.controlGroupVideoURLs?.[
+                        userProficiency as keyof typeof chapter.controlGroupVideoURLs
+                      ]
+                    : chapter.experimentalGroupVideoURLs?.[
+                        userProficiency as keyof typeof chapter.experimentalGroupVideoURLs
+                      ]
+                }
+                onProgress={(progress) => {
+                  setPlayed(progress.playedSeconds);
+                }}
+                className="h-full w-full"
+                allowFullScreen
+                controls={false}
+                onEnded={() => {
+                  const playedMinutes = Math.floor(played / 60);
+                  handleVideoEnd(playedMinutes, userDocument?.id);
+                  setIsVideoWatched(true);
+                }}
+                seekTo={20}
+              />
+            </div>
+          )}
+
         <br />
         {/* video progress: {Math.floor(played / 60)}:
         {String(Math.floor(played % 60)).padStart(2, "0")}
@@ -442,23 +441,27 @@ export default function ChapterPage() {
         )}
       </div>
 
-      <div>
-        {chapter.chapterType !== "assessment" && (
-          <div className="text-sm text-gray-700">
-            It takes 1 minute and 30 seconds to go to the next chapter and
-            complete this chapter.
+      {chapter.chapterType !== "assessment" && (
+        <>
+          <div>
+            {chapter.chapterType !== "assessment" && (
+              <div className="text-sm text-gray-700">
+                It takes 1 minute and 30 seconds to go to the next chapter and
+                complete this chapter.
+              </div>
+            )}
           </div>
-        )}
-      </div>
-      <div className="relative h-2 w-full bg-gray-200">
-  <motion.div
-    className="absolute h-2 bg-blue-500"
-    initial={{ width: 0 }}
-    animate={{ width: `${(secondsElapsed / 90) * 100}%` }}
-    transition={{ duration: 1, ease: 'linear' }}
-  />
-</div>
 
+          <div className="relative h-2 w-full bg-gray-200">
+            <motion.div
+              className="absolute h-2 bg-blue-500"
+              initial={{ width: 0 }}
+              animate={{ width: `${(secondsElapsed / 90) * 100}%` }}
+              transition={{ duration: 1, ease: "linear" }}
+            />
+          </div>
+        </>
+      )}
     </BaseLayout>
   );
 }
