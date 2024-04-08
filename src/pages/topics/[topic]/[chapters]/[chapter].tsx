@@ -144,7 +144,7 @@ export default function ChapterPage() {
 
   useEffect(() => {
     // Check if 1 minute and 30 seconds has passed
-    if (secondsElapsed >= 1) {
+    if (secondsElapsed >= 90) {
       setProgressComplete(true);
     }
   }, [secondsElapsed]);
