@@ -85,22 +85,6 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
             })),
           },
         ],
-        cssClasses: {
-          root: "bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4",
-          header: "text-xl font-bold mb-4",
-          question: {
-            title: "font-semibold",
-            mainRoot: "mb-4",
-          },
-          radiogroup: {
-            root: "flex flex-col",
-            item: "mb-2",
-          },
-          progressBar: "h-2 bg-blue-200",
-          page: {
-            description: "text-sm mb-2",
-          },
-        },
       };
     };
 
@@ -164,7 +148,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
 
   return (
     <div className="flex justify-center items-center p-4 bg-white rounded-lg shadow-xl border border-gray-200">
-      <div className="w-full max-w-2xl p-6 bg-white rounded-md">
+    <div className="w-full max-w-2xl p-6 bg-white rounded-md mt-[-2rem]">
         <Survey
           model={surveyJson}
           onComplete={(result: Model) => {
@@ -180,17 +164,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
               updateUserProgress(percentage, false, timeElapsed);
             }
           }}
-          css={{
-            root: "text-gray-800",
-            header: "text-xl font-semibold mb-4",
-            body: "flex flex-col gap-4",
-            question: {
-              title: "font-semibold text-lg",
-              description: "text-sm text-gray-600",
-            },
-            navigationButton: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded",
-            progressBar: "h-2 bg-blue-600 rounded",
-          }}
+         
         />
       </div>
     </div>
