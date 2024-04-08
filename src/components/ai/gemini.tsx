@@ -11,6 +11,7 @@ const determineProficiency = async (responses: string): Promise<string> => {
     Please return an array with values for each topic. There are 5 topics: 
     Two-Factor Authentication, Phishing, Password Security, Software Updates, and Online Privacy. 
     Each value should be separated by commas. 
+    Do not include any braces or brackets.
     The values in the array should be ordered according to the order of the topics. 
 
     From the question choices, each choice is ordered alphabetically, like so: starting from a, to b, to c, to d, to e, and continue if more choices.
