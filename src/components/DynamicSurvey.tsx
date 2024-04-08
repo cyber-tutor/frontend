@@ -190,8 +190,9 @@ selectedQuestions.forEach((question, index) => {
 
     if (resultMessage === "User passed") {
       alert(`You passed with a score of ${percentage.toFixed(2)}%`);
-      updateUserProgress(percentage, true, timeElapsed);
+      updateUserProgress(percentage, true, timeElapsed).then(() => {
       router.push(`/topics/${topicId}`);
+      });
     } else {
       alert(`You failed with a score of ${percentage.toFixed(2)}%`);
       updateUserProgress(percentage, false, timeElapsed);
