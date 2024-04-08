@@ -5,7 +5,7 @@ import { auth, db } from "./firebase/config";
 import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { findUserDocId, increaseLevel } from "~/components/firebase/firebase_functions";
 import { useRouter } from "next/router";
-import { user } from "@nextui-org/react";
+import { button, user } from "@nextui-org/react";
 
 interface Question {
   question: string;
@@ -23,6 +23,7 @@ interface DynamicSurveyProps {
 const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
   const [surveyJson, setSurveyJson] = useState<Model>(new Model({}));
   const [correctAnswers, setCorrectAnswers] = useState<Record<string, string>>({});
+  const [userFailed, setUserFailed] = useState<boolean>(false);
   const startTimeRef = useRef<Date | null>(null);
 
   const router = useRouter();
@@ -196,9 +197,24 @@ selectedQuestions.forEach((question, index) => {
     } else {
       alert(`You failed with a score of ${percentage.toFixed(2)}%`);
       updateUserProgress(percentage, false, timeElapsed);
+      setUserFailed(true);
+      
     }
   }}
 />
+
+{userFailed && (
+  <div className="flex items-center justify-center">
+    <button
+      onClick={() => {
+        router.reload();
+      }}
+      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    >
+      Try again
+    </button>
+  </div>
+)}
       </div>
     </div>
   );
