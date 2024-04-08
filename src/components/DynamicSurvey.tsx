@@ -61,7 +61,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
       });
 
       // Randomly select 10 questions
-      const selectedQuestions = allQuestions.sort(() => 0.5 - Math.random()).slice(0, 3);
+      const selectedQuestions = allQuestions.sort(() => 0.5 - Math.random()).slice(0, 10);
 
       const correctAnswers: Record<string, string> = {};
 selectedQuestions.forEach((question, index) => {
@@ -108,9 +108,9 @@ selectedQuestions.forEach((question, index) => {
     });
   }, [chapterId, userId]);
 
-  useEffect(() => {
-    console.log("Correct Answers:", correctAnswers);
-  }, [correctAnswers]);
+  // useEffect(() => {
+  //   console.log("Correct Answers:", correctAnswers);
+  // }, [correctAnswers]);
   
 
   const calculateResults = (results: Record<string, string>, correctAnswers: Record<string, string>) => {
