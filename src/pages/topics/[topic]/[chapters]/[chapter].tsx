@@ -244,96 +244,10 @@ export default function ChapterPage() {
   }
   return (
     <BaseLayout>
+    
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
       <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
-      <div className="mx-auto w-full overflow-y-auto">
-        {contentPreference === "text" && (
-          <div className="m-4 rounded border p-4 shadow">
-            <div className="overflow-auto">
-              {(userGroup === "control"
-                ? chapter.controlGroupImageURLs
-                : chapter.experimentalGroupImageURLs
-              )?.length > 0 && (
-                <img
-                  className="float-right ml-5 mt-5 w-1/3 shadow-lg"
-                  src={
-                    userGroup === "control" &&
-                    chapter.controlGroupImageURLs.length > 0
-                      ? chapter.controlGroupImageURLs[
-                          controlGroupImageIndex ?? 0
-                        ]
-                      : userGroup === "experimental" &&
-                          chapter.experimentalGroupImageURLs.length > 0
-                        ? chapter.experimentalGroupImageURLs[
-                            experimentalGroupImageIndex ?? 0
-                          ]
-                        : undefined
-                  }
-                  alt={
-                    chapter.chapterTitle
-                      ? String(chapter.chapterTitle)
-                      : undefined
-                  }
-                  title={
-                    chapter.chapterTitle
-                      ? String(chapter.chapterTitle)
-                      : undefined
-                  }
-                />
-              )}
-              {userDocument?.data().id}
-              {userProficiency && (
-                <div>
-                  {userGroup === "control" ? (
-                    <div
-                      dangerouslySetInnerHTML={convertNewlinesToBreaks(
-                        chapter.controlGroupContent?.[
-                          userProficiency as keyof typeof chapter.controlGroupContent
-                        ],
-                      )}
-                    />
-                  ) : (
-                    <div
-                      dangerouslySetInnerHTML={convertNewlinesToBreaks(
-                        chapter.experimentalGroupContent?.[
-                          userProficiency as keyof typeof chapter.experimentalGroupContent
-                        ],
-                      )}
-                    />
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-        {contentPreference === "video" && (
-          <div className="flex h-screen flex-grow justify-center">
-            <ReactPlayer
-              url={
-                userGroup === "control"
-                  ? chapter.controlGroupVideoURLs?.[
-                      userProficiency as keyof typeof chapter.controlGroupVideoURLs
-                    ]
-                  : chapter.experimentalGroupVideoURLs?.[
-                      userProficiency as keyof typeof chapter.experimentalGroupVideoURLs
-                    ]
-              }
-              onProgress={(progress) => {
-                setPlayed(progress.playedSeconds);
-              }}
-              className="h-full w-full"
-              allowFullScreen
-              controls={false}
-              onEnded={() => {
-                const playedMinutes = Math.floor(played / 60);
-                handleVideoEnd(playedMinutes, userDocument?.id);
-                setIsVideoWatched(true);
-              }}
-              seekTo={20}
-            />
-          </div>
-        )}
-        {progressComplete && chapter.chapterType !== "assessment" && (
+      {progressComplete && chapter.chapterType !== "assessment" && (
           <button
             className="rounded bg-blue-500 px-4 py-2 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-700"
             onClick={async () => {
@@ -419,6 +333,94 @@ export default function ChapterPage() {
             Next
           </button>
         )}
+      <div className="mx-auto w-full overflow-y-auto">
+        {contentPreference === "text" && (
+          <div className="m-4 rounded border p-4 shadow">
+            <div className="overflow-auto">
+              {(userGroup === "control"
+                ? chapter.controlGroupImageURLs
+                : chapter.experimentalGroupImageURLs
+              )?.length > 0 && (
+                <img
+                  className="float-right ml-5 mt-5 w-1/3 shadow-lg"
+                  src={
+                    userGroup === "control" &&
+                    chapter.controlGroupImageURLs.length > 0
+                      ? chapter.controlGroupImageURLs[
+                          controlGroupImageIndex ?? 0
+                        ]
+                      : userGroup === "experimental" &&
+                          chapter.experimentalGroupImageURLs.length > 0
+                        ? chapter.experimentalGroupImageURLs[
+                            experimentalGroupImageIndex ?? 0
+                          ]
+                        : undefined
+                  }
+                  alt={
+                    chapter.chapterTitle
+                      ? String(chapter.chapterTitle)
+                      : undefined
+                  }
+                  title={
+                    chapter.chapterTitle
+                      ? String(chapter.chapterTitle)
+                      : undefined
+                  }
+                />
+              )}
+              {userDocument?.data().id}
+              {userProficiency && (
+                <div>
+                  {userGroup === "control" ? (
+                    <div
+                      dangerouslySetInnerHTML={convertNewlinesToBreaks(
+                        chapter.controlGroupContent?.[
+                          userProficiency as keyof typeof chapter.controlGroupContent
+                        ],
+                      )}
+                    />
+                  ) : (
+                    <div
+                      dangerouslySetInnerHTML={convertNewlinesToBreaks(
+                        chapter.experimentalGroupContent?.[
+                          userProficiency as keyof typeof chapter.experimentalGroupContent
+                        ],
+                      )}
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        {contentPreference === "video" && chapter.chapterType !== "assessment" && (
+          <div className="flex h-screen flex-grow justify-center">
+            <ReactPlayer
+              url={
+                userGroup === "control"
+                  ? chapter.controlGroupVideoURLs?.[
+                      userProficiency as keyof typeof chapter.controlGroupVideoURLs
+                    ]
+                  : chapter.experimentalGroupVideoURLs?.[
+                      userProficiency as keyof typeof chapter.experimentalGroupVideoURLs
+                    ]
+              }
+              onProgress={(progress) => {
+                setPlayed(progress.playedSeconds);
+              }}
+              className="h-full w-full"
+              allowFullScreen
+              controls={false}
+              onEnded={() => {
+                const playedMinutes = Math.floor(played / 60);
+                handleVideoEnd(playedMinutes, userDocument?.id);
+                setIsVideoWatched(true);
+              }}
+              seekTo={20}
+            />
+          </div>
+        )}
+        
         <br />
         {/* video progress: {Math.floor(played / 60)}:
         {String(Math.floor(played % 60)).padStart(2, "0")}
