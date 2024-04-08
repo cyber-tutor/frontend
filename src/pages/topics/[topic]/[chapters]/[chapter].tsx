@@ -144,7 +144,7 @@ export default function ChapterPage() {
 
   useEffect(() => {
     // Check if 1 minute and 30 seconds has passed
-    if (secondsElapsed >= 90) {
+    if (secondsElapsed >= 1) {
       setProgressComplete(true);
     }
   }, [secondsElapsed]);
@@ -434,6 +434,15 @@ export default function ChapterPage() {
               chapterId={chapter.chapterId}
               userId={userDocument?.data().userId}
             />
+          </div>
+        )}
+      </div>
+
+      <div>
+        {chapter.chapterType !== "assessment" && (
+          <div className="text-sm text-gray-700">
+            It takes 1 minute and 30 seconds to go to the next chapter and
+            complete this chapter.
           </div>
         )}
       </div>
