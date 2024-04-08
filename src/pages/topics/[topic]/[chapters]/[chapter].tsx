@@ -25,6 +25,8 @@ import TimerComponent from "~/components/Timer";
 import DynamicSurvey from "../../../../components/DynamicSurvey";
 import { progress } from "framer-motion";
 import queryUserDocument from "~/components/firebase/firebase_functions";
+import { motion } from 'framer-motion';
+
 
 type Chapter = {
   chapterId: string;
@@ -448,6 +450,15 @@ export default function ChapterPage() {
           </div>
         )}
       </div>
+      <div className="relative h-2 w-full bg-gray-200">
+  <motion.div
+    className="absolute h-2 bg-blue-500"
+    initial={{ width: 0 }}
+    animate={{ width: `${(secondsElapsed / 90) * 100}%` }}
+    transition={{ duration: 1, ease: 'linear' }}
+  />
+</div>
+
     </BaseLayout>
   );
 }
