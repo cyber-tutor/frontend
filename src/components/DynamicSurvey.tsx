@@ -16,7 +16,7 @@ interface Question {
 
 interface DynamicSurveyProps {
   chapterId: string;
-  userId: string; // Assuming you have the userId
+  userId: string; 
 }
 
 const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
@@ -29,9 +29,6 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
 
   useEffect(() => {
     const fetchQuestions = async () => {
-      const questions: Question[] = [];
-      const correctAnswers: Record<string, string> = {};
-
       const user = auth.currentUser;
       const uid = user ? user.uid : null;
 
@@ -55,15 +52,24 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
         where("difficulty", "==", proficiency)
       );
       const querySnapshot = await getDocs(q);
+
+      const allQuestions: Question[] = [];
       querySnapshot.forEach((doc) => {
         const questionData = doc.data() as Question;
-        questions.push(questionData);
-        correctAnswers[`question${questions.length}`] = questionData.correctAnswer;
-
-        console.log(`Question: ${questionData.question}, Difficulty: ${questionData.difficulty}`);
+        allQuestions.push(questionData);
       });
+
+      // Randomly select 10 questions
+      const selectedQuestions = allQuestions.sort(() => 0.5 - Math.random()).slice(0, 10);
+
+      const correctAnswers: Record<string, string> = {};
+      selectedQuestions.forEach((question, index) => {
+        correctAnswers[`question${index + 1}`] = question.correctAnswer;
+        console.log(`Question: ${question.question}, Difficulty: ${question.difficulty}`);
+      });
+
       setCorrectAnswers(correctAnswers);
-      return questions;
+      return selectedQuestions;
     };
 
     console.log("Chapter ID:", chapterId);
