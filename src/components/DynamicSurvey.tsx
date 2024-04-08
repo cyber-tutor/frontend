@@ -112,6 +112,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
                 type: "radiogroup",
                 name: `question${index + 1}`,
                 title: q.question,
+                // title: `${q.question} (Difficulty: ${q.difficulty})`,
                 isRequired: true,
                 choices: sortedChoices,
               };
