@@ -20,6 +20,7 @@ import {
   isWatched,
   getNextChapterId,
   increaseLevel,
+  isChapterComplete,
 } from "~/components/firebase/firebase_functions";
 import TimerComponent from "~/components/Timer";
 import DynamicSurvey from "../../../../components/DynamicSurvey";
@@ -84,6 +85,7 @@ export default function ChapterPage() {
   const [userGroup, setUserGroup] = useState<string | null>(null);
   const [userProficiency, setUserProficiency] = useState<string | null>(null);
   const [progressData, setProgressData] = useState<DocumentData | null>(null);
+  const [chapterComplete, setChapterComplete] = useState<boolean>(false);
   const [contentPreference, setContentPreference] = useState<string | null>(
     null,
   );
@@ -173,6 +175,12 @@ export default function ChapterPage() {
     fetchUserGroup();
   }, [uid]);
 
+    function convertNewlinesToBreaks(text: string | undefined): {
+    __html: string;
+  } {
+    return { __html: text ? text.replace(/(\\n|\r\n|\n|\r)/g, "<br />") : "" };
+  }
+
   useEffect(() => {
     const fetchContentPreference = async () => {
       if (!uid) return;
@@ -238,16 +246,19 @@ export default function ChapterPage() {
       </BaseLayout>
     );
 
-  function convertNewlinesToBreaks(text: string | undefined): {
-    __html: string;
-  } {
-    return { __html: text ? text.replace(/(\\n|\r\n|\n|\r)/g, "<br />") : "" };
-  }
+  const handleChapterComplete = async () => {
+    setChapterComplete(await isChapterComplete(user?.uid ?? "", chapterId?.toString() ?? ""));
+  };
+
+  handleChapterComplete();
+
+ 
+
   return (
     <BaseLayout>
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
       <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
-      {progressComplete && chapter.chapterType !== "assessment" && (
+      {progressComplete || chapterComplete && chapter.chapterType !== "assessment" && (
         <button
           className="rounded bg-blue-500 px-4 py-2 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-700"
           onClick={async () => {
@@ -441,7 +452,7 @@ export default function ChapterPage() {
         )}
       </div>
 
-      {chapter.chapterType !== "assessment" && (
+      {chapter.chapterType !== "assessment" && !chapterComplete && (
         <>
           <div>
             {chapter.chapterType !== "assessment" && (

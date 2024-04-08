@@ -328,3 +328,17 @@ export async function isTopicComplete(userId: string, topicId: string) {
 
   return allComplete;
 }
+
+export async function isChapterComplete(userId: string, chapterId: string) {
+  const docId = await findUserDocId(userId);
+  if (!docId) {
+    // console.error('User document ID not found');
+    return false;
+  }
+
+  const userDoc = doc(db, 'users', docId);
+  const progressDoc = doc(userDoc, 'progress', chapterId);
+  const progressSnapshot = await getDoc(progressDoc);
+
+  return progressSnapshot?.data()?.complete ?? false;
+}
