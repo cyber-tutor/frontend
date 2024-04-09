@@ -189,6 +189,23 @@ const SignUpForm: React.FC = () => {
               <span className="ml-2">Google</span>
             </button>
           </form>
+          <div className="my-4 border-t border-gray-300"></div>
+          <p className="mt-4 text-center text-sm text-gray-600">
+            Have an account?{" "}
+            <button
+              className="flex w-full items-center justify-center rounded border bg-blue-500 px-4 py-2  text-white hover:bg-blue-600 focus:outline-none"
+              onClick={() => router.push("/users/sign-in")}
+            >
+              Sign In
+            </button>
+          </p>
+
+          <button
+            className="mt-4 flex w-full items-center justify-center rounded border border-t bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none"
+            onClick={() => router.push("/")}
+          >
+            Home
+          </button>
         </div>
       </div>
       <footer className="w-full bg-white py-4 text-center text-gray-900">
