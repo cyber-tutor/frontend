@@ -258,7 +258,7 @@ export default function ChapterPage() {
     <BaseLayout>
       <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
       <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
-      {progressComplete || chapterComplete && chapter.chapterType !== "assessment" && (
+      {(progressComplete || chapterComplete) && chapter.chapterType !== "assessment" && (
         <button
           className="rounded bg-blue-500 px-4 py-2 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-700"
           onClick={async () => {
