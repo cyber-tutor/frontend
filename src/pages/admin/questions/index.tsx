@@ -36,35 +36,33 @@ export default function CRUD_Questions() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedQuestion, setEditedQuestion] = useState<Question | null>(null);
 
-  const user = auth.currentUser;
+
 
   const router = useRouter();
 
   useEffect(() => {
-    const fetchSuperUserStatus = async () => {
-      if (user) {
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+      if (currentUser) {
         const usersCollection = collection(db, "users");
         const superUserQuery = query(
           usersCollection,
-          where("userId", "==", user.uid),
+          where("userId", "==", currentUser.uid),
           where("isSuperuser", "==", true),
         );
         const querySnapshot = await getDocs(superUserQuery);
         if (!querySnapshot.empty) {
-          console.log("You are a superuser");
+          // console.log("You are a superuser");
         } else {
-          console.log("You are not a superuser");
+          // console.log("You are not a superuser");
           router.push("/");
         }
-      }
-      else {
-        if (user === null) {
+      } else {
         router.push("/");
       }
-    }
-    };
-    fetchSuperUserStatus();
-  }, [user, router]);
+    });
+  
+    return () => unsubscribe();
+  }, [router]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
