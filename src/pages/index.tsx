@@ -126,6 +126,9 @@ export default function Home() {
       if (diffInDays >= 1 && diffInDays < 2) {
         newStreakCount += 1;
         shouldUpdateFirebase = true;
+      }
+      else if (diffInDays < 1){
+        return;
       } else if (diffInDays >= 2) {
         newStreakCount = 0;
         shouldUpdateFirebase = true;
