@@ -264,7 +264,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
           </button>
           <p className="font-semibold text-lg">Don't give up! You can do it!</p>
           {quote && (
-            <p className="text-center text-gray-500 text-sm mt-4 italic">
+            <p className="text-center text-gray-500 text-md mt-4 italic">
               {quote}
             </p>
           )}
