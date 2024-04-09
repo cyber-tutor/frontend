@@ -47,7 +47,7 @@ export default function CRUD_Questions() {
         const superUserQuery = query(
           usersCollection,
           where("userId", "==", user.uid),
-          where("isSuperUser", "==", true),
+          where("isSuperuser", "==", true),
         );
         const querySnapshot = await getDocs(superUserQuery);
         if (!querySnapshot.empty) {
@@ -58,8 +58,10 @@ export default function CRUD_Questions() {
         }
       }
       else {
+        if (user === null) {
         router.push("/");
       }
+    }
     };
     fetchSuperUserStatus();
   }, [user, router]);

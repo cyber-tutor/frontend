@@ -35,18 +35,21 @@ export default function CRUD_ControlGroupContent() {
         const superUserQuery = query(
           usersCollection,
           where("userId", "==", user.uid),
-          where("isSuperUser", "==", true),
+          where("isSuperuser", "==", true),
         );
         const querySnapshot = await getDocs(superUserQuery);
         if (!querySnapshot.empty) {
           console.log("You are a superuser");
+          // router.push("/admin/content");
         } else {
           console.log("You are not a superuser");
           router.push("/");
         }
       }
       else{
+        if(user === null){
         router.push("/");
+        }
       }
     };
     fetchSuperUserStatus();
