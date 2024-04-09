@@ -150,7 +150,7 @@ const SignInForm = () => {
           </button>
         </div>
       </div>
-      <footer className="w-full bg-white py-4 text-center text-gray-900">
+      <footer className="w-full bg-slate-50 py-4 text-center text-gray-900">
         <div className="mx-auto">
           <p>&copy; 2024 Cyber Tutor. All rights reserved.</p>
         </div>
