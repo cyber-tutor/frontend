@@ -13,7 +13,9 @@ import {
   DocumentData,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import queryUserDocument, { isTopicComplete } from "../firebase/firebase_functions";
+import queryUserDocument, {
+  isTopicComplete,
+} from "../firebase/firebase_functions";
 import {
   Navbar,
   NavbarBrand,
@@ -178,16 +180,14 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
           topics.map(async (topic) => {
             const isComplete = await isTopicComplete(uid, topic.topicId);
             return { ...topic, isComplete } as Topic;
-          })
+          }),
         );
         setTopics(updatedTopics);
       }
     };
-  
+
     checkTopicCompletion();
   }, [user, topics]);
-  
-
 
   const handleLogoClick = () => {
     router.push("/");
@@ -253,7 +253,6 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
                 {topics.map((topic) => (
                   <DropdownItem
                     key={topic.topicId}
-                    
                     onClick={() => {
                       if (
                         user &&
@@ -271,7 +270,7 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
                     ) : (
                       <div className="relative">
                         <div className="pointer-events-none select-none blur-sm">
-                          {topic.topicTitle} 
+                          {topic.topicTitle}
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center bg-white bg-opacity-75">
                           <span>Sign in to unlock</span>
@@ -307,24 +306,21 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
             {user && (
               <>
                 <NavbarItem>
-                  <p className="text-sm">Hi {userDocument?.data().name }</p>
+                  <p className="text-sm">Hi {userDocument?.data().name}</p>
                 </NavbarItem>
                 <Dropdown>
-  <DropdownTrigger>
-    <Button className="text-sm" radius="sm">
-      Menu↓
-    </Button>
-  </DropdownTrigger>
-  <DropdownMenu>
-    <DropdownItem onClick={() => router.push("/")}>
-      Home
-    </DropdownItem>
-    <DropdownItem onClick={handleLogout}>
-      Logout
-    </DropdownItem>
-  </DropdownMenu>
-</Dropdown>
-
+                  <DropdownTrigger>
+                    <Button className="text-sm" radius="sm">
+                      Menu↓
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu>
+                    <DropdownItem onClick={() => router.push("/")}>
+                      Home
+                    </DropdownItem>
+                    <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
               </>
             )}
           </NavbarContent>
@@ -373,9 +369,12 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
                     userDocument &&
                     userDocument.data().initialSurveyComplete ? (
                       topics.map((topic) => (
-                        <MenuItem key={topic.topicId} onClick={() => handleTopicClick(topic)}>
+                        <MenuItem
+                          key={topic.topicId}
+                          onClick={() => handleTopicClick(topic)}
+                        >
                           <span className="text-sm">{topic.topicTitle}</span>
-                          {topic.isComplete && <span>  💯</span>}
+                          {topic.isComplete && <span> 💯</span>}
                         </MenuItem>
                       ))
                     ) : (
@@ -426,13 +425,13 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
                         </button>
                       </MenuItem>
                     )}
-                    
+
                     {/* User ID for testing */}
                     {/* {userDocument ? userDocument.id : ""} */}
 
                     {user && (
                       <MenuItem>
-                      <br />
+                        <br />
                         <p>
                           Welcome {userDocument ? userDocument.data().name : ""}
                         </p>

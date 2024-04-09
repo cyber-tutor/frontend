@@ -192,7 +192,6 @@ export async function createUserDocument(
   }
 }
 
-
 export const findUserDocId = async (userId: string): Promise<string | null> => {
   if (!userId) {
     // console.error("User ID is undefined");
@@ -207,7 +206,7 @@ export const findUserDocId = async (userId: string): Promise<string | null> => {
 export const updateProgress = async (
   userId: string,
   chapterId: string,
-  timeElapsed: number
+  timeElapsed: number,
 ) => {
   const progressDocRef = doc(db, "users", userId, "progress", chapterId);
 
@@ -217,11 +216,13 @@ export const updateProgress = async (
   });
 };
 
-export async function getNextChapterId(order: number, documentId: string, userProficiency: number) {
-
-
-  const topicsCollection = collection(db, 'topics', documentId, 'chapters');
-  const q = query(topicsCollection, where('order', '==', order + 1));
+export async function getNextChapterId(
+  order: number,
+  documentId: string,
+  userProficiency: number,
+) {
+  const topicsCollection = collection(db, "topics", documentId, "chapters");
+  const q = query(topicsCollection, where("order", "==", order + 1));
 
   const querySnapshot = await getDocs(q);
   let nextChapterId = null;
@@ -241,35 +242,37 @@ export async function getNextChapterId(order: number, documentId: string, userPr
 }
 
 export async function increaseLevel(topicId: string, userId: string) {
- 
-  const userDoc = doc(db, 'users', userId, 'levels', topicId);
+  const userDoc = doc(db, "users", userId, "levels", topicId);
 
   await updateDoc(userDoc, {
-    level: increment(1)
+    level: increment(1),
   });
 }
 
 export async function initialSurveyComplete(userId: string, quizResponse: any) {
   const docId = await findUserDocId(userId);
-  const userDoc = doc(db, 'users', docId ? docId : '');
+  const userDoc = doc(db, "users", docId ? docId : "");
 
   await setDoc(userDoc, {
-    initialSurveyComplete: true
+    initialSurveyComplete: true,
   });
 
-  const surveyResponseCollection = collection(userDoc, 'initialSurveyResponse');
+  const surveyResponseCollection = collection(userDoc, "initialSurveyResponse");
   const surveyResponseDoc = doc(surveyResponseCollection, userId);
   await setDoc(surveyResponseDoc, {
-    response: quizResponse
+    response: quizResponse,
   });
 }
 
-export async function demographicSurveyComplete(userId: string, quizResponse: any) {
+export async function demographicSurveyComplete(
+  userId: string,
+  quizResponse: any,
+) {
   const docId = await findUserDocId(userId);
-  const userDoc = doc(db, 'users', docId ? docId : '');
+  const userDoc = doc(db, "users", docId ? docId : "");
 
   await updateDoc(userDoc, {
-    demographicSurveyComplete: true
+    demographicSurveyComplete: true,
   });
 
   // const surveyResponseCollection = collection(userDoc, 'demographicSurveyResponse');
@@ -283,9 +286,9 @@ export async function demographicSurveyComplete(userId: string, quizResponse: an
 
 export async function numberOfTopicsCompleted(userId: string) {
   const docId = await findUserDocId(userId);
-  const userDoc = doc(db, 'users', docId ? docId : '');
+  const userDoc = doc(db, "users", docId ? docId : "");
 
-  const topicsCollection = collection(db, 'topics');
+  const topicsCollection = collection(db, "topics");
   const topicsSnapshot = await getDocs(topicsCollection);
 
   let completedTopicsCount = 0;
@@ -293,12 +296,12 @@ export async function numberOfTopicsCompleted(userId: string) {
   for (const topicDoc of topicsSnapshot.docs) {
     const topicId = topicDoc.id;
 
-    const progressCollection = collection(userDoc, 'progress');
-    const q = query(progressCollection, where('topicId', '==', topicId));
+    const progressCollection = collection(userDoc, "progress");
+    const q = query(progressCollection, where("topicId", "==", topicId));
 
     const progressSnapshot = await getDocs(q);
 
-    if (progressSnapshot.docs.every(doc => doc.data().complete)) {
+    if (progressSnapshot.docs.every((doc) => doc.data().complete)) {
       completedTopicsCount++;
     }
   }
@@ -313,12 +316,12 @@ export async function isTopicComplete(userId: string, topicId: string) {
     return false;
   }
 
-  const userDoc = doc(db, 'users', docId);
-  const progressCollection = collection(userDoc, 'progress');
-  const q = query(progressCollection, where('topicId', '==', topicId));
+  const userDoc = doc(db, "users", docId);
+  const progressCollection = collection(userDoc, "progress");
+  const q = query(progressCollection, where("topicId", "==", topicId));
 
   const querySnapshot = await getDocs(q);
-  
+
   let allComplete = true;
   querySnapshot.forEach((doc) => {
     if (!doc.data().complete) {
@@ -336,8 +339,8 @@ export async function isChapterComplete(userId: string, chapterId: string) {
     return false;
   }
 
-  const userDoc = doc(db, 'users', docId);
-  const progressDoc = doc(userDoc, 'progress', chapterId);
+  const userDoc = doc(db, "users", docId);
+  const progressDoc = doc(userDoc, "progress", chapterId);
   const progressSnapshot = await getDoc(progressDoc);
 
   return progressSnapshot?.data()?.complete ?? false;

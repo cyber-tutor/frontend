@@ -1,11 +1,15 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const determineProficiency = async (responses: string): Promise<string> => {
-  const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_API_KEY ? process.env.NEXT_PUBLIC_GOOGLE_API_KEY : "");
+  const genAI = new GoogleGenerativeAI(
+    process.env.NEXT_PUBLIC_GOOGLE_API_KEY
+      ? process.env.NEXT_PUBLIC_GOOGLE_API_KEY
+      : "",
+  );
 
-  console.log("User responses: ",responses);
+  console.log("User responses: ", responses);
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
     const prompt = `
     Based on the provided responses from the user, determine the user's proficiency level. 
     Please return an array with values for each topic. There are 5 topics: 
@@ -41,7 +45,7 @@ const determineProficiency = async (responses: string): Promise<string> => {
     return proficiency;
   } catch (error) {
     // console.error("Error determining proficiency:", error);
-    return "error"; 
+    return "error";
   }
 };
 

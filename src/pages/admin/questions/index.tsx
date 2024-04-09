@@ -44,11 +44,14 @@ export default function CRUD_Questions() {
     const fetchSuperUserStatus = async () => {
       if (user) {
         const usersCollection = collection(db, "users");
-        const superUserQuery = query(usersCollection, where("userId", "==", user.uid), where("isSuperUser", "==", true));
+        const superUserQuery = query(
+          usersCollection,
+          where("userId", "==", user.uid),
+          where("isSuperUser", "==", true),
+        );
         const querySnapshot = await getDocs(superUserQuery);
         if (!querySnapshot.empty) {
           console.log("You are a superuser");
-          
         } else {
           console.log("You are not a superuser");
           router.push("/");

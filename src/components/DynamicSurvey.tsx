@@ -45,9 +45,9 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
   const { topic: topicId } = router.query;
 
   useEffect(() => {
-    fetch('https://api.quotable.io/random')
-      .then(response => response.json())
-      .then(data => setQuote(data.content));
+    fetch("https://api.quotable.io/random")
+      .then((response) => response.json())
+      .then((data) => setQuote(data.content));
   }, []);
 
   useEffect(() => {
@@ -236,8 +236,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
               1000;
 
             const completionMessage = `<h3>Assessment Finished</h3><h4>You scored ${percentage.toFixed(2)}% (${resultMessage.replace("User", "You")}).</h4>`;
-            result.completedHtml = completionMessage; 
-
+            result.completedHtml = completionMessage;
 
             if (resultMessage === "User passed") {
               alert(`You passed with a score of ${percentage.toFixed(2)}%`);
@@ -254,22 +253,23 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
 
         {userFailed && (
           <div className="flex flex-col items-center justify-center">
-          <button
-            onClick={() => {
-              router.reload();
-            }}
-            className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 transition-colors duration-200 ease-in-out mb-4"
-          >
-            Try again
-          </button>
-          <p className="font-semibold text-lg">Don't give up! You can do it!</p>
-          {quote && (
-            <p className="text-center text-gray-500 text-md mt-4 italic">
-              {quote}
+            <button
+              onClick={() => {
+                router.reload();
+              }}
+              className="mb-4 rounded bg-blue-500 px-4 py-2 font-bold text-white transition-colors duration-200 ease-in-out hover:bg-blue-700"
+            >
+              Try again
+            </button>
+            <p className="text-lg font-semibold">
+              Don't give up! You can do it!
             </p>
-          )}
-        </div>
-        
+            {quote && (
+              <p className="text-md mt-4 text-center italic text-gray-500">
+                {quote}
+              </p>
+            )}
+          </div>
         )}
       </div>
     </div>

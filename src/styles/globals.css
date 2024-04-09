@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 .sv-hidden {
   display: none;
 }

@@ -1,20 +1,20 @@
-import * as React from 'react';
+import * as React from "react";
 import CircularProgress, {
   CircularProgressProps,
-} from '@mui/material/CircularProgress';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
+} from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 interface CircularProgressWithLabelProps extends CircularProgressProps {
   value: number;
-  size?: number; 
+  size?: number;
 }
 
 function CircularProgressWithLabel(props: CircularProgressWithLabelProps) {
-  const { size = 40, ...otherProps } = props; 
+  const { size = 40, ...otherProps } = props;
 
   return (
-    <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+    <Box sx={{ position: "relative", display: "inline-flex" }}>
       <CircularProgress variant="determinate" {...otherProps} size={size} />
       <Box
         sx={{
@@ -22,10 +22,10 @@ function CircularProgressWithLabel(props: CircularProgressWithLabelProps) {
           left: 0,
           bottom: 0,
           right: 0,
-          position: 'absolute',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          position: "absolute",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         <Typography
@@ -43,6 +43,9 @@ interface CircularWithValueLabelProps {
   size?: number;
 }
 
-export default function CircularWithValueLabel({ value, size }: CircularWithValueLabelProps) {
+export default function CircularWithValueLabel({
+  value,
+  size,
+}: CircularWithValueLabelProps) {
   return <CircularProgressWithLabel value={value} size={size} />;
 }

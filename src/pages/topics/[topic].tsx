@@ -102,7 +102,6 @@ export default function TopicPage() {
           }
         }
 
-
         const progressCollectionRef = collection(
           db,
           `users/${userDoc?.id}/progress`,

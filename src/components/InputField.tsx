@@ -16,7 +16,7 @@ interface InputProps {
   isSelect?: boolean;
   options?: Option[];
   error?: string;
-  disabled?: boolean
+  disabled?: boolean;
 }
 
 const InputField: React.FC<InputProps> = ({
@@ -37,7 +37,10 @@ const InputField: React.FC<InputProps> = ({
         <select
           name={name}
           value={value}
-          onChange={onSelectChange as (e: ChangeEvent<HTMLSelectElement>) => void || onChange}
+          onChange={
+            (onSelectChange as (e: ChangeEvent<HTMLSelectElement>) => void) ||
+            onChange
+          }
           className={`mb-4 w-full rounded border p-2 ${error ? "border-red-500" : ""}`}
         >
           <option value="">{placeholder}</option>

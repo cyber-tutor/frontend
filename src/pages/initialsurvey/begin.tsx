@@ -1,6 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 
 export default function InitialSurvey() {
   const router = useRouter();

@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { auth, db } from "../../../components/firebase/config";
-import { getDocs, collection, onSnapshot, doc, getDoc, query, where } from "firebase/firestore";
+import {
+  getDocs,
+  collection,
+  onSnapshot,
+  doc,
+  getDoc,
+  query,
+  where,
+} from "firebase/firestore";
 import Head from "next/head";
 import { BaseLayout } from "../../../components/layouts/baseLayout";
 import ControlGroupForm from "../../../components/CRUDControlGroupForm";
@@ -13,7 +21,6 @@ interface UserData {
   isSuperUser: boolean;
 }
 
-
 export default function CRUD_ControlGroupContent() {
   const [topicId, setTopicId] = useState<string>("");
 
@@ -25,11 +32,14 @@ export default function CRUD_ControlGroupContent() {
     const fetchSuperUserStatus = async () => {
       if (user) {
         const usersCollection = collection(db, "users");
-        const superUserQuery = query(usersCollection, where("userId", "==", user.uid), where("isSuperUser", "==", true));
+        const superUserQuery = query(
+          usersCollection,
+          where("userId", "==", user.uid),
+          where("isSuperUser", "==", true),
+        );
         const querySnapshot = await getDocs(superUserQuery);
         if (!querySnapshot.empty) {
           console.log("You are a superuser");
-          
         } else {
           console.log("You are not a superuser");
           router.push("/");
@@ -38,9 +48,6 @@ export default function CRUD_ControlGroupContent() {
     };
     fetchSuperUserStatus();
   }, [user, router]);
-  
-
-
 
   useEffect(() => {
     const fetchTopicId = async () => {
