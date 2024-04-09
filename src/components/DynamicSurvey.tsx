@@ -258,13 +258,18 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
             onClick={() => {
               router.reload();
             }}
-            className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 mb-4"
+            className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 transition-colors duration-200 ease-in-out mb-4"
           >
             Try again
           </button>
-          <p>Don't give up! You can do it!</p>
-          {quote && (<p className="text-center text-gray-500 text-sm mt-4">{quote}</p>)}
+          <p className="font-semibold text-lg">Don't give up! You can do it!</p>
+          {quote && (
+            <p className="text-center text-gray-500 text-sm mt-4 italic">
+              {quote}
+            </p>
+          )}
         </div>
+        
         )}
       </div>
     </div>
