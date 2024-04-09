@@ -57,6 +57,9 @@ export default function CRUD_Questions() {
           router.push("/");
         }
       }
+      else {
+        router.push("/");
+      }
     };
     fetchSuperUserStatus();
   }, [user, router]);

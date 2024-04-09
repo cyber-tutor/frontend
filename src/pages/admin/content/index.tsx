@@ -30,7 +30,7 @@ export default function CRUD_ControlGroupContent() {
 
   useEffect(() => {
     const fetchSuperUserStatus = async () => {
-      if (user) {
+      if (user ) {
         const usersCollection = collection(db, "users");
         const superUserQuery = query(
           usersCollection,
@@ -44,6 +44,9 @@ export default function CRUD_ControlGroupContent() {
           console.log("You are not a superuser");
           router.push("/");
         }
+      }
+      else{
+        router.push("/");
       }
     };
     fetchSuperUserStatus();
