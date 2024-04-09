@@ -351,14 +351,6 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
                         </span>
                       )}
                     </div>
-                    <button
-                      type="button"
-                      className="sb-button font-mono"
-                      onClick={() => setCollapsed(!collapsed)}
-                      aria-label="Sidebar Toggle Button"
-                    >
-                      <FiMenu />
-                    </button>
                   </MenuItem>
                   <SubMenu
                     label="Topics"
