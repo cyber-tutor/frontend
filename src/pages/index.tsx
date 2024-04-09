@@ -300,12 +300,16 @@ export default function Home() {
             </motion.div>
           </motion.div>
         )}
+        {!user && (
         <footer className="w-full border-t border-gray-300 bg-white py-4 text-center text-gray-900">
           <div className="mx-auto px-4">
             <p>&copy; 2024 Cyber Tutor. All rights reserved.</p>
           </div>
         </footer>
+          )
+        }
       </div>
+      
     </>
   );
 }
