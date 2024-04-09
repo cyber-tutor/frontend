@@ -38,10 +38,17 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
     {},
   );
   const [userFailed, setUserFailed] = useState<boolean>(false);
+  const [quote, setQuote] = useState<string | null>(null);
   const startTimeRef = useRef<Date | null>(null);
 
   const router = useRouter();
   const { topic: topicId } = router.query;
+
+  useEffect(() => {
+    fetch('https://api.quotable.io/random')
+      .then(response => response.json())
+      .then(data => setQuote(data.content));
+  }, []);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -246,16 +253,18 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
         />
 
         {userFailed && (
-          <div className="flex items-center justify-center">
-            <button
-              onClick={() => {
-                router.reload();
-              }}
-              className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-            >
-              Try again
-            </button>
-          </div>
+          <div className="flex flex-col items-center justify-center">
+          <button
+            onClick={() => {
+              router.reload();
+            }}
+            className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 mb-4"
+          >
+            Try again
+          </button>
+          <p>Don't give up! You can do it!</p>
+          {quote && (<p className="text-center text-gray-500 text-sm mt-4">{quote}</p>)}
+        </div>
         )}
       </div>
     </div>
