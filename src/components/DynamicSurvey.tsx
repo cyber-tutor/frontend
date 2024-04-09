@@ -185,7 +185,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
     const progressDocSnapshot = await getDoc(progressDocRef);
     const progressData = progressDocSnapshot.data();
 
-    let currentAttempts =
+    const currentAttempts =
       progressData && progressData.attempts
         ? Object.keys(progressData.attempts).length
         : 0;
