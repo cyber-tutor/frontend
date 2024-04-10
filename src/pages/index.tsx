@@ -36,6 +36,7 @@ export default function Home() {
   const [topicsCompleted, setTopicsCompleted] = useState<number>(0);
   const [totalChapters, setTotalChapters] = useState(0);
   const [completedChapters, setCompletedChapters] = useState(0);
+  const [hasReadToday, setHasReadToday] = useState(false);
   const router = useRouter();
 
   // Get the user ID
@@ -48,20 +49,60 @@ export default function Home() {
         setUserDocument(userDoc as UserDocument);
       });
     }
+    if (userDocument?.lastReadTime) {
+      const lastReadTime = new Date(userDocument.lastReadTime.seconds * 1000);
+      const currentTime = new Date();
+      const timeDifference = currentTime.getTime() - lastReadTime.getTime();
+      const hoursDifference = timeDifference / (1000 * 3600);
+
+      if(hoursDifference < 24){
+      setHasReadToday(true);
+      }
+      else{
+        setHasReadToday(false);
+      } 
+    } else {
+      setHasReadToday(false);
+    }
   }, [uid]);
+  
+  useEffect(() => {
+    if (userDocument?.lastReadTime) {
+      const lastReadTime = new Date(userDocument.lastReadTime.seconds * 1000);
+      const currentTime = new Date();
+      const timeDifference = currentTime.getTime() - lastReadTime.getTime();
+      const hoursDifference = timeDifference / (1000 * 3600);
+
+      if(hoursDifference < 24){
+      setHasReadToday(true);
+      }
+      else{
+        setHasReadToday(false);
+      }
+
+    } else {
+      setHasReadToday(false);
+    }
+  }, [userDocument?.lastReadTime]);
+  
 
   // Check if the user has completed the initial survey, demographic survey and update the streak count. If not, redirect to the respective survey page
   useEffect(() => {
     if (userDocument) {
-      if (!userDocument.data().initialSurveyComplete) {
-        router.push("/initialsurvey/begin");
-      } else if (!userDocument.data().demographicSurveyComplete) {
-        router.push("/demographicsurvey/survey");
-      } else {
-        updateUserStreak(uid, userDocument.data().lastLoginDate);
+      const lastLoginDate = new Date(
+        userDocument?.lastLoginDate?.seconds
+          ? userDocument?.lastLoginDate.seconds
+          : 0 * 1000,
+      );
+      const today = new Date();
+      const hasRead = lastLoginDate.toDateString() === today.toDateString();
+      setHasReadToday(hasRead);
+
+      if (!hasRead) {
+        updateUserStreak(userDocument.id, userDocument.lastLoginDate);
       }
     }
-  }, [userDocument, uid, router]);
+  }, [userDocument]);
 
   // Fetch the number of topics completed by the user by calling the function numberOfTopicsCompleted from firebase_functions.ts
   if (uid) {
@@ -126,8 +167,7 @@ export default function Home() {
       if (diffInDays >= 1 && diffInDays < 2) {
         newStreakCount += 1;
         shouldUpdateFirebase = true;
-      }
-      else if (diffInDays < 1){
+      } else if (diffInDays < 1) {
         return;
       } else if (diffInDays >= 2) {
         newStreakCount = 0;
@@ -142,11 +182,30 @@ export default function Home() {
 
     if (shouldUpdateFirebase) {
       await updateDoc(userDocRef, {
-        lastLoginDate: currentDate,
+        lastReadTime: currentDate,
         streakCount: newStreakCount,
       });
     }
   }
+
+  async function updateReadStreak() {
+    if (!uid || !userDocument) return;
+  
+    const userDocRef = doc(db, "users", userDocument.id);
+    const currentTime = new Date();
+  
+    let newStreakCount = userDocument.streakCount || 0;
+    newStreakCount += 1;
+  
+    await updateDoc(userDocRef, {
+      lastReadTime: currentTime,
+      streakCount: newStreakCount,
+    });
+  
+    setStreakCount(newStreakCount);
+    setHasReadToday(true);
+  }
+  
 
   // Function to create the UI of the certificate and download it as a PDF
 
@@ -248,6 +307,23 @@ export default function Home() {
                     </motion.span>
                   )}
                 </motion.div>
+
+                {hasReadToday ? (
+  <p>You have already read an article today.</p>
+) : (
+                <button
+                  onClick={() => {
+                    updateReadStreak()
+                    updateUserStreak(userDocument?.id, userDocument?.lastReadTime)
+                    router.push("/news/content")
+                  }
+                  }
+                  className="button-class"
+                >
+                  Read Daily Article
+                </button>
+)}
+
               </motion.div>
             </motion.div>
           </BaseLayout>
@@ -301,15 +377,13 @@ export default function Home() {
           </motion.div>
         )}
         {!user && (
-        <footer className="w-full border-t border-gray-300 bg-white py-4 text-center text-gray-900">
-          <div className="mx-auto px-4">
-            <p>&copy; 2024 Cyber Tutor. All rights reserved.</p>
-          </div>
-        </footer>
-          )
-        }
+          <footer className="w-full border-t border-gray-300 bg-white py-4 text-center text-gray-900">
+            <div className="mx-auto px-4">
+              <p>&copy; 2024 Cyber Tutor. All rights reserved.</p>
+            </div>
+          </footer>
+        )}
       </div>
-      
     </>
   );
 }
