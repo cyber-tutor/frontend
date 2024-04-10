@@ -454,27 +454,29 @@ export default function ChapterPage() {
       </div>
 
       {chapter.chapterType !== "assessment" && !chapterComplete && (
-        <>
-          <div>
-            {chapter.chapterType !== "assessment" && (
-              <div className="text-sm text-gray-700">
-                It takes 1 minute and 30 seconds to go to the next chapter and
-                complete this chapter.
-              </div>
-            )}
-          </div>
+        <div className="sticky bottom-0 w-full bg-white px-4 pb-8 lg:px-8 lg:pb-0">
+          <div className="mx-auto">
+            <div>
+              {chapter.chapterType !== "assessment" && (
+                <div className="text-sm text-gray-700">
+                  It takes 1 minute and 30 seconds to go to the next chapter and
+                  complete this chapter.
+                </div>
+              )}
+            </div>
 
-          <div className="relative h-2 w-full bg-gray-200">
-            <motion.div
-              className="absolute h-2 bg-blue-500"
-              initial={{ width: 0 }}
-              animate={{
-                width: `${Math.min((secondsElapsed / 90) * 100, 100)}%`,
-              }}
-              transition={{ duration: 1, ease: "linear" }}
-            />
+            <div className="relative h-2 w-full bg-gray-200">
+              <motion.div
+                className="absolute h-2 bg-blue-500"
+                initial={{ width: 0 }}
+                animate={{
+                  width: `${Math.min((secondsElapsed / 90) * 100, 100)}%`,
+                }}
+                transition={{ duration: 1, ease: "linear" }}
+              />
+            </div>
           </div>
-        </>
+        </div>
       )}
     </BaseLayout>
   );
