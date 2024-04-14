@@ -110,11 +110,12 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
         pages: [
           {
             questions: questions.map((q, index) => {
-              const sortedChoices = ["a", "b", "c", "d"].map((key) => ({
-                // Assuming these are all the keys that can exist
-                value: key,
-                text: q.choices[key],
-              }));
+              const sortedChoices = ["a", "b", "c", "d"]
+                .filter(key => key in q.choices)
+                .map((key) => ({
+                  value: key,
+                  text: q.choices[key],
+                }));
               return {
                 type: "radiogroup",
                 name: `question${index + 1}`,

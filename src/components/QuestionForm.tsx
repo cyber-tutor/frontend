@@ -30,6 +30,8 @@ export interface Question {
   topicId: string;
   difficulty: string;
   chapterId: string;
+  topics: string[];
+  fromChapter: string;
   [key: string]: any;
 }
 
@@ -91,13 +93,14 @@ const QuestionForm: React.FC<{
   const [editedQuestion, setEditedQuestion] = useState<Question>(
     question || {
       question: "",
-      choices: {},
+      choices: { a: "", b: "", c: "", d: "" },
       answer: "",
       topicId: "",
-      chapterId: "",
-      difficulty: "",
+      chapterId: "defaultChapterId",
+      difficulty: "Beginner",
       explanation: "",
       topics: [],
+      fromChapter: "",
     },
   );
   const [errors, setErrors] = useState<Partial<Record<keyof Question, string>>>(
@@ -111,15 +114,14 @@ const QuestionForm: React.FC<{
     const { name, value } = e.target;
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
 
-    if (name === "choices") {
-      const choiceKey = value.substring(0, 1);
-      const choiceValue = value.substring(1).trim();
+    if (name.startsWith("choice-")) {
+      const choiceKey = name.split("-")[1]!;
 
       setEditedQuestion((prevQuestion) => ({
         ...prevQuestion,
         choices: {
           ...prevQuestion.choices,
-          [choiceKey]: choiceValue,
+          [choiceKey]: value,
         },
       }));
     } else {
@@ -201,8 +203,8 @@ const QuestionForm: React.FC<{
       errors.chapterId = "uh oh 🦧, you need to choose a chapter.";
     }
 
-    if (question.topics.length < 1) {
-      errors.topics = "uh oh 🦧, you need at least 1 tag.";
+    if (!question.fromChapter) {
+      errors.fromChapter = "uh oh 🦧, you need to specify the chapter.";
     }
 
     return errors;
@@ -221,144 +223,168 @@ const QuestionForm: React.FC<{
     onSubmit(editedQuestion);
     setEditedQuestion({
       question: "",
-      choices: {},
+      choices: { a: "", b: "", c: "", d: "" },
       answer: "",
       topicId: "",
       chapterId: "",
       difficulty: "",
       explanation: "",
       topics: [],
+      fromChapter: "",
     });
   };
 
   return (
     <div className="p-5">
-      <form
-        onSubmit={handleSubmit}
-        className="xs:grid-cols-1 grid gap-4 sm:grid-cols-2 md:grid-cols-4"
-      >
-        <div className="flex flex-col">
-          <label htmlFor="question" className="mb-1 font-bold">
-            Question
-          </label>
-          <InputField
-            name="question"
-            value={editedQuestion.question}
-            onChange={handleChange}
-            placeholder="Question"
-            isTextArea
-            error={errors.question}
-          />
+      <form onSubmit={handleSubmit} className="grid grid-cols-3 gap-4">
+        <div className="col-span-1">
+          <div className="flex flex-col">
+            <label htmlFor="question" className="mb-1 font-bold">
+              Question
+            </label>
+            <InputField
+              name="question"
+              value={editedQuestion.question}
+              onChange={handleChange}
+              placeholder="Question"
+              isTextArea
+              error={errors.question}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="difficulty" className="mb-1 font-bold">
+              Difficulty
+            </label>
+            <InputField
+              name="difficulty"
+              value={editedQuestion.difficulty}
+              onChange={handleChange}
+              placeholder="Select a difficulty"
+              isSelect={true}
+              options={["Beginner", "Intermediate", "Expert"].map(
+                (difficulty) => ({
+                  value: difficulty,
+                  label: difficulty,
+                }),
+              )}
+              error={errors.difficulty}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="answer" className="mb-1 font-bold">
+              Answer
+            </label>
+            <InputField
+              name="answer"
+              value={editedQuestion.answer}
+              onChange={handleChange}
+              placeholder="Correct Answer"
+              error={errors.answer}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="explanation" className="mb-1 font-bold">
+              Explanation
+            </label>
+            <InputField
+              name="explanation"
+              value={editedQuestion.explanation}
+              onChange={handleChange}
+              placeholder="Explanation"
+              isTextArea
+              error={errors.explanation}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="imageURL" className="mb-1 font-bold">
+              Image URL
+            </label>
+            <InputField
+              name="imageURL"
+              value={editedQuestion.imageURL || ""}
+              onChange={handleChange}
+              placeholder="Image URL"
+              error={errors.imageURL}
+            />
+          </div>
         </div>
-        <div className="flex flex-col">
-          <label htmlFor="choices" className="mb-1 font-bold">
-            Choices
-          </label>
-          <InputField
-            name="choices"
-            value={Object.values(editedQuestion.choices).join(", ")}
-            onChange={handleArrayChange}
-            placeholder="Options (comma-separated)"
-            isTextArea
-            error={errors.choices}
-          />
+
+        <div className="col-span-1 col-start-2">
+          {["a", "b", "c", "d"].map((choiceKey) => (
+            <div className="flex flex-col" key={choiceKey}>
+              <label htmlFor={`choice-${choiceKey}`} className="mb-1 font-bold">
+                Choice {choiceKey.toUpperCase()}
+              </label>
+              <InputField
+                name={`choice-${choiceKey}`}
+                value={editedQuestion.choices[choiceKey] || ""}
+                onChange={handleChange}
+                placeholder={`Choice ${choiceKey.toUpperCase()}`}
+                error={errors.choices}
+              />
+            </div>
+          ))}
         </div>
-        <div className="flex flex-col">
-          <label htmlFor="answer" className="mb-1 font-bold">
-            Answer
-          </label>
-          <InputField
-            name="answer"
-            value={editedQuestion.answer}
-            onChange={handleChange}
-            placeholder="Correct Answer"
-            error={errors.answer}
-          />
+
+        <div className="col-span-1 col-start-3">
+          <div className="flex flex-col">
+            <label htmlFor="topicId" className="mb-1 font-bold">
+              Topic ID
+            </label>
+            <InputField
+              name="topicId"
+              value={editedQuestion.topicId}
+              onChange={handleChange}
+              placeholder="Topic ID"
+              isSelect={true}
+              options={topics.map((topic) => ({
+                value: topic.topicId,
+                label: topic.topicTitle,
+              }))}
+              error={errors.topicId}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="chapterId" className="mb-1 font-bold">
+              Chapter ID
+            </label>
+            <InputField
+              name="chapterId"
+              value={editedQuestion.chapterId}
+              onChange={handleChange}
+              placeholder="Chapter ID"
+              isSelect={true}
+              options={chapters.map((chapter) => ({
+                value: chapter.chapterId,
+                label: chapter.chapterTitle,
+              }))}
+              disabled={!editedQuestion.topicId}
+              error={errors.chapterId}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="fromChapter" className="mb-1 font-bold">
+              From Chapter
+            </label>
+            <InputField
+              name="fromChapter"
+              value={editedQuestion.fromChapter}
+              onChange={handleChange}
+              placeholder="From Chapter"
+              isSelect={true}
+              options={chapters.map((chapter) => ({
+                value: chapter.chapterId,
+                label: chapter.chapterTitle,
+              }))}
+              disabled={!editedQuestion.topicId}
+              error={errors.fromChapter}
+            />
+          </div>
         </div>
-        <div className="flex flex-col">
-          <label htmlFor="explanation" className="mb-1 font-bold">
-            Explanation
-          </label>
-          <InputField
-            name="explanation"
-            value={editedQuestion.explanation}
-            onChange={handleChange}
-            placeholder="Explanation"
-            isTextArea
-            error={errors.explanation}
-          />
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor="topicId" className="mb-1 font-bold">
-            Topic ID
-          </label>
-          <InputField
-            name="topicId"
-            value={editedQuestion.topicId}
-            onChange={handleChange}
-            placeholder="Topic ID"
-            isSelect={true}
-            options={topics.map((topic) => ({
-              value: topic.topicId,
-              label: topic.topicTitle,
-            }))}
-            error={errors.topicId}
-          />
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor="difficulty" className="mb-1 font-bold">
-            Difficulty
-          </label>
-          <InputField
-            name="difficulty"
-            value={editedQuestion.difficulty}
-            onChange={handleChange}
-            placeholder="Select a difficulty"
-            isSelect={true}
-            options={["Beginner", "Intermediate", "Hard"].map((difficulty) => ({
-              value: difficulty,
-              label: difficulty,
-            }))}
-            error={errors.difficulty}
-          />
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor="chapterId" className="mb-1 font-bold">
-            Chapter ID
-          </label>
-          <InputField
-            name="chapterId"
-            value={editedQuestion.chapterId}
-            onChange={handleChange}
-            placeholder="Chapter ID"
-            isSelect={true}
-            options={chapters.map((chapter) => ({
-              value: chapter.chapterId,
-              label: chapter.chapterTitle,
-            }))}
-            disabled={!editedQuestion.topicId}
-            error={errors.chapterId}
-          />
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor="topics" className="mb-1 font-bold">
-            Topics
-          </label>
-          <InputField
-            name="topics"
-            value={
-              Array.isArray(editedQuestion.topics)
-                ? editedQuestion.topics.join(", ")
-                : ""
-            }
-            onChange={handleArrayChange}
-            placeholder="Tags (comma-separated)"
-            error={errors.topics}
-          />
-        </div>
+
         <button
           type="submit"
-          className="question-white col-span-full rounded bg-green-600 p-2 font-mono"
+          className="col-span-full rounded bg-green-600 p-2 font-mono"
         >
           Submit
         </button>
