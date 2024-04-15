@@ -96,8 +96,8 @@ const QuestionForm: React.FC<{
       choices: { a: "", b: "", c: "", d: "" },
       answer: "",
       topicId: "",
-      chapterId: "defaultChapterId",
-      difficulty: "Beginner",
+      chapterId: "",
+      difficulty: "",
       explanation: "",
       topics: [],
       fromChapter: "",
@@ -259,14 +259,7 @@ const QuestionForm: React.FC<{
               name="difficulty"
               value={editedQuestion.difficulty}
               onChange={handleChange}
-              placeholder="Select a difficulty"
-              isSelect={true}
-              options={["Beginner", "Intermediate", "Expert"].map(
-                (difficulty) => ({
-                  value: difficulty,
-                  label: difficulty,
-                }),
-              )}
+              placeholder="Difficulty"
               error={errors.difficulty}
             />
           </div>
@@ -336,11 +329,6 @@ const QuestionForm: React.FC<{
               value={editedQuestion.topicId}
               onChange={handleChange}
               placeholder="Topic ID"
-              isSelect={true}
-              options={topics.map((topic) => ({
-                value: topic.topicId,
-                label: topic.topicTitle,
-              }))}
               error={errors.topicId}
             />
           </div>
@@ -353,12 +341,6 @@ const QuestionForm: React.FC<{
               value={editedQuestion.chapterId}
               onChange={handleChange}
               placeholder="Chapter ID"
-              isSelect={true}
-              options={chapters.map((chapter) => ({
-                value: chapter.chapterId,
-                label: chapter.chapterTitle,
-              }))}
-              disabled={!editedQuestion.topicId}
               error={errors.chapterId}
             />
           </div>
@@ -371,12 +353,6 @@ const QuestionForm: React.FC<{
               value={editedQuestion.fromChapter}
               onChange={handleChange}
               placeholder="From Chapter"
-              isSelect={true}
-              options={chapters.map((chapter) => ({
-                value: chapter.chapterId,
-                label: chapter.chapterTitle,
-              }))}
-              disabled={!editedQuestion.topicId}
               error={errors.fromChapter}
             />
           </div>
