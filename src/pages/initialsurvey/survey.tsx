@@ -265,7 +265,13 @@ const InitialSurvey = () => {
 
       determineProficiency(responseString)
         .then((proficiency) => {
+
+
           const proficiencyLevels = proficiency.split(", ");
+
+          if(proficiencyLevels.length !== 5) {
+            throw new Error('Proficiency levels must be provided for all 5 topics.');
+          }
           const topics = [
             "online_privacy",
             "password_security",
