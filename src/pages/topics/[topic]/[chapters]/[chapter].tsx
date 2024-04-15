@@ -256,12 +256,13 @@ export default function ChapterPage() {
 
   return (
     <BaseLayout>
-      <h1 className="text-3xl font-bold">{chapter.chapterTitle}</h1>
+    <div className="mx-auto w-full overflow-y-auto">
+      <h1 className="text-3xl font-bold py-3">{chapter.chapterTitle}</h1>
       <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
       {(progressComplete || chapterComplete) &&
         chapter.chapterType !== "assessment" && (
           <button
-            className="rounded bg-blue-500 px-4 py-2 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-700"
+            className="rounded bg-blue-500 px-4 py-2 my-3 font-bold text-white transition duration-150 ease-in-out hover:bg-blue-700"
             onClick={async () => {
               const userDocId = await findUserDocId(uid ?? "");
               if (typeof chapterId === "string" && userDocId) {
@@ -345,7 +346,6 @@ export default function ChapterPage() {
             Next
           </button>
         )}
-      <div className="mx-auto w-full overflow-y-auto">
         {contentPreference === "text" && (
           <div className="m-4 rounded border p-4 shadow">
             <div className="overflow-auto">
