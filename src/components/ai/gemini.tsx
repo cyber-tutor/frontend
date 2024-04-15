@@ -12,11 +12,9 @@ const determineProficiency = async (responses: string): Promise<string> => {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
     const prompt = `
     Based on the provided responses from the user, determine the user's proficiency level. 
-    Please return an array with values for each topic. There are 5 topics: 
+    Please ONLY return values seperated by commas for each topic. There are 5 topics: 
     Two-Factor Authentication, Phishing, Password Security, Software Updates, and Online Privacy. 
-    Each value should be separated by commas. 
-    Do not include any braces or brackets.
-    The values in the array should be ordered according to the order of the topics. 
+    The values should be ordered according to the order of how the topics appear from the questions. 
 
     From the question choices, each choice is ordered alphabetically, like so: starting from a, to b, to c, to d, to e, and continue if more choices.
     Look at the description attribute of the question to determine the proficiency, which maps the proficiency value to the letter of the choice.
