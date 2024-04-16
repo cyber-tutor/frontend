@@ -12,7 +12,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import Head from "next/head";
-import { BaseLayout } from "../../../components/layouts/BaseLayout";
+import { BaseLayout } from "../../../components/layouts/BaseLayout2";
 import QuestionForm, { Question } from "../../../components/admin/CRUDQuestionForm";
 import StickyHeadTable from "../../../components/ui/StickyHeadTable";
 import queryUserDocument from "~/components/firebase/FirebaseFunctions";

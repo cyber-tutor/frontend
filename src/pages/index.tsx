@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { BaseLayout } from "../components/layouts/BaseLayout";
+import { BaseLayout } from "../components/layouts/BaseLayout2";
 import { auth, db } from "../components/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import React, { useEffect, useState } from "react";
