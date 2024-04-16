@@ -239,12 +239,12 @@ export default function Home() {
           rel="stylesheet"
         />
       </Head>
-      <div className="flex min-h-screen w-full flex-col">
+      <div className="flex w-full flex-col">
         {user ? (
           // If user is logged in, show the dashboard with their progress information
           <BaseLayout>
             <motion.div
-              className="bg-white"
+              className="bg-white  mt-0 lg:mt-16 md:mt-16"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1.5 }}
