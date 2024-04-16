@@ -344,7 +344,6 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
                       />
                       {!collapsed && (
                         <span
-                          className="pe-2 font-mono"
                           onClick={handleLogoClick}
                         >
                           Cyber Tutor{" "}
