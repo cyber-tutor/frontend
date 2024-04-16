@@ -1,7 +1,7 @@
 import React, { useState, useEffect, FormEvent, ChangeEvent } from "react";
-import InputField from "../components/InputField";
+import InputField from "../ui/InputField";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { db } from "./firebase/config";
+import { db } from "../firebase/config";
 
 type Topic = {
   topicId: string;

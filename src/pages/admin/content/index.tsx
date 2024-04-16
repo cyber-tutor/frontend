@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 import Head from "next/head";
 import { BaseLayout } from "../../../components/layouts/BaseLayout";
-import ControlGroupForm from "../../../components/CRUDControlGroupForm";
+import ControlGroupForm from "../../../components/admin/CRUDControlGroupForm";
 import queryUserDocument from "~/components/firebase/FirebaseFunctions";
 import { User } from "firebase/auth";
 import { useRouter } from "next/router";

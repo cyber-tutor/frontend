@@ -13,7 +13,7 @@ import {
   where,
 } from "firebase/firestore";
 import Link from "next/link";
-import CircularWithValueLabel from "~/components/ProgressCircle";
+import CircularWithValueLabel from "~/components/ui/ProgressCircle";
 import { auth } from "../../components/firebase/config";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import queryUserDocument from "../../components/firebase/FirebaseFunctions";

@@ -22,8 +22,8 @@ import {
   increaseLevel,
   isChapterComplete,
 } from "~/components/firebase/FirebaseFunctions";
-import TimerComponent from "~/components/Timer";
-import DynamicSurvey from "../../../../components/DynamicSurvey";
+import TimerComponent from "~/components/ui/Timer";
+import DynamicSurvey from "../../../../components/assessments/DynamicSurvey";
 import { progress } from "framer-motion";
 import queryUserDocument from "~/components/firebase/FirebaseFunctions";
 import { motion } from "framer-motion";

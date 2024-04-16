@@ -1,7 +1,7 @@
 import { Survey, Model } from "survey-react";
 import "survey-react/modern.min.css";
 import { useEffect, useRef, useState } from "react";
-import { auth, db } from "./firebase/config";
+import { auth, db } from "../firebase/config";
 import {
   collection,
   doc,

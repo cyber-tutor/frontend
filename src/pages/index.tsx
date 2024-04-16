@@ -16,7 +16,7 @@ import {
   doc,
 } from "firebase/firestore";
 import { useRouter } from "next/router";
-import CircularWithValueLabel from "~/components/ProgressCircle";
+import CircularWithValueLabel from "~/components/ui/ProgressCircle";
 import { set } from "firebase/database";
 import { jsPDF } from "jspdf";
 
