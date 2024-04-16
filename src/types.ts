@@ -3,6 +3,7 @@ export interface Topic {
   topicTitle: string;
   topicDescription: string;
   order: number;
+  isComplete: boolean;
 }
 
 export interface Chapter {
