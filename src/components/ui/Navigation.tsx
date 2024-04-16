@@ -88,7 +88,48 @@ export const Navigation = ({
             </p>
           </NavbarBrand>
           <NavbarContent className="gap-2 sm:flex" justify="center">
-            <Dropdown>
+           
+            {!user && (
+              <>
+                <NavbarItem isActive>
+                  <Link
+                    onClick={() => router.push("/users/sign-in")}
+                    className="text-sm"
+                  >
+                    Login
+                  </Link>
+                </NavbarItem>
+                <NavbarItem>
+                  <Link
+                    onClick={() => router.push("/users/sign-up")}
+                    className="text-sm"
+                  >
+                    Register
+                  </Link>
+                </NavbarItem>
+              </>
+            )}
+          </NavbarContent>
+          <NavbarContent justify="end">
+            {user && (
+              <>
+                <NavbarItem>
+                  <p className="mr-20 text-sm">Hi {userDocument?.data().name}</p>
+                </NavbarItem>
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button className="text-sm" radius="sm">
+                      Menu↓
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu>
+                    <DropdownItem onClick={() => router.push("/")}>
+                      Home
+                    </DropdownItem>
+                    <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+                <Dropdown>
               <NavbarItem>
                 <DropdownTrigger>
                   <Button className="text-sm" radius="sm">
@@ -128,46 +169,6 @@ export const Navigation = ({
                 ))}
               </DropdownMenu>
             </Dropdown>
-            {!user && (
-              <>
-                <NavbarItem isActive>
-                  <Link
-                    onClick={() => router.push("/users/sign-in")}
-                    className="text-sm"
-                  >
-                    Login
-                  </Link>
-                </NavbarItem>
-                <NavbarItem>
-                  <Link
-                    onClick={() => router.push("/users/sign-up")}
-                    className="text-sm"
-                  >
-                    Register
-                  </Link>
-                </NavbarItem>
-              </>
-            )}
-          </NavbarContent>
-          <NavbarContent justify="end">
-            {user && (
-              <>
-                <NavbarItem>
-                  <p className="text-sm">Hi {userDocument?.data().name}</p>
-                </NavbarItem>
-                <Dropdown>
-                  <DropdownTrigger>
-                    <Button className="text-sm" radius="sm">
-                      Menu↓
-                    </Button>
-                  </DropdownTrigger>
-                  <DropdownMenu>
-                    <DropdownItem onClick={() => router.push("/")}>
-                      Home
-                    </DropdownItem>
-                    <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
               </>
             )}
           </NavbarContent>
