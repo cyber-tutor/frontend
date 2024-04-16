@@ -87,7 +87,12 @@ const SignUpForm: React.FC = () => {
         setPassword("");
         router.push("/pre_screening/begin");
       }
+      else{
+        alert("A user already exists with this email. Please sign in, or use a different email.");
+      }
+      
     } catch (error) {
+      
       if (error instanceof FirebaseError) {
         switch (error.code) {
           case "auth/email-already-in-use":
