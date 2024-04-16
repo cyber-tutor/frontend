@@ -230,7 +230,7 @@ export default function TopicPage() {
 
   return (
     <BaseLayout>
-      <div className="overflow-y-auto rounded-lg border-2 border-solid text-center lg:w-7/12 lg:p-10">
+      <div className="mt-0 overflow-y-auto rounded-lg border-2 border-solid text-center md:mt-16 lg:mt-16 lg:w-7/12 lg:p-10">
         <div className="grid grid-cols-6 items-center">
           <h1 className="col-span-5 flex justify-start text-3xl font-bold">
             {topic.topicTitle}
