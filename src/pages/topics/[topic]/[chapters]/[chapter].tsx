@@ -385,7 +385,7 @@ export default function ChapterPage() {
               )}
               {userDocument?.data().id}
               {userProficiency && (
-                <div>
+                <div className="prose">
                   {userGroup === "control" ? (
                     <div
                       dangerouslySetInnerHTML={convertNewlinesToBreaks(
