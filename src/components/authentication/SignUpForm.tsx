@@ -115,104 +115,88 @@ const SignUpForm: React.FC = () => {
   );
 
   return (
-    <div
-      className="flex h-screen flex-col lg:pl-64"
-      style={{ marginTop: "-4rem" }}
-    >
-      <div className="flex h-screen w-screen items-center justify-center bg-transparent">
-        <div className="m-4 w-full max-w-xs rounded-lg bg-white p-8 shadow-md">
-          <h1 className="mb-8 text-center text-2xl font-bold">
-            Create Account
-          </h1>
-          <form onSubmit={handleSignUp} className="space-y-6">
-            <div className="mb-4">
-              <label htmlFor="email" className="mb-1 block font-bold">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={handleEmailChange}
-                required
-                className="w-full rounded border px-3 py-2 leading-tight focus:border-blue-500 focus:outline-none"
-              />
-              {emailError && <p className="text-red-600">{emailError}</p>}
-            </div>
-            <div className="mb-4">
-              <label htmlFor="name" className="mb-1 block font-bold">
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="w-full rounded border px-3 py-2 leading-tight focus:border-blue-500 focus:outline-none"
-              />
-            </div>
-            <div className="mb-6">
-              <label htmlFor="password" className="mb-1 block font-bold">
-                Password
-              </label>
-              <Password
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                toggleMask
-                footer={passwordFooter}
-                className="w-full rounded border px-3 py-2 leading-tight focus:border-blue-500 focus:outline-none"
-              />
-              {isWeak && <p className="text-red-600">Password is weak</p>}
-            </div>
-            <button
-              type="submit"
-              className="w-full rounded bg-green-500 py-2 font-bold text-white hover:bg-green-600"
-            >
-              Sign Up
-            </button>
-
-            <div className="my-6 flex items-center justify-between">
-              <span className="w-1/5 border-b border-gray-300"></span>
-              <p className="mx-4 text-xs uppercase text-gray-700">
-                or sign up with
-              </p>
-              <span className="w-1/5 border-b border-gray-300"></span>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleGoogleSignIn}
-              className="flex w-full items-center justify-center rounded border border-gray-300 bg-white px-4 py-2 text-gray-700 shadow-sm hover:bg-gray-50"
-            >
-              <FcGoogle className="text-2xl" />
-              <span className="ml-2">Google</span>
-            </button>
-          </form>
-          <div className="my-4 border-t border-gray-300"></div>
-          <p className="mt-4 text-center text-sm text-gray-600">
-            Have an account?{" "}
-            <button
-              className="flex w-full items-center justify-center rounded border bg-blue-500 px-4 py-2  text-white hover:bg-blue-600 focus:outline-none"
-              onClick={() => router.push("/users/sign-in")}
-            >
-              Sign In
-            </button>
-          </p>
-
+    <div className="flex h-screen items-center justify-center">
+      <div className="rounded-lg p-8 shadow-lg">
+        <h1 className="mb-8 text-center text-2xl font-bold">Create Account</h1>
+        <form onSubmit={handleSignUp} className="space-y-6">
+          <div className="mb-4">
+            <label htmlFor="email" className="mb-1 font-bold">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={handleEmailChange}
+              required
+              className="w-full rounded border border-gray-300 px-3 py-2"
+            />
+            {emailError && <p className="text-red-600">{emailError}</p>}
+          </div>
+          <div className="mb-4">
+            <label htmlFor="name" className="mb-1 font-bold">
+              Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full rounded border border-gray-300 px-3 py-2"
+            />
+          </div>
+          <div className="mb-6">
+            <label htmlFor="password" className="mb-1 font-bold">
+              Password
+            </label>
+            <Password
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              toggleMask
+              footer={passwordFooter}
+              className="w-full rounded border border-gray-300 px-3 py-2"
+            />
+            {isWeak && <p className="text-red-600">Password is weak</p>}
+          </div>
           <button
-            className="mt-4 flex w-full items-center justify-center rounded border border-t bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none"
-            onClick={() => router.push("/")}
+            type="submit"
+            className="w-full rounded bg-green-500 py-2 font-bold text-white hover:bg-green-600"
           >
-            Home
+            Sign Up
           </button>
-        </div>
+          <div className="my-6 flex items-center justify-between">
+            <span className="w-1/5 border-b border-gray-300"></span>
+            <p className="mx-4 text-xs text-gray-700">OR SIGN UP WITH</p>
+            <span className="w-1/5 border-b border-gray-300"></span>
+          </div>
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            className="flex w-full items-center justify-center rounded border border-gray-300 py-2 text-gray-700 shadow-sm hover:bg-gray-50"
+          >
+            <FcGoogle className="text-2xl" />
+            <span className="ml-2">Google</span>
+          </button>
+        </form>
+        <p className="my-4 text-center text-sm text-gray-600">
+          Have an account?{" "}
+        </p>
+        <button
+          className="flex w-full items-center justify-center rounded border bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600"
+          onClick={() => router.push("/users/sign-in")}
+        >
+          Sign In
+        </button>
+
+        <p className="mt-2 text-center text-sm text-gray-600"></p>
+        <button
+          className="mt-4 flex w-full items-center justify-center rounded border border-t bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600"
+          onClick={() => router.push("/")}
+        >
+          Home
+        </button>
       </div>
-      <footer className="w-full bg-slate-50 py-4 text-center text-gray-900">
-        <div className="mx-auto">
-          <p>&copy; 2024 Cyber Tutor. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 };
