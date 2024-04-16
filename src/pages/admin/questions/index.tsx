@@ -13,7 +13,7 @@ import {
 } from "firebase/firestore";
 import Head from "next/head";
 import { BaseLayout } from "../../../components/layouts/BaseLayout";
-import QuestionForm, { Question } from "../../../components/admin/QuestionForm";
+import QuestionForm, { Question } from "../../../components/admin/CRUDQuestionForm";
 import StickyHeadTable from "../../../components/ui/StickyHeadTable";
 import queryUserDocument from "~/components/firebase/FirebaseFunctions";
 import { useRouter } from "next/router";
