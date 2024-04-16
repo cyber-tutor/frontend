@@ -12,25 +12,7 @@ import {
 import { getAuth } from "firebase/auth";
 import queryUserDocument from "../firebase/FirebaseFunctions";
 import { Navigation } from "../ui/Navigation";
-
-type Topic = {
-  topicId: string;
-  topicTitle: string;
-  topicDescription: string;
-  chapters: Chapter[];
-  isComplete: boolean;
-};
-
-type Chapter = {
-  chapterId: string;
-  chapterType: string;
-  chapterTitle: string;
-  chapterDescription: string;
-  controlGroupContent: string;
-  experimentalGroupContent: string;
-  controlGroupImageURL: string;
-  experimentalGroupImageURL: string;
-};
+import { Topic } from "../../types/Topic";
 
 type LayoutProps = {
   children: ReactNode;
