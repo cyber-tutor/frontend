@@ -73,7 +73,7 @@ export const Navigation = ({
   return (
     <>
       {screenSize !== "lg" && screenSize !== "md" && showSidebar ? (
-        <Navbar>
+        <Navbar className="fixed left-0 top-0 w-full">
           <NavbarBrand className="pr-7">
             <Image
               src="/Cyber-Tutor_Logo.png"
