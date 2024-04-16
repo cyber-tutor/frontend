@@ -1,6 +1,7 @@
 import { type Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
 const { nextui } = require("@nextui-org/react");
+import typography from "@tailwindcss/typography";
 
 export default {
   content: [
@@ -21,7 +22,39 @@ export default {
       animation: {
         fadeIn: "fadeIn 2s ease-in-out",
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            h1: {
+              fontWeight: "700",
+              fontSize: "2em",
+              marginBottom: "0.5em",
+            },
+            h2: {
+              fontWeight: "700",
+              fontSize: "1.5em",
+              marginBottom: "0.5em",
+            },
+            p: {
+              marginBottom: "1em",
+            },
+            ul: {
+              marginBottom: "1em",
+            },
+            ol: {
+              marginBottom: "1em",
+            },
+            strong: {
+              fontWeight: "bold",
+            },
+            em: {
+              fontStyle: "italic",
+            },
+            // Add styles for other tags if needed
+          },
+        },
+      },
     },
   },
-  plugins: [nextui()],
-} satisfies Config;
+  plugins: [nextui(), typography],
+} as Config;
