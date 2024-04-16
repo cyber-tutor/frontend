@@ -451,7 +451,7 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
             ) : null}
           </div>
         </div>
-        <div className="container flex h-screen flex-col items-center gap-4">
+        <div className="container flex h-screen flex-col items-center gap-4 p-10 overflow-y-auto">
           {children}
         </div>
       </div>
