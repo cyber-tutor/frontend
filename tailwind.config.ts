@@ -23,5 +23,8 @@ export default {
       },
     },
   },
+  corePlugins: {
+    preflight: false,
+  },
   plugins: [nextui()],
 } satisfies Config;
