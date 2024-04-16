@@ -350,7 +350,7 @@ export default function ChapterPage() {
             )}
         </div>
         {contentPreference === "text" && (
-          <div className="m-4 rounded border p-4 shadow">
+          <div className="m-4 rounded p-4 ">
             <div className="overflow-auto">
               {(userGroup === "control"
                 ? chapter.controlGroupImageURLs
