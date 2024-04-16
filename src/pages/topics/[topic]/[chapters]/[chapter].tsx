@@ -175,10 +175,10 @@ export default function ChapterPage() {
     fetchUserGroup();
   }, [uid]);
 
-  function convertNewlinesToBreaks(text: string | undefined): {
-    __html: string;
-  } {
-    return { __html: text ? text.replace(/(\\n|\r\n|\n|\r)/g, "<br />") : "" };
+  function removeBreakTags(text?: string) {
+    if (!text) return;
+    const textWithoutBr = text.replace(/<br\s*\/?>/gi, "");
+    return { __html: textWithoutBr };
   }
 
   useEffect(() => {
@@ -388,7 +388,7 @@ export default function ChapterPage() {
                 <div className="prose">
                   {userGroup === "control" ? (
                     <div
-                      dangerouslySetInnerHTML={convertNewlinesToBreaks(
+                      dangerouslySetInnerHTML={removeBreakTags(
                         chapter.controlGroupContent?.[
                           userProficiency as keyof typeof chapter.controlGroupContent
                         ],
@@ -396,7 +396,7 @@ export default function ChapterPage() {
                     />
                   ) : (
                     <div
-                      dangerouslySetInnerHTML={convertNewlinesToBreaks(
+                      dangerouslySetInnerHTML={removeBreakTags(
                         chapter.experimentalGroupContent?.[
                           userProficiency as keyof typeof chapter.experimentalGroupContent
                         ],
