@@ -20,6 +20,13 @@ const SignUpForm: React.FC = () => {
   const [name, setName] = useState<string>("");
   const [isWeak, setIsWeak] = useState<boolean>(false);
   const [emailError, setEmailError] = useState<string>("");
+  const [passwordCriteria, setPasswordCriteria] = useState({
+    minChar: false,
+    lowerCase: false,
+    upperCase: false,
+    numeric: false,
+    specialChar: false
+  });
 
   const [createUserWithEmailAndPassword] =
     useCreateUserWithEmailAndPassword(auth);
@@ -119,17 +126,6 @@ const SignUpForm: React.FC = () => {
     }
   };
   
-  
-
-
-  const [passwordCriteria, setPasswordCriteria] = useState({
-    minChar: false,
-    lowerCase: false,
-    upperCase: false,
-    numeric: false,
-    specialChar: false
-  });
-
 
   const checkPasswordCriteria = (password: string) => {
     const criteria = {
