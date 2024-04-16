@@ -457,7 +457,7 @@ export default function ChapterPage() {
       </div>
 
       {chapter.chapterType !== "assessment" && !chapterComplete && (
-        <div className="sticky bottom-0 w-full bg-white px-4 pb-8 lg:px-8 lg:pb-0">
+        <div className="sticky bottom-0 w-full px-4 pb-8 lg:px-8 lg:pb-0">
           <div className="mx-auto">
             <div>
               {chapter.chapterType !== "assessment" && (
@@ -468,9 +468,9 @@ export default function ChapterPage() {
               )}
             </div>
 
-            <div className="relative h-2 w-full bg-gray-200">
+            <div className="relative border border-gray h-2 w-full rounded bg-gray-200">
               <motion.div
-                className="absolute h-2 bg-blue-500"
+                className="h-2 rounded bg-blue-500 "
                 initial={{ width: 0 }}
                 animate={{
                   width: `${Math.min((secondsElapsed / 90) * 100, 100)}%`,
