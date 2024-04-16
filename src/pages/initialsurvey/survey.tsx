@@ -13,8 +13,8 @@ import "survey-react/survey.css";
 import { StylesManager } from "survey-react";
 import { useRouter } from "next/router";
 import { getAuth } from "firebase/auth";
-import queryUserDocument from "~/components/firebase/firebase_functions";
-import determineProficiency from "~/components/ai/gemini";
+import queryUserDocument from "~/components/firebase/FirebaseFunctions";
+import determineProficiency from "~/components/ai/Gemini";
 import { Serializer } from "survey-react";
 import "survey-react/survey.css";
 

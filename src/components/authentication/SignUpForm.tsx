@@ -11,7 +11,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
-import { createUserDocument } from "~/components/firebase/firebase_functions";
+import { createUserDocument } from "~/components/firebase/FirebaseFunctions";
 
 const SignUpForm: React.FC = () => {
   const [email, setEmail] = useState<string>("");

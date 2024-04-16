@@ -10,9 +10,9 @@ import {
   where,
 } from "firebase/firestore";
 import Head from "next/head";
-import { BaseLayout } from "../../../components/layouts/baseLayout";
+import { BaseLayout } from "../../../components/layouts/BaseLayout";
 import ControlGroupForm from "../../../components/CRUDControlGroupForm";
-import queryUserDocument from "~/components/firebase/firebase_functions";
+import queryUserDocument from "~/components/firebase/FirebaseFunctions";
 import { User } from "firebase/auth";
 import { useRouter } from "next/router";
 

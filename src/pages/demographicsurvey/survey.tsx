@@ -18,7 +18,7 @@ import "survey-react/survey.css";
 import { db } from "../../components/firebase/config";
 import queryUserDocument, {
   demographicSurveyComplete,
-} from "~/components/firebase/firebase_functions";
+} from "~/components/firebase/FirebaseFunctions";
 
 Survey.StylesManager.applyTheme("default");
 

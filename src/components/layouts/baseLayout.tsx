@@ -10,8 +10,8 @@ import {
   DocumentData,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import queryUserDocument from "../firebase/firebase_functions";
-import { Navigation } from "../../components/ui/Navigation";
+import queryUserDocument from "../firebase/FirebaseFunctions";
+import { Navigation } from "../ui/Navigation";
 
 type Topic = {
   topicId: string;

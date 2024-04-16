@@ -1,11 +1,11 @@
-import { BaseLayout } from "../../../../components/layouts/baseLayout";
+import { BaseLayout } from "../../../../components/layouts/BaseLayout";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { Survey } from "survey-react-ui";
 import { Model } from "survey-core";
 import "survey-core/defaultV2.min.css";
 import ReactPlayer from "react-player";
-import getVideoDuration from "~/components/youtube_data";
+import getVideoDuration from "~/components/YouTubeData";
 import { db, auth } from "~/components/firebase/config";
 import {
   DocumentData,
@@ -21,11 +21,11 @@ import {
   getNextChapterId,
   increaseLevel,
   isChapterComplete,
-} from "~/components/firebase/firebase_functions";
+} from "~/components/firebase/FirebaseFunctions";
 import TimerComponent from "~/components/Timer";
 import DynamicSurvey from "../../../../components/DynamicSurvey";
 import { progress } from "framer-motion";
-import queryUserDocument from "~/components/firebase/firebase_functions";
+import queryUserDocument from "~/components/firebase/FirebaseFunctions";
 import { motion } from "framer-motion";
 
 type Chapter = {

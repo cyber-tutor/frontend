@@ -11,7 +11,7 @@ import {
   getAdditionalUserInfo,
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
-import { createUserDocument } from "~/components/firebase/firebase_functions";
+import { createUserDocument } from "~/components/firebase/FirebaseFunctions";
 import { Password } from "primereact/password";
 
 const SignInForm = () => {

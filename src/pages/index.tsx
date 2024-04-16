@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { BaseLayout } from "../components/layouts/baseLayout";
+import { BaseLayout } from "../components/layouts/BaseLayout";
 import { auth, db } from "../components/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import React, { useEffect, useState } from "react";
@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import queryUserDocument, {
   numberOfTopicsCompleted,
-} from "../components/firebase/firebase_functions";
+} from "../components/firebase/FirebaseFunctions";
 import {
   DocumentData,
   collection,

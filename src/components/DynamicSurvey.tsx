@@ -15,7 +15,7 @@ import {
 import {
   findUserDocId,
   increaseLevel,
-} from "~/components/firebase/firebase_functions";
+} from "~/components/firebase/FirebaseFunctions";
 import { useRouter } from "next/router";
 import { button, user } from "@nextui-org/react";
 
