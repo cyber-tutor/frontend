@@ -108,16 +108,49 @@ const SignUpForm: React.FC = () => {
         console.error("An unexpected error occurred:", error);
         alert("An unexpected error occurred. Please try again.");
       }
+      console.error("An unexpected error occurred:", error);
+      alert("An unexpected error occurred. Please try again.");
       return; 
     }
   };
   
   
 
+
+  const [passwordCriteria, setPasswordCriteria] = useState({
+    minChar: false,
+    lowerCase: false,
+    upperCase: false,
+    numeric: false,
+    specialChar: false
+  });
+
+
+  const checkPasswordCriteria = (password: string) => {
+    const criteria = {
+      minChar: password.length >= 8,
+      lowerCase: /[a-z]/.test(password),
+      upperCase: /[A-Z]/.test(password),
+      numeric: /[0-9]/.test(password),
+      specialChar: /[!@#$%^&*()_+{}\[\]:;<>,.?\/~`\-]/.test(password)
+    };
+    setPasswordCriteria(criteria);
+  };
+
+
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const emailValue = e.target.value;
     setEmail(emailValue);
   };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    checkPasswordCriteria(newPassword);
+  };
+
+  const createCheckMark = (isTrue: boolean) => isTrue ? '✅' : '';
+
 
   const passwordHeader = <h6 className="text-white">Pick a password</h6>;
   const passwordFooter = (
@@ -125,12 +158,11 @@ const SignUpForm: React.FC = () => {
       <Divider />
       <p className="mt-2">Suggestions</p>
       <ul className="line-height-3 ml-2 mt-0 pl-2">
-        <li>At least one lowercase</li>
-        <li>At least one uppercase</li>
-        <li>At least one numeric</li>
-        <li>At least one special character</li>
-        <li>Minimum 8 characters</li>
-        <li>Strong password ex: 7h!sI$C0oL</li>
+        <li>At least one lowercase {createCheckMark(passwordCriteria.lowerCase)}</li>
+        <li>At least one uppercase {createCheckMark(passwordCriteria.upperCase)}</li>
+        <li>At least one numeric {createCheckMark(passwordCriteria.numeric)}</li>
+        <li>At least one special character {createCheckMark(passwordCriteria.specialChar)}</li>
+        <li>Minimum 8 characters {createCheckMark(passwordCriteria.minChar)}</li>
       </ul>
     </>
   );
@@ -173,7 +205,7 @@ const SignUpForm: React.FC = () => {
             </label>
             <Password
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               toggleMask
               footer={passwordFooter}
               className="w-full rounded border border-gray-300 px-3 py-2"
