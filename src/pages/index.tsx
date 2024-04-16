@@ -55,17 +55,16 @@ export default function Home() {
       const timeDifference = currentTime.getTime() - lastReadTime.getTime();
       const hoursDifference = timeDifference / (1000 * 3600);
 
-      if(hoursDifference < 24){
-      setHasReadToday(true);
-      }
-      else{
+      if (hoursDifference < 24) {
+        setHasReadToday(true);
+      } else {
         setHasReadToday(false);
-      } 
+      }
     } else {
       setHasReadToday(false);
     }
   }, [uid]);
-  
+
   useEffect(() => {
     if (userDocument?.lastReadTime) {
       const lastReadTime = new Date(userDocument.lastReadTime.seconds * 1000);
@@ -73,18 +72,15 @@ export default function Home() {
       const timeDifference = currentTime.getTime() - lastReadTime.getTime();
       const hoursDifference = timeDifference / (1000 * 3600);
 
-      if(hoursDifference < 24){
-      setHasReadToday(true);
-      }
-      else{
+      if (hoursDifference < 24) {
+        setHasReadToday(true);
+      } else {
         setHasReadToday(false);
       }
-
     } else {
       setHasReadToday(false);
     }
   }, [userDocument?.lastReadTime]);
-  
 
   // Check if the user has completed the initial survey, demographic survey and update the streak count. If not, redirect to the respective survey page
   useEffect(() => {
@@ -190,22 +186,21 @@ export default function Home() {
 
   async function updateReadStreak() {
     if (!uid || !userDocument) return;
-  
+
     const userDocRef = doc(db, "users", userDocument.id);
     const currentTime = new Date();
-  
+
     let newStreakCount = userDocument.streakCount || 0;
     newStreakCount += 1;
-  
+
     await updateDoc(userDocRef, {
       lastReadTime: currentTime,
       streakCount: newStreakCount,
     });
-  
+
     setStreakCount(newStreakCount);
     setHasReadToday(true);
   }
-  
 
   // Function to create the UI of the certificate and download it as a PDF
 
@@ -309,21 +304,22 @@ export default function Home() {
                 </motion.div>
 
                 {hasReadToday ? (
-  <p>You have already read an article today.</p>
-) : (
-                <button
-                  onClick={() => {
-                    updateReadStreak()
-                    updateUserStreak(userDocument?.id, userDocument?.lastReadTime)
-                    router.push("/news/content")
-                  }
-                  }
-                  className="button-class"
-                >
-                  Read Daily Article
-                </button>
-)}
-
+                  <p>You have already read an article today.</p>
+                ) : (
+                  <button
+                    onClick={() => {
+                      updateReadStreak();
+                      updateUserStreak(
+                        userDocument?.id,
+                        userDocument?.lastReadTime,
+                      );
+                      router.push("/news/content");
+                    }}
+                    className="button-class"
+                  >
+                    Read Daily Article
+                  </button>
+                )}
               </motion.div>
             </motion.div>
           </BaseLayout>
@@ -375,13 +371,6 @@ export default function Home() {
               </button>
             </motion.div>
           </motion.div>
-        )}
-        {!user && (
-          <footer className="w-full border-t border-gray-300 bg-white py-4 text-center text-gray-900">
-            <div className="mx-auto px-4">
-              <p>&copy; 2024 Cyber Tutor. All rights reserved.</p>
-            </div>
-          </footer>
         )}
       </div>
     </>
