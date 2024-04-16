@@ -183,7 +183,7 @@ const SignUpForm: React.FC = () => {
           Have an account?{" "}
         </p>
         <button
-          className="flex w-full items-center justify-center rounded border bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600"
+          className="flex w-full items-center justify-center rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600"
           onClick={() => router.push("/users/sign-in")}
         >
           Sign In
@@ -191,7 +191,7 @@ const SignUpForm: React.FC = () => {
 
         <p className="mt-2 text-center text-sm text-gray-600"></p>
         <button
-          className="mt-4 flex w-full items-center justify-center rounded border border-t bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600"
+          className="mt-4 flex w-full items-center justify-center rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600"
           onClick={() => router.push("/")}
         >
           Home
