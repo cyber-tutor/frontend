@@ -6,7 +6,7 @@ export default function InitialSurvey() {
   const router = useRouter();
 
   const handleRouter = () => {
-    router.push("/initialsurvey/survey");
+    router.push("/pre_screening/initial_survey");
   };
 
   return (

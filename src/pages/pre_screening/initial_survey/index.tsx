@@ -202,7 +202,7 @@ const InitialSurvey = () => {
           })
           .then(() => {
             // console.log('User document successfully updated');
-            router.push("/demographicsurvey");
+            router.push("/pre_screening/demographics_survey");
           })
           .catch((error) => {
             // console.error('Error updating documents: ', error);

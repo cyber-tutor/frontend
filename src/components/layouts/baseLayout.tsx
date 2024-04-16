@@ -61,8 +61,8 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
           ) {
             router.push(
               data.initialSurveyComplete
-                ? "/demographicsurvey"
-                : "/initialsurvey/begin",
+                ? "/pre_screening/demographics_survey"
+                : "/pre_screening/begin",
             );
           }
         }

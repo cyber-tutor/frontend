@@ -86,7 +86,7 @@ const SignUpForm: React.FC = () => {
         setEmail("");
         setName("");
         setPassword("");
-        router.push("/initialsurvey/begin");
+        router.push("/pre_screening/begin");
       }
     } catch (e) {
       // console.error(e);
