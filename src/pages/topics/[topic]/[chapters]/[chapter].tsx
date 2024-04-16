@@ -1,4 +1,4 @@
-import { BaseLayout } from "../../../../components/layouts/BaseLayout2";
+import { BaseLayout } from "../../../../components/layouts/BaseLayout";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { Survey } from "survey-react-ui";
