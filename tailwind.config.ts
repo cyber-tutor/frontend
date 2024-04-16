@@ -1,6 +1,6 @@
 import { type Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
-const { nextui } = require("@nextui-org/react");
+import { nextui } from "@nextui-org/react";
 import typography from "@tailwindcss/typography";
 
 export default {
