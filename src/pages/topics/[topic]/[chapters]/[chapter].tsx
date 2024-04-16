@@ -27,51 +27,7 @@ import DynamicSurvey from "../../../../components/assessments/DynamicSurvey";
 import { progress } from "framer-motion";
 import queryUserDocument from "~/components/firebase/FirebaseFunctions";
 import { motion } from "framer-motion";
-
-type Chapter = {
-  chapterId: string;
-  chapterTitle: string;
-  chapterDescription: string;
-  chapterType: string;
-  controlGroupContent: {
-    beginner: string;
-    intermediate: string;
-    expert: string;
-  };
-  controlGroupVideoURLs: {
-    beginner: string;
-    intermediate: string;
-    expert: string;
-  };
-  controlGroupImageURLs: string[];
-  experimentalGroupContent: {
-    beginner: string;
-    intermediate: string;
-    expert: string;
-  };
-  experimentalGroupVideoURLs: {
-    beginner: string;
-    intermediate: string;
-    expert: string;
-  };
-  experimentalGroupImageURLs: string[];
-  order: number;
-  proficiency: string;
-};
-
-type Question = {
-  questionId: string;
-  questionTitle: string;
-  questionDifficulty: string;
-  options: Option[];
-};
-
-type Option = {
-  optionId: string;
-  optionTitle: string;
-  optionCorrectness: string;
-  optionReasoning: string;
-};
+import { Chapter } from "../../../../types";
 
 export default function ChapterPage() {
   const [chapter, setChapter] = useState<Chapter | null>(null);
@@ -468,7 +424,7 @@ export default function ChapterPage() {
               )}
             </div>
 
-            <div className="relative border border-gray h-2 w-full rounded bg-gray-200">
+            <div className="border-gray relative h-2 w-full rounded border bg-gray-200">
               <motion.div
                 className="h-2 rounded bg-blue-500 "
                 initial={{ width: 0 }}
