@@ -157,7 +157,7 @@ const SignUpForm: React.FC = () => {
   const passwordFooter = (
     <>
       <Divider />
-      <p className="mt-2">Requirementss</p>
+      <p className="mt-2">Requirements</p>
       <ul className="list-none m-0 p-0">
         <li className="flex items-center mt-2">
           <span className="flex-1">At least one lowercase</span>
