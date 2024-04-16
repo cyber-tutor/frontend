@@ -111,7 +111,7 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
         showSidebar={showSidebar}
         userDocument={userDocument}
       />
-      <div className="container flex h-screen flex-col items-center gap-4 overflow-y-auto p-10">
+      <div className="flex h-screen w-full flex-col items-center gap-4 overflow-y-auto pt-10">
         {children}
       </div>
     </div>
