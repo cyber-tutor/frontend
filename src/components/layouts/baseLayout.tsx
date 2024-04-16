@@ -12,7 +12,7 @@ import {
 import { getAuth } from "firebase/auth";
 import queryUserDocument from "../firebase/FirebaseFunctions";
 import { Navigation } from "../ui/Navigation";
-import { Topic } from "../../types/Topic";
+import { Topic } from "../../types";
 
 type LayoutProps = {
   children: ReactNode;
@@ -70,14 +70,14 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
       const topicsCollectionRef = collection(db, "topics");
       const topicsQuery = query(topicsCollectionRef, orderBy("order"));
       const topicsSnapshot = await getDocs(topicsQuery);
-      const fetchedTopics = topicsSnapshot.docs.map(
-        (doc) =>
-          ({
-            ...doc.data(),
-            topicId: doc.id,
-            isComplete: false,
-          }) as Topic,
-      );
+      const fetchedTopics = topicsSnapshot.docs.map((doc) => {
+        const data = doc.data() as Topic;
+        return {
+          ...data,
+          topicId: doc.id,
+          isComplete: false,
+        };
+      });
 
       setTopics(fetchedTopics);
     };
