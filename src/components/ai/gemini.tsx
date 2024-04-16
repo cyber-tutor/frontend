@@ -40,9 +40,26 @@ const determineProficiency = async (responses: string): Promise<string> => {
 
     // console.log("User Level: ", proficiency);
 
+    let generated = false;
+    while (!generated) {
+      try {
+        const levels = ["beginner", "intermediate", "expert"];
+        const proficiencyLevels = proficiency.split(", ");
+        for (const level of proficiencyLevels) {
+          if (!levels.includes(level)) {
+            throw new Error("Proficiency level is not valid");
+          }
+        }
+
+        generated = true;
+        console.log("Valid output:", proficiency);
+      } catch (error) {
+        console.error("Error validating proficiency:", error);
+      }
+    }
+
     return proficiency;
   } catch (error) {
-    // console.error("Error determining proficiency:", error);
     return "error";
   }
 };
