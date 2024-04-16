@@ -241,25 +241,6 @@ export const Navigation = ({
                       },
                     }}
                   >
-                    {!user && !loading && (
-                      <MenuItem>
-                        <button
-                          type="button"
-                          className="pointer-events-auto rounded px-3 hover:bg-blue-500"
-                          onClick={() => router.push("/users/sign-in")}
-                        >
-                          {collapsed ? "L" : "Login"}
-                        </button>
-                        <button
-                          type="button"
-                          className="pointer-events-auto rounded px-3 hover:bg-blue-500"
-                          onClick={() => router.push("/users/sign-up")}
-                        >
-                          {collapsed ? "R" : "Register"}
-                        </button>
-                      </MenuItem>
-                    )}
-
                     {/* User ID for testing */}
                     {/* {userDocument ? userDocument.id : ""} */}
 
