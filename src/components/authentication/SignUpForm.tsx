@@ -12,6 +12,7 @@ import {
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { createUserDocument } from "~/components/firebase/FirebaseFunctions";
+import { FirebaseError } from "firebase/app";
 
 const SignUpForm: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -64,22 +65,20 @@ const SignUpForm: React.FC = () => {
 
   const handleSignUp = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault();
-
-    // Validate the email address, don't delete this code
-
-    // const isValidEmail = await validateEmail(email);
-    // // Check if the email is valid before signing up
-    // if (!isValidEmail) {
-    //   return; // Exit the function if the email is not valid
-    // }
-
+  
+    if (!email || !password) {
+      alert("Please enter both email and password.");
+      return;
+    }
+  
+    const strongRegex = /^(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`\-]).{8,}$/;
+    if (!strongRegex.test(password)) {
+      setIsWeak(true);
+      alert('Password is weak, please ensure it meets all requirements.');
+      return;
+    }
+  
     try {
-      const strongRegex =
-        /^(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`\-]).{8,}$/;
-      if (!strongRegex.test(password)) {
-        setIsWeak(true);
-        return;
-      }
       const res = await createUserWithEmailAndPassword(email, password);
       if (res?.user) {
         await createUserDocument(res.user, name);
@@ -88,10 +87,32 @@ const SignUpForm: React.FC = () => {
         setPassword("");
         router.push("/pre_screening/begin");
       }
-    } catch (e) {
-      // console.error(e);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        switch (error.code) {
+          case "auth/email-already-in-use":
+            alert("This email is already in use by another account.");
+            break;
+          case "auth/invalid-email":
+            alert("The email address is not valid.");
+            break;
+          case "auth/weak-password":
+            alert("The password is too weak.");
+            break;
+          default:
+            alert("Failed to create account. Please try again.");
+            break;
+        }
+      } else {
+
+        console.error("An unexpected error occurred:", error);
+        alert("An unexpected error occurred. Please try again.");
+      }
+      return; 
     }
   };
+  
+  
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const emailValue = e.target.value;
