@@ -157,15 +157,31 @@ const SignUpForm: React.FC = () => {
     <>
       <Divider />
       <p className="mt-2">Suggestions</p>
-      <ul className="line-height-3 ml-2 mt-0 pl-2">
-        <li>At least one lowercase {createCheckMark(passwordCriteria.lowerCase)}</li>
-        <li>At least one uppercase {createCheckMark(passwordCriteria.upperCase)}</li>
-        <li>At least one numeric {createCheckMark(passwordCriteria.numeric)}</li>
-        <li>At least one special character {createCheckMark(passwordCriteria.specialChar)}</li>
-        <li>Minimum 8 characters {createCheckMark(passwordCriteria.minChar)}</li>
+      <ul className="list-none m-0 p-0">
+        <li className="flex items-center mt-2">
+          <span className="flex-1">At least one lowercase</span>
+          <span>{createCheckMark(passwordCriteria.lowerCase)}</span>
+        </li>
+        <li className="flex items-center mt-2">
+          <span className="flex-1">At least one uppercase</span>
+          <span>{createCheckMark(passwordCriteria.upperCase)}</span>
+        </li>
+        <li className="flex items-center mt-2">
+          <span className="flex-1">At least one numeric</span>
+          <span>{createCheckMark(passwordCriteria.numeric)}</span>
+        </li>
+        <li className="flex items-center mt-2">
+          <span className="flex-1">At least one special character</span>
+          <span>{createCheckMark(passwordCriteria.specialChar)}</span>
+        </li>
+        <li className="flex items-center mt-2">
+          <span className="flex-1">Minimum 8 characters</span>
+          <span>{createCheckMark(passwordCriteria.minChar)}</span>
+        </li>
       </ul>
     </>
   );
+  
 
   return (
     <div className="flex h-screen items-center justify-center">
