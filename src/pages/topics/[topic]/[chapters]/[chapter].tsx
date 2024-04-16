@@ -212,7 +212,7 @@ export default function ChapterPage() {
 
   return (
     <BaseLayout>
-      <div className="mx-auto w-full mt-0 lg:mt-16 md:mt-16">
+      <div className="mx-auto mt-0 w-full md:mt-16 lg:mt-16">
         <div className="text-center">
           <h1 className="py-3 text-3xl font-bold">{chapter.chapterTitle}</h1>
           <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
@@ -413,7 +413,7 @@ export default function ChapterPage() {
       </div>
 
       {chapter.chapterType !== "assessment" && !chapterComplete && (
-        <div className="sticky bottom-0 w-full px-4 pb-8 lg:px-8 lg:pb-0">
+        <div className="sticky bottom-0 w-full pb-8 lg:pb-0">
           <div className="mx-auto">
             <div>
               {chapter.chapterType !== "assessment" && (
@@ -424,9 +424,9 @@ export default function ChapterPage() {
               )}
             </div>
 
-            <div className="border-gray relative h-2 w-full rounded border bg-gray-200">
+            <div className="border-gray relative h-2 w-full bg-gray-200">
               <motion.div
-                className="h-2 rounded bg-blue-500 "
+                className="h-2 bg-blue-500 "
                 initial={{ width: 0 }}
                 animate={{
                   width: `${Math.min((secondsElapsed / 90) * 100, 100)}%`,
