@@ -111,7 +111,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
           {
             questions: questions.map((q, index) => {
               const sortedChoices = ["a", "b", "c", "d"]
-                .filter(key => key in q.choices)
+                .filter((key) => key in q.choices)
                 .map((key) => ({
                   value: key,
                   text: q.choices[key],
@@ -217,8 +217,8 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
   };
 
   return (
-    <div className="flex items-center justify-center rounded-lg border border-gray-200 bg-white p-4 shadow-xl">
-      <div className="mt-[-2rem] w-full max-w-2xl rounded-md bg-white p-6">
+    <div className="flex items-center justify-center">
+      <div className="mt-[-2rem] w-full max-w-2xl rounded bg-white p-6 shadow">
         <Survey
           model={surveyJson}
           onComplete={(result: {
@@ -236,7 +236,12 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
                 (startTimeRef.current?.getTime() || endTime.getTime())) /
               1000;
 
-            const completionMessage = `<h3>Assessment Finished</h3><h4>You scored ${percentage.toFixed(2)}% (${resultMessage.replace("User", "You")}).</h4>`;
+            const completionMessage = `
+              <div style="text-align: center; margin-top: -15%;">
+                <h3 style="color: #4A5568; font-size: 24px;">Assessment Finished</h3>
+                <h4 style="color: #718096; font-size: 20px;">You scored ${percentage.toFixed(2)}% (${resultMessage.replace("User", "You")}).</h4>
+              </div>
+            `;
             result.completedHtml = completionMessage;
 
             if (resultMessage === "User passed") {
@@ -258,7 +263,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
               onClick={() => {
                 router.reload();
               }}
-              className="mb-4 rounded bg-blue-500 px-4 py-2 font-bold text-white transition-colors duration-200 ease-in-out hover:bg-blue-700"
+              className="my-4 flex w-full justify-center rounded bg-gray-300 px-4 py-2 font-bold hover:bg-gray-500"
             >
               Try again
             </button>
