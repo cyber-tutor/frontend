@@ -145,6 +145,7 @@ const SignUpForm: React.FC = () => {
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setIsWeak(false);
     const newPassword = e.target.value;
     setPassword(newPassword);
     checkPasswordCriteria(newPassword);
