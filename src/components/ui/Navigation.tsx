@@ -161,7 +161,7 @@ export const Navigation = ({
         </Navbar>
       ) : null}
       <div className="flex min-h-screen items-stretch bg-slate-50">
-        <div className="flex h-screen flex-col items-center bg-slate-400 ">
+        <div className="flex h-screen flex-col items-center bg-slate-400">
           <div className="flex h-full flex-col justify-between">
             {(screenSize === "lg" || screenSize === "md") && showSidebar ? (
               <Sidebar className="flex h-full flex-col">
@@ -212,38 +212,25 @@ export const Navigation = ({
                       </div>
                     )}
                   </SubMenu>
-                </Menu>
 
-                <div>
-                  <Menu
-                    className="text-center"
-                    menuItemStyles={{
-                      button: {
-                        "&:hover": {
-                          background: "none",
-                          color: "inherit",
-                        },
-                        pointerEvents: "none",
-                      },
-                    }}
-                  >
+                  <div className="absolute bottom-0 w-full text-center">
                     {user && (
-                      <MenuItem>
+                      <>
                         <br />
-                        <p>
+                        <p className="py-2 font-bold">
                           Welcome {userDocument ? userDocument.data().name : ""}
                         </p>
+                        <div className="mx-4 border-t-2 border-gray-500 text-center"></div>
                         <button
-                          type="button"
-                          className="pointer-events-auto rounded px-3 hover:bg-blue-500"
+                          className="w-full border-gray-500 bg-slate-50 py-3 text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
                           onClick={handleLogout}
                         >
                           Logout
                         </button>
-                      </MenuItem>
+                      </>
                     )}
-                  </Menu>
-                </div>
+                  </div>
+                </Menu>
               </Sidebar>
             ) : null}
           </div>
