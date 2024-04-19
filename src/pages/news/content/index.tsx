@@ -30,35 +30,48 @@ const CyberSecurityNews = () => {
   };
   const router = useRouter();
   return (
-    <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-4">
-      <h1 className="font-semibold text-xl mb-4">Cybersecurity News</h1>
-      {article ? (
-        <div>
-          {article && <p className="mb-2">{(article as any).title}</p>}
-          <a
-            href={(article as any).url}
-            onClick={(e) => {
-              
-              router.push('/');
-            }}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-300"
-          >
-            Read More
-          </a>
-          <button
-            onClick={refreshPage}
-            className="ml-4 inline-block bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-700 transition duration-300"
-          >
-            Give me a different article
-          </button>
-        </div>
-      ) : (
-        <p>Loading...</p>
-      )}
+    <div className="flex flex-col min-h-screen bg-gray-800 text-white">
+      <div className="w-full p-4">
+        <button
+          onClick={() => router.push('/')}
+          className="bg-blue-800 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Back to Home
+        </button>
+      </div>
+      <div className="max-w-xl mx-auto my-auto bg-white rounded-xl shadow-md overflow-hidden p-6 text-black">
+        <h1 className="font-semibold text-3xl mb-6">Cybersecurity News</h1>
+        {article ? (
+          <div>
+            <p className="mb-4 text-xl">{(article as any).title}</p>
+            <div className="flex justify-start items-center space-x-4">
+              <a
+                href={(article as any).url}
+                onClick={(e) => {
+                  e.preventDefault(); // Prevent default to demonstrate router.push
+                  router.push('/');
+                }}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-blue-600 text-white font-bold py-4 px-8 text-xl rounded hover:bg-blue-800 transition duration-300"
+              >
+                Read More
+              </a>
+              <button
+                onClick={refreshPage}
+                className="bg-green-600 text-white font-bold py-4 px-8 text-xl rounded hover:bg-green-800 transition duration-300"
+              >
+                Give me a different article
+              </button>
+            </div>
+          </div>
+        ) : (
+          <p className="text-xl">Loading...</p>
+        )}
+      </div>
     </div>
   );
+  
 };
 
 export default CyberSecurityNews;
