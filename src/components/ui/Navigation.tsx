@@ -37,28 +37,13 @@ export const Navigation = ({
   showSidebar,
   userDocument,
 }: Props) => {
-  const [isSubMenuOpen, setSubMenuOpen] = useState(true);
-  const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
   const [user, loading, error] = useAuthState(auth);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setCollapsed(window.innerWidth <= 640);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const handleLogoClick = () => router.push("/");
 
   const handleTopicClick = (topic: Topic) => {
     router.push(`/topics/${encodeURIComponent(topic.topicId)}`);
-  };
-
-  const toggleSubMenu = () => {
-    setSubMenuOpen(!isSubMenuOpen);
   };
 
   const handleLogout = async () => {
@@ -88,7 +73,6 @@ export const Navigation = ({
             </p>
           </NavbarBrand>
           <NavbarContent className="gap-2 sm:flex" justify="center">
-           
             {!user && (
               <>
                 <NavbarItem isActive>
@@ -114,7 +98,9 @@ export const Navigation = ({
             {user && (
               <>
                 <NavbarItem>
-                  <p className="mr-20 text-sm">Hi {userDocument?.data().name}</p>
+                  <p className="mr-20 text-sm">
+                    Hi {userDocument?.data().name}
+                  </p>
                 </NavbarItem>
                 <Dropdown>
                   <DropdownTrigger>
@@ -130,45 +116,45 @@ export const Navigation = ({
                   </DropdownMenu>
                 </Dropdown>
                 <Dropdown>
-              <NavbarItem>
-                <DropdownTrigger>
-                  <Button className="text-sm" radius="sm">
-                    Topics↓
-                  </Button>
-                </DropdownTrigger>
-              </NavbarItem>
-              <DropdownMenu>
-                {topics.map((topic) => (
-                  <DropdownItem
-                    key={topic.topicId}
-                    onClick={() => {
-                      if (
-                        user &&
+                  <NavbarItem>
+                    <DropdownTrigger>
+                      <Button className="text-sm" radius="sm">
+                        Topics↓
+                      </Button>
+                    </DropdownTrigger>
+                  </NavbarItem>
+                  <DropdownMenu>
+                    {topics.map((topic) => (
+                      <DropdownItem
+                        key={topic.topicId}
+                        onClick={() => {
+                          if (
+                            user &&
+                            userDocument &&
+                            userDocument.data().initialSurveyComplete
+                          ) {
+                            handleTopicClick(topic);
+                          }
+                        }}
+                      >
+                        {user &&
                         userDocument &&
-                        userDocument.data().initialSurveyComplete
-                      ) {
-                        handleTopicClick(topic);
-                      }
-                    }}
-                  >
-                    {user &&
-                    userDocument &&
-                    userDocument.data().initialSurveyComplete ? (
-                      topic.topicTitle + (topic.isComplete ? " 💯" : "")
-                    ) : (
-                      <div className="relative">
-                        <div className="pointer-events-none select-none blur-sm">
-                          {topic.topicTitle}
-                        </div>
-                        <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center bg-white bg-opacity-75">
-                          <span>Sign in to unlock</span>
-                        </div>
-                      </div>
-                    )}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+                        userDocument.data().initialSurveyComplete ? (
+                          topic.topicTitle + (topic.isComplete ? " 💯" : "")
+                        ) : (
+                          <div className="relative">
+                            <div className="pointer-events-none select-none blur-sm">
+                              {topic.topicTitle}
+                            </div>
+                            <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center bg-white bg-opacity-75">
+                              <span>Sign in to unlock</span>
+                            </div>
+                          </div>
+                        )}
+                      </DropdownItem>
+                    ))}
+                  </DropdownMenu>
+                </Dropdown>
               </>
             )}
           </NavbarContent>
@@ -178,7 +164,7 @@ export const Navigation = ({
         <div className="flex h-screen flex-col items-center bg-slate-400 ">
           <div className="flex h-full flex-col justify-between">
             {(screenSize === "lg" || screenSize === "md") && showSidebar ? (
-              <Sidebar collapsed={collapsed} className="flex h-full flex-col">
+              <Sidebar className="flex h-full flex-col">
                 <Menu>
                   <MenuItem className="flex flex-col justify-center p-2 text-center">
                     <div className="flex items-center justify-center">
@@ -190,16 +176,10 @@ export const Navigation = ({
                         layout="fixed"
                         onClick={handleLogoClick}
                       />
-                      {!collapsed && (
-                        <span onClick={handleLogoClick}>Cyber Tutor </span>
-                      )}
+                      <span onClick={handleLogoClick}>Cyber Tutor </span>
                     </div>
                   </MenuItem>
-                  <SubMenu
-                    label="Topics"
-                    open={isSubMenuOpen}
-                    onOpenChange={toggleSubMenu}
-                  >
+                  <SubMenu label="Topics">
                     {user &&
                     userDocument &&
                     userDocument.data().initialSurveyComplete ? (
@@ -242,9 +222,6 @@ export const Navigation = ({
                       },
                     }}
                   >
-                    {/* User ID for testing */}
-                    {/* {userDocument ? userDocument.id : ""} */}
-
                     {user && (
                       <MenuItem>
                         <br />
@@ -256,7 +233,7 @@ export const Navigation = ({
                           type="button"
                           className="pointer-events-auto rounded px-3 hover:bg-blue-500"
                         >
-                          {collapsed ? "H" : "Home"}
+                          Home
                         </button>
                         <br />
 
@@ -265,7 +242,7 @@ export const Navigation = ({
                           className="pointer-events-auto rounded px-3 hover:bg-blue-500"
                           onClick={handleLogout}
                         >
-                          {collapsed ? "L" : "Logout"}
+                          Logout
                         </button>
                       </MenuItem>
                     )}
