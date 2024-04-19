@@ -1,4 +1,3 @@
-// Navigation.tsx
 import { useState, useEffect } from "react";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import {
@@ -180,6 +179,7 @@ export const Navigation = ({
                       <span onClick={handleLogoClick}>Cyber Tutor </span>
                     </div>
                   </MenuItem>
+                  <MenuItem onClick={() => router.push("/")}>Home</MenuItem>
                   <SubMenu
                     label="Topics"
                     open={isSubMenuOpen}
@@ -233,15 +233,6 @@ export const Navigation = ({
                         <p>
                           Welcome {userDocument ? userDocument.data().name : ""}
                         </p>
-                        <button
-                          onClick={() => router.push("/")}
-                          type="button"
-                          className="pointer-events-auto rounded px-3 hover:bg-blue-500"
-                        >
-                          Home
-                        </button>
-                        <br />
-
                         <button
                           type="button"
                           className="pointer-events-auto rounded px-3 hover:bg-blue-500"
