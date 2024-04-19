@@ -39,6 +39,7 @@ export const Navigation = ({
 }: Props) => {
   const router = useRouter();
   const [user, loading, error] = useAuthState(auth);
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(true);
 
   const handleLogoClick = () => router.push("/");
 
@@ -179,7 +180,11 @@ export const Navigation = ({
                       <span onClick={handleLogoClick}>Cyber Tutor </span>
                     </div>
                   </MenuItem>
-                  <SubMenu label="Topics">
+                  <SubMenu
+                    label="Topics"
+                    open={isSubMenuOpen}
+                    onOpenChange={() => setIsSubMenuOpen(!isSubMenuOpen)}
+                  >
                     {user &&
                     userDocument &&
                     userDocument.data().initialSurveyComplete ? (
