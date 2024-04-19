@@ -10,7 +10,7 @@ const CyberSecurityNews = () => {
     const fetchNews = async () => {
       try {
         const response = await axios.get(
-          'https://newsapi.org/v2/everything?q=cybersecurity&apiKey=018fcf2ccff3427ea53508356aa21cbd'
+          `https://newsapi.org/v2/everything?q=cybersecurity&apiKey=${process.env.NEXT_PUBLIC_NEWS_KEY}`
         );
         const articles = response.data.articles;
         if (articles.length > 0) {
