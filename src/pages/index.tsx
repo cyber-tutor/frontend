@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import CircularWithValueLabel from "~/components/ui/ProgressCircle";
 import { set } from "firebase/database";
 import { jsPDF } from "jspdf";
+import { FaNewspaper } from "react-icons/fa";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
@@ -244,7 +245,7 @@ export default function Home() {
           // If user is logged in, show the dashboard with their progress information
           <BaseLayout>
             <motion.div
-              className="bg-white  mt-0 lg:mt-16 md:mt-16"
+              className="mt-0  bg-white md:mt-16 lg:mt-16"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1.5 }}
@@ -303,9 +304,10 @@ export default function Home() {
                   )}
                 </motion.div>
 
-                {hasReadToday ? (
+                {/* {hasReadToday ? (
                   <p>You have already read an article today.</p>
-                ) : (
+                ) : ( */}
+                <div className="flex items-center justify-center">
                   <button
                     onClick={() => {
                       updateReadStreak();
@@ -315,11 +317,14 @@ export default function Home() {
                       );
                       router.push("/news/content");
                     }}
-                    className="button-class"
+                    className="button-class mt-5 flex items-center justify-center rounded-full bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
                   >
+                    <FaNewspaper className="mr-2 h-6 w-6" />
                     Read Daily Article
                   </button>
-                )}
+                </div>
+
+                {/* )} */}
               </motion.div>
             </motion.div>
           </BaseLayout>
