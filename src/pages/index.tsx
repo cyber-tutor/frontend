@@ -320,7 +320,7 @@ export default function Home() {
                     className="button-class mt-5 flex items-center justify-center rounded-full bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
                   >
                     <FaNewspaper className="mr-2 h-6 w-6" />
-                    Read Daily Article
+                    Read an Article
                   </button>
                 </div>
 
