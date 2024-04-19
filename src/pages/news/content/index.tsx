@@ -1,12 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { get } from 'http';
 import { useRouter } from 'next/router';
+import { auth } from '~/components/firebase/config';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 const CyberSecurityNews = () => {
-  const [article, setArticle] = useState(null);
+  const [user, loading, error] = useAuthState(auth); 
+  const [article, setArticle] = useState(null);      
+  const router = useRouter();                      
+
 
   useEffect(() => {
+    if (loading) return; 
+    if (!user) {
+      router.push('/'); 
+    }
+  }, [user, loading, router]);
+
+
+  useEffect(() => {
+    if (!user || loading) return; 
+
     const fetchNews = async () => {
       try {
         const response = await axios.get(
@@ -23,12 +37,21 @@ const CyberSecurityNews = () => {
     };
 
     fetchNews();
-  }, []);
+  }, [user, loading]); 
 
-  const refreshPage = () => {
-    window.location.reload();
-  };
-  const router = useRouter();
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">
+      <p>Loading...</p>
+    </div>;
+  }
+
+  if (!user) {
+    return <div className="flex items-center justify-center min-h-screen">
+      <p>You do not have access to this page</p>
+    </div>;
+  }
+
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-800 text-white">
       <div className="w-full p-4">
@@ -48,7 +71,7 @@ const CyberSecurityNews = () => {
               <a
                 href={(article as any).url}
                 onClick={(e) => {
-                  e.preventDefault(); // Prevent default to demonstrate router.push
+                  e.preventDefault(); 
                   router.push('/');
                 }}
                 target="_blank"
@@ -58,7 +81,7 @@ const CyberSecurityNews = () => {
                 Read More
               </a>
               <button
-                onClick={refreshPage}
+                onClick={() => window.location.reload()}
                 className="bg-green-600 text-white font-bold py-4 px-8 text-xl rounded hover:bg-green-800 transition duration-300"
               >
                 Give me a different article
@@ -71,7 +94,6 @@ const CyberSecurityNews = () => {
       </div>
     </div>
   );
-  
 };
 
 export default CyberSecurityNews;
