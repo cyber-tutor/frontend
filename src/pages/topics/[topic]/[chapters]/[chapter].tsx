@@ -31,6 +31,7 @@ import { Chapter } from "../../../../types";
 import NextChapterButton from "../../.././../components/ui/NextChapterButton";
 import ContentPreferenceText from "../../../../components/content_management/chapter/ContentPreferenceText";
 import ContentPreferenceVideo from "../../../../components/content_management/chapter/ContentPreferenceVideo";
+import ChapterTypeAssessment from "../../../../components/content_management/chapter/ChapterTypeAssessment";
 
 export default function ChapterPage() {
   const [chapter, setChapter] = useState<Chapter | null>(null);
@@ -237,14 +238,7 @@ export default function ChapterPage() {
           secondsElapsed={secondsElapsed}
           setSecondsElapsed={setSecondsElapsed}
         />
-        {chapter && chapter.chapterType === "assessment" && (
-          <div className="w-full px-4 md:px-0">
-            <DynamicSurvey
-              chapterId={chapter.chapterId}
-              userId={userDocument?.data().userId}
-            />
-          </div>
-        )}
+        <ChapterTypeAssessment chapter={chapter} userDocument={userDocument} />
       </div>
 
       {chapter.chapterType !== "assessment" &&
