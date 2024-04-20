@@ -223,19 +223,16 @@ export default function ChapterPage() {
           userDocument={userDocument}
           userProficiency={userProficiency}
         />
-        {contentPreference === "video" &&
-          chapter.chapterType !== "assessment" && (
-            <ContentPreferenceVideo
-              userGroup={userGroup || ""}
-              chapter={chapter}
-              userProficiency={userProficiency || ""}
-              userDocument={userDocument}
-              setPlayed={setPlayed}
-              setIsVideoWatched={setIsVideoWatched}
-              played={played}
-            />
-          )}
-
+        <ContentPreferenceVideo
+          userGroup={userGroup || ""}
+          chapter={chapter}
+          userProficiency={userProficiency || ""}
+          userDocument={userDocument}
+          setPlayed={setPlayed}
+          setIsVideoWatched={setIsVideoWatched}
+          played={played}
+          contentPreference={contentPreference || ""}
+        />
         <br />
         {/* video progress: {Math.floor(played / 60)}:
         {String(Math.floor(played % 60)).padStart(2, "0")}

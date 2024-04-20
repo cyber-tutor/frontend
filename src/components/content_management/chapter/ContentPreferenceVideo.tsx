@@ -11,6 +11,7 @@ interface ContentPreferenceVideoProps {
   setPlayed: React.Dispatch<React.SetStateAction<number>>;
   setIsVideoWatched: React.Dispatch<React.SetStateAction<boolean>>;
   played: number;
+  contentPreference: string;
 }
 
 const ContentPreferenceVideo: React.FC<ContentPreferenceVideoProps> = ({
@@ -21,7 +22,12 @@ const ContentPreferenceVideo: React.FC<ContentPreferenceVideoProps> = ({
   setPlayed,
   setIsVideoWatched,
   played,
+  contentPreference,
 }) => {
+  if (contentPreference !== "video" || chapter.chapterType === "assessment") {
+    return null;
+  }
+
   return (
     <div className="flex h-screen flex-grow justify-center">
       <ReactPlayer
