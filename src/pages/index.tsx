@@ -239,7 +239,7 @@ export default function Home() {
           // If user is logged in, show the dashboard with their progress information
           <BaseLayout>
             <motion.div
-              className="  bg-white mt-20 md:mt-16 lg:mt-16"
+              className="  mt-20 bg-white md:mt-16 lg:mt-16"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1.5 }}

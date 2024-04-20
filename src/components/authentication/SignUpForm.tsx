@@ -25,7 +25,7 @@ const SignUpForm: React.FC = () => {
     lowerCase: false,
     upperCase: false,
     numeric: false,
-    specialChar: false
+    specialChar: false,
   });
 
   const [createUserWithEmailAndPassword] =
@@ -72,19 +72,20 @@ const SignUpForm: React.FC = () => {
 
   const handleSignUp = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault();
-  
+
     if (!email || !password) {
       alert("Please enter both email and password.");
       return;
     }
-  
-    const strongRegex = /^(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`\-]).{8,}$/;
+
+    const strongRegex =
+      /^(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?\/~`\-]).{8,}$/;
     if (!strongRegex.test(password)) {
       setIsWeak(true);
-      alert('Password is weak, please ensure it meets all requirements.');
+      alert("Password is weak, please ensure it meets all requirements.");
       return;
     }
-  
+
     try {
       const res = await createUserWithEmailAndPassword(email, password);
       if (res?.user) {
@@ -93,13 +94,12 @@ const SignUpForm: React.FC = () => {
         setName("");
         setPassword("");
         router.push("/pre_screening/begin");
+      } else {
+        alert(
+          "A user already exists with this email. Please sign in, or use a different email.",
+        );
       }
-      else{
-        alert("A user already exists with this email. Please sign in, or use a different email.");
-      }
-      
     } catch (error) {
-      
       if (error instanceof FirebaseError) {
         switch (error.code) {
           case "auth/email-already-in-use":
@@ -116,16 +116,14 @@ const SignUpForm: React.FC = () => {
             break;
         }
       } else {
-
         console.error("An unexpected error occurred:", error);
         alert("An unexpected error occurred. Please try again.");
       }
       console.error("An unexpected error occurred:", error);
       alert("An unexpected error occurred. Please try again.");
-      return; 
+      return;
     }
   };
-  
 
   const checkPasswordCriteria = (password: string) => {
     const criteria = {
@@ -133,57 +131,56 @@ const SignUpForm: React.FC = () => {
       lowerCase: /[a-z]/.test(password),
       upperCase: /[A-Z]/.test(password),
       numeric: /[0-9]/.test(password),
-      specialChar: /[!@#$%^&*()_+{}\[\]:;<>,.?\/~`\-]/.test(password)
+      specialChar: /[!@#$%^&*()_+{}\[\]:;<>,.?\/~`\-]/.test(password),
     };
     setPasswordCriteria(criteria);
   };
-
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const emailValue = e.target.value;
     setEmail(emailValue);
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handlePasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ): void => {
     setIsWeak(false);
     const newPassword = e.target.value;
     setPassword(newPassword);
     checkPasswordCriteria(newPassword);
   };
 
-  const createCheckMark = (isTrue: boolean) => isTrue ? '✅' : '';
-
+  const createCheckMark = (isTrue: boolean) => (isTrue ? "✅" : "");
 
   const passwordHeader = <h6 className="text-white">Pick a password</h6>;
   const passwordFooter = (
     <>
       <Divider />
       <p className="mt-2">Requirements</p>
-      <ul className="list-none m-0 p-0">
-        <li className="flex items-center mt-2">
+      <ul className="m-0 list-none p-0">
+        <li className="mt-2 flex items-center">
           <span className="flex-1">At least one lowercase</span>
           <span>{createCheckMark(passwordCriteria.lowerCase)}</span>
         </li>
-        <li className="flex items-center mt-2">
+        <li className="mt-2 flex items-center">
           <span className="flex-1">At least one uppercase</span>
           <span>{createCheckMark(passwordCriteria.upperCase)}</span>
         </li>
-        <li className="flex items-center mt-2">
+        <li className="mt-2 flex items-center">
           <span className="flex-1">At least one numeric</span>
           <span>{createCheckMark(passwordCriteria.numeric)}</span>
         </li>
-        <li className="flex items-center mt-2">
+        <li className="mt-2 flex items-center">
           <span className="flex-1">At least one special character</span>
           <span>{createCheckMark(passwordCriteria.specialChar)}</span>
         </li>
-        <li className="flex items-center mt-2">
+        <li className="mt-2 flex items-center">
           <span className="flex-1">Minimum 8 characters</span>
           <span>{createCheckMark(passwordCriteria.minChar)}</span>
         </li>
       </ul>
     </>
   );
-  
 
   return (
     <div className="flex h-screen items-center justify-center">

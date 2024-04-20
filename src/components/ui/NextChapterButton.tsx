@@ -1,4 +1,3 @@
-// NextChapterButton.tsx
 import React from "react";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import {
@@ -14,7 +13,7 @@ import { useRouter } from "next/router";
 
 interface NextChapterButtonProps {
   uid: string | null;
-  chapterId: string | number | string[]; // Allow chapterId to be a string array
+  chapterId: string | number | string[];
   secondsElapsed: number;
   chapterOrder: number;
 }
@@ -27,7 +26,6 @@ const NextChapterButton: React.FC<NextChapterButtonProps> = ({
 }) => {
   const router = useRouter();
 
-  // Ensure chapterId is a string or number
   const id = Array.isArray(chapterId) ? chapterId[0] : chapterId;
 
   return (
@@ -36,7 +34,6 @@ const NextChapterButton: React.FC<NextChapterButtonProps> = ({
       onClick={async () => {
         const userDocId = await findUserDocId(uid ?? "");
         if (typeof id === "string" && userDocId) {
-          // Use id instead of chapterId
           const userDocRef = doc(db, "users", userDocId);
           const minutes = Math.floor(secondsElapsed / 60);
           const seconds = secondsElapsed % 60;
@@ -45,13 +42,7 @@ const NextChapterButton: React.FC<NextChapterButtonProps> = ({
             timeOnPage: timeElapsed,
           });
 
-          const progressRef = doc(
-            db,
-            "users",
-            userDocId,
-            "progress",
-            id, // Use id instead of chapterId
-          );
+          const progressRef = doc(db, "users", userDocId, "progress", id);
           const progressSnapshot = await getDoc(progressRef);
 
           if (progressSnapshot.exists()) {
@@ -85,7 +76,7 @@ const NextChapterButton: React.FC<NextChapterButtonProps> = ({
             const levelData = levelSnapshot.data();
 
             const topicString: String | null = await getNextChapterId(
-              chapterOrder, // Replace chapter.order with chapterOrder
+              chapterOrder,
               progressData.topicId,
               levelData?.level,
             );
@@ -101,7 +92,6 @@ const NextChapterButton: React.FC<NextChapterButtonProps> = ({
               );
             }
           } else {
-            // If no progress document exists, create the first attempt
             await updateDoc(progressRef, {
               complete: true,
               attempts: {

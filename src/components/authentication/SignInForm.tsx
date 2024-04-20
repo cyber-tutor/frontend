@@ -38,11 +38,10 @@ const SignInForm = () => {
       emptyTextBoxes();
       const auth = getAuth();
       const user = auth.currentUser;
-      if(!user) {
+      if (!user) {
         alert("User does not exist.");
-      }
-      else{
-      router.push("/");
+      } else {
+        router.push("/");
       }
     } catch (e) {
       // console.error(e);

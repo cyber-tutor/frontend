@@ -19,7 +19,7 @@ import { progress } from "framer-motion";
 import queryUserDocument from "~/components/firebase/FirebaseFunctions";
 import { motion } from "framer-motion";
 import { Chapter } from "../../../../types";
-import NextChapterButton from "../../.././../components/ui/NextChapterButton";
+import NextChapterButton from "../../../../components/ui/NextChapterButton";
 import ChapterContentManager from "../../../../components/content_management/chapter/ChapterContentManager";
 
 export default function ChapterPage() {

@@ -25,8 +25,6 @@ export default function CRUD_ControlGroupContent() {
   const [topicId, setTopicId] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
 
-
-
   const router = useRouter();
 
   useEffect(() => {
@@ -42,7 +40,6 @@ export default function CRUD_ControlGroupContent() {
         const querySnapshot = await getDocs(superUserQuery);
         if (!querySnapshot.empty) {
           // console.log("You are a superuser");
-
         } else {
           // console.log("You are not a superuser");
           router.push("/");
@@ -51,10 +48,9 @@ export default function CRUD_ControlGroupContent() {
         router.push("/");
       }
     });
-  
+
     return () => unsubscribe();
   }, [router]);
-
 
   useEffect(() => {
     const fetchTopicId = async () => {
