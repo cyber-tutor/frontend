@@ -32,6 +32,7 @@ import NextChapterButton from "../../.././../components/ui/NextChapterButton";
 import ContentPreferenceText from "../../../../components/content_management/chapter/ContentPreferenceText";
 import ContentPreferenceVideo from "../../../../components/content_management/chapter/ContentPreferenceVideo";
 import ChapterTypeAssessment from "../../../../components/content_management/chapter/ChapterTypeAssessment";
+import ChapterContentManager from "../../../../components/content_management/chapter/ChapterContentManager";
 
 export default function ChapterPage() {
   const [chapter, setChapter] = useState<Chapter | null>(null);
@@ -215,30 +216,22 @@ export default function ChapterPage() {
           <h1 className="py-3 text-3xl font-bold">{chapter.chapterTitle}</h1>
           <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
         </div>
-        <ContentPreferenceText
+        <ChapterContentManager
           contentPreference={contentPreference || ""}
           userGroup={userGroup || ""}
           chapter={chapter}
           controlGroupImageIndex={controlGroupImageIndex ?? null}
           experimentalGroupImageIndex={experimentalGroupImageIndex ?? null}
           userDocument={userDocument}
-          userProficiency={userProficiency}
-        />
-        <ContentPreferenceVideo
-          userGroup={userGroup || ""}
-          chapter={chapter}
           userProficiency={userProficiency || ""}
-          userDocument={userDocument}
           setPlayed={setPlayed}
           setIsVideoWatched={setIsVideoWatched}
           played={played}
-          contentPreference={contentPreference || ""}
         />
         <TimerComponent
           secondsElapsed={secondsElapsed}
           setSecondsElapsed={setSecondsElapsed}
         />
-        <ChapterTypeAssessment chapter={chapter} userDocument={userDocument} />
       </div>
 
       {chapter.chapterType !== "assessment" &&
