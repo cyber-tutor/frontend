@@ -1,11 +1,7 @@
 import { BaseLayout } from "../../../../components/layouts/BaseLayout";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { Survey } from "survey-react-ui";
-import { Model } from "survey-core";
 import "survey-core/defaultV2.min.css";
-import ReactPlayer from "react-player";
-import getVideoDuration from "~/components/YouTubeData";
 import { db, auth } from "~/components/firebase/config";
 import {
   DocumentData,
@@ -16,22 +12,14 @@ import {
 } from "firebase/firestore";
 import {
   findUserDocId,
-  handleVideoEnd,
-  isWatched,
-  getNextChapterId,
-  increaseLevel,
   isChapterComplete,
 } from "~/components/firebase/FirebaseFunctions";
 import TimerComponent from "~/components/ui/Timer";
-import DynamicSurvey from "../../../../components/assessments/DynamicSurvey";
 import { progress } from "framer-motion";
 import queryUserDocument from "~/components/firebase/FirebaseFunctions";
 import { motion } from "framer-motion";
 import { Chapter } from "../../../../types";
 import NextChapterButton from "../../.././../components/ui/NextChapterButton";
-import ContentPreferenceText from "../../../../components/content_management/chapter/ContentPreferenceText";
-import ContentPreferenceVideo from "../../../../components/content_management/chapter/ContentPreferenceVideo";
-import ChapterTypeAssessment from "../../../../components/content_management/chapter/ChapterTypeAssessment";
 import ChapterContentManager from "../../../../components/content_management/chapter/ChapterContentManager";
 
 export default function ChapterPage() {
