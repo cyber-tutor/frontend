@@ -17,7 +17,7 @@ const ChapterTypeAssessment: React.FC<ChapterTypeAssessmentProps> = ({
   }
 
   return (
-    <div className="w-full px-4 md:px-0">
+    <div className="w-full mt-10 md:px-0">
       <DynamicSurvey
         chapterId={chapter.chapterId}
         userId={userDocument?.data().userId}
