@@ -30,6 +30,7 @@ import { motion } from "framer-motion";
 import { Chapter } from "../../../../types";
 import NextChapterButton from "../../.././../components/ui/NextChapterButton";
 import ContentPreferenceText from "../../../../components/content_management/chapter/ContentPreferenceText";
+import ContentPreferenceVideo from "../../../../components/content_management/chapter/ContentPreferenceVideo";
 
 export default function ChapterPage() {
   const [chapter, setChapter] = useState<Chapter | null>(null);
@@ -224,31 +225,15 @@ export default function ChapterPage() {
         />
         {contentPreference === "video" &&
           chapter.chapterType !== "assessment" && (
-            <div className="flex h-screen flex-grow justify-center">
-              <ReactPlayer
-                url={
-                  userGroup === "control"
-                    ? chapter.controlGroupVideoURLs?.[
-                        userProficiency as keyof typeof chapter.controlGroupVideoURLs
-                      ]
-                    : chapter.experimentalGroupVideoURLs?.[
-                        userProficiency as keyof typeof chapter.experimentalGroupVideoURLs
-                      ]
-                }
-                onProgress={(progress) => {
-                  setPlayed(progress.playedSeconds);
-                }}
-                className="h-full w-full"
-                allowFullScreen
-                controls={false}
-                onEnded={() => {
-                  const playedMinutes = Math.floor(played / 60);
-                  handleVideoEnd(playedMinutes, userDocument?.id);
-                  setIsVideoWatched(true);
-                }}
-                seekTo={20}
-              />
-            </div>
+            <ContentPreferenceVideo
+              userGroup={userGroup || ""}
+              chapter={chapter}
+              userProficiency={userProficiency || ""}
+              userDocument={userDocument}
+              setPlayed={setPlayed}
+              setIsVideoWatched={setIsVideoWatched}
+              played={played}
+            />
           )}
 
         <br />
