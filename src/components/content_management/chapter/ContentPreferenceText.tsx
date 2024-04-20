@@ -1,15 +1,19 @@
-// ContentPreferenceText.tsx
 import React from "react";
 
 interface ContentPreferenceTextProps {
   contentPreference: string;
   userGroup: string;
-  chapter: any; // Replace with the correct type
+  chapter: any;
   controlGroupImageIndex: number | null;
   experimentalGroupImageIndex: number | null;
-  userDocument: any; // Replace with the correct type
-  userProficiency: any; // Replace with the correct type
-  removeBreakTags: (input: string) => string;
+  userDocument: any;
+  userProficiency: any;
+}
+
+function removeBreakTags(text?: string) {
+  if (!text) return;
+  const textWithoutBr = text.replace(/<br\s*\/?>/gi, "");
+  return { __html: textWithoutBr };
 }
 
 const ContentPreferenceText: React.FC<ContentPreferenceTextProps> = ({
@@ -20,7 +24,6 @@ const ContentPreferenceText: React.FC<ContentPreferenceTextProps> = ({
   experimentalGroupImageIndex,
   userDocument,
   userProficiency,
-  removeBreakTags,
 }) => {
   if (contentPreference !== "text") {
     return null;
@@ -59,23 +62,19 @@ const ContentPreferenceText: React.FC<ContentPreferenceTextProps> = ({
           <div className="prose">
             {userGroup === "control" ? (
               <div
-                dangerouslySetInnerHTML={{
-                  __html: removeBreakTags(
-                    chapter.controlGroupContent?.[
-                      userProficiency as keyof typeof chapter.controlGroupContent
-                    ] ?? "",
-                  ),
-                }}
+                dangerouslySetInnerHTML={removeBreakTags(
+                  chapter.controlGroupContent?.[
+                    userProficiency as keyof typeof chapter.controlGroupContent
+                  ] ?? "",
+                )}
               />
             ) : (
               <div
-                dangerouslySetInnerHTML={{
-                  __html: removeBreakTags(
-                    chapter.experimentalGroupContent?.[
-                      userProficiency as keyof typeof chapter.experimentalGroupContent
-                    ] ?? "",
-                  ),
-                }}
+                dangerouslySetInnerHTML={removeBreakTags(
+                  chapter.experimentalGroupContent?.[
+                    userProficiency as keyof typeof chapter.experimentalGroupContent
+                  ] ?? "",
+                )}
               />
             )}
           </div>

@@ -133,12 +133,6 @@ export default function ChapterPage() {
     fetchUserGroup();
   }, [uid]);
 
-  function removeBreakTags(text?: string) {
-    if (!text) return;
-    const textWithoutBr = text.replace(/<br\s*\/?>/gi, "");
-    return { __html: textWithoutBr };
-  }
-
   useEffect(() => {
     const fetchContentPreference = async () => {
       if (!uid) return;
@@ -227,7 +221,6 @@ export default function ChapterPage() {
           experimentalGroupImageIndex={experimentalGroupImageIndex ?? null}
           userDocument={userDocument}
           userProficiency={userProficiency}
-          removeBreakTags={(input) => removeBreakTags(input)?.__html || ""}
         />
         {contentPreference === "video" &&
           chapter.chapterType !== "assessment" && (
