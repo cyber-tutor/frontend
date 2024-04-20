@@ -233,11 +233,6 @@ export default function ChapterPage() {
           played={played}
           contentPreference={contentPreference || ""}
         />
-        <br />
-        {/* video progress: {Math.floor(played / 60)}:
-        {String(Math.floor(played % 60)).padStart(2, "0")}
-        <br />
-        <p>User's time spent on this chapter:</p> */}
         <TimerComponent
           secondsElapsed={secondsElapsed}
           setSecondsElapsed={setSecondsElapsed}
