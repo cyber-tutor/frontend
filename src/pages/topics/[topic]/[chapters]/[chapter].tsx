@@ -29,6 +29,7 @@ import queryUserDocument from "~/components/firebase/FirebaseFunctions";
 import { motion } from "framer-motion";
 import { Chapter } from "../../../../types";
 import NextChapterButton from "../../.././../components/ui/NextChapterButton";
+import ContentPreferenceText from "../../../../components/content_management/chapter/ContentPreferenceText";
 
 export default function ChapterPage() {
   const [chapter, setChapter] = useState<Chapter | null>(null);
@@ -218,65 +219,16 @@ export default function ChapterPage() {
           <h1 className="py-3 text-3xl font-bold">{chapter.chapterTitle}</h1>
           <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
         </div>
-        {contentPreference === "text" && (
-          <div className="m-4 rounded p-4 ">
-            <div className="overflow-auto">
-              {(userGroup === "control"
-                ? chapter.controlGroupImageURLs
-                : chapter.experimentalGroupImageURLs
-              )?.length > 0 && (
-                <img
-                  className="float-right ml-5 mt-5 w-1/3 shadow-lg"
-                  src={
-                    userGroup === "control" &&
-                    chapter.controlGroupImageURLs.length > 0
-                      ? chapter.controlGroupImageURLs[
-                          controlGroupImageIndex ?? 0
-                        ]
-                      : userGroup === "experimental" &&
-                          chapter.experimentalGroupImageURLs.length > 0
-                        ? chapter.experimentalGroupImageURLs[
-                            experimentalGroupImageIndex ?? 0
-                          ]
-                        : undefined
-                  }
-                  alt={
-                    chapter.chapterTitle
-                      ? String(chapter.chapterTitle)
-                      : undefined
-                  }
-                  title={
-                    chapter.chapterTitle
-                      ? String(chapter.chapterTitle)
-                      : undefined
-                  }
-                />
-              )}
-              {userDocument?.data().id}
-              {userProficiency && (
-                <div className="prose">
-                  {userGroup === "control" ? (
-                    <div
-                      dangerouslySetInnerHTML={removeBreakTags(
-                        chapter.controlGroupContent?.[
-                          userProficiency as keyof typeof chapter.controlGroupContent
-                        ],
-                      )}
-                    />
-                  ) : (
-                    <div
-                      dangerouslySetInnerHTML={removeBreakTags(
-                        chapter.experimentalGroupContent?.[
-                          userProficiency as keyof typeof chapter.experimentalGroupContent
-                        ],
-                      )}
-                    />
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+        <ContentPreferenceText
+          contentPreference={contentPreference || ""}
+          userGroup={userGroup || ""}
+          chapter={chapter}
+          controlGroupImageIndex={controlGroupImageIndex ?? null}
+          experimentalGroupImageIndex={experimentalGroupImageIndex ?? null}
+          userDocument={userDocument}
+          userProficiency={userProficiency}
+          removeBreakTags={(input) => removeBreakTags(input)?.__html || ""}
+        />
         {contentPreference === "video" &&
           chapter.chapterType !== "assessment" && (
             <div className="flex h-screen flex-grow justify-center">
