@@ -21,10 +21,7 @@ const CyberSecurityNews = () => {
     if (!user || loading) return;
 
     try {
-      // Fetch news from News API
-      const response = await axios.get(
-        `https://newsapi.org/v2/everything?q=cybersecurity&apiKey=${process.env.NEXT_PUBLIC_NEWS_KEY}`,
-      );
+      const response = await axios.get("/api/news");
       const articles = response.data.articles;
 
       for (let i = articles.length - 1; i > 0; i--) {
@@ -33,7 +30,7 @@ const CyberSecurityNews = () => {
       }
 
       if (articles.length > 0) {
-        setArticles(articles.slice(0, 10)); // Get the first 10 articles
+        setArticles(articles.slice(0, 10));
       }
     } catch (error) {
       console.error("Error fetching news:", error);
