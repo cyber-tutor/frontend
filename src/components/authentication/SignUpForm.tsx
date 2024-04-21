@@ -4,7 +4,6 @@ import { auth } from "../firebase/config";
 import { useRouter } from "next/router";
 import { Password } from "primereact/password";
 import { Divider } from "primereact/divider";
-import "primereact/resources/themes/lara-light-cyan/theme.css";
 import {
   GoogleAuthProvider,
   getAdditionalUserInfo,
