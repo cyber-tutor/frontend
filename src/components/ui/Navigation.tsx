@@ -16,6 +16,8 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase/config";
+import { IoPersonCircleSharp } from "react-icons/io5";
+import { IoLogOutOutline } from "react-icons/io5";
 
 type Topic = {
   topicId: string;
@@ -213,25 +215,29 @@ export const Navigation = ({
                     )}
                   </SubMenu>
 
-                  <div className="absolute bottom-0 w-full text-center">
+                  <div className="absolute bottom-0 w-full">
                     {user && (
                       <>
                         <br />
-                        <div className="mx-4 border-t-2 border-gray-500 text-center"></div>
+                        <div className="border-t-3 border-gray-400"></div>
                         <button
-                          className="w-full border-gray-500 bg-slate-50 py-3 text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
+                          className="flex w-full items-center bg-slate-50 px-2 py-3 text-left text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
                           onClick={() =>
                             router.push(`/users/profile/${userDocument.id}`)
                           }
                         >
-                          Welcome {userDocument ? userDocument.data().name : ""}
+                          <IoPersonCircleSharp />
+                          <span className="ml-2">
+                            {userDocument ? userDocument.data().name : ""}
+                          </span>
                         </button>
-                        <div className="mx-4 border-t-2 border-gray-500 text-center"></div>
+                        <div className="mx-5 border-t-3 border-gray-400"></div>
                         <button
-                          className="w-full border-gray-500 bg-slate-50 py-3 text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
+                          className="flex w-full items-center bg-slate-50 px-2 py-3 text-left text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
                           onClick={handleLogout}
                         >
-                          Logout
+                          <IoLogOutOutline />
+                          <span className="ml-2">Logout</span>
                         </button>
                       </>
                     )}
