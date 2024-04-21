@@ -94,7 +94,7 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
         userDocument={userDocument}
       />
       <div
-        className={`flex h-screen w-full flex-col items-center gap-4 overflow-y-auto ${screenSize === "md" || screenSize === "sm" ? "pt-10" : ""}`}
+        className={`flex h-screen w-full flex-col gap-4 overflow-y-auto ${screenSize === "md" || screenSize === "sm" ? "pt-10" : ""}`}
       >
         {children}
       </div>

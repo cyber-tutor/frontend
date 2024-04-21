@@ -230,77 +230,79 @@ export default function TopicPage() {
 
   return (
     <BaseLayout>
-      <div className="mt-0 overflow-y-auto rounded-lg border-2 border-solid text-center md:mt-16 lg:mt-16 lg:w-7/12 lg:p-10">
-        <div className="grid grid-cols-6 items-center">
-          <h1 className="col-span-5 flex justify-start text-3xl font-bold">
-            {topic.topicTitle}
-          </h1>
-          <div className="flex justify-end">
-            <span className="decoration-5 flex rounded-full border-solid border-black  p-1.5 text-xs font-bold ">
-              <CircularWithValueLabel value={proficiencyRatio} />
-            </span>
+      <div className="flex w-full flex-col items-center">
+        <div className="mt-0 overflow-y-auto rounded-lg border-2 border-solid text-center md:mt-16 lg:mt-16 lg:w-7/12 lg:p-10">
+          <div className="grid grid-cols-6 items-center">
+            <h1 className="col-span-5 flex justify-start text-3xl font-bold">
+              {topic.topicTitle}
+            </h1>
+            <div className="flex justify-end">
+              <span className="decoration-5 flex rounded-full border-solid border-black  p-1.5 text-xs font-bold ">
+                <CircularWithValueLabel value={proficiencyRatio} />
+              </span>
+            </div>
           </div>
-        </div>
-        <p className="border-b-4 py-3">{topic.topicDescription}</p>
-        <div className="flex flex-col text-start">
-          {topic.chapters.map((chapter) =>
-            userProficiency !== null &&
-            userProficiency >= chapter.proficiency ? (
-              <Link
-                key={chapter.chapterId}
-                href={`/topics/${encodeURIComponent(
-                  topic.topicId,
-                )}/chapters/${encodeURIComponent(chapter.chapterId)}`}
-                className="px-3 pt-3 hover:bg-slate-200"
-              >
-                <div>
-                  <div className="grid grid-cols-6 items-center">
-                    <h3 className="col-span-5 text-xl font-bold">
-                      {chapter.chapterType.toLowerCase() === "assessment" && (
+          <p className="border-b-4 py-3">{topic.topicDescription}</p>
+          <div className="flex flex-col text-start">
+            {topic.chapters.map((chapter) =>
+              userProficiency !== null &&
+              userProficiency >= chapter.proficiency ? (
+                <Link
+                  key={chapter.chapterId}
+                  href={`/topics/${encodeURIComponent(
+                    topic.topicId,
+                  )}/chapters/${encodeURIComponent(chapter.chapterId)}`}
+                  className="px-3 pt-3 hover:bg-slate-200"
+                >
+                  <div>
+                    <div className="grid grid-cols-6 items-center">
+                      <h3 className="col-span-5 text-xl font-bold">
+                        {chapter.chapterType.toLowerCase() === "assessment" && (
+                          <p className="text-xs font-bold">
+                            {chapter.chapterType.toUpperCase()}
+                          </p>
+                        )}
+                        {chapter.chapterTitle}
+                        {chapterCompletion[chapter.chapterId] ? " ✅" : ""}
+                      </h3>
+                      <div className="flex justify-end">
+                        <span className="decoration-5 rounded-full border border-solid border-black bg-slate-200 p-1.5 text-xs font-bold">
+                          🔓
+                        </span>
+                      </div>
+                    </div>
+                    <p className="border-b-2 pb-3">
+                      {chapter.chapterDescription}
+                    </p>
+                  </div>
+                </Link>
+              ) : (
+                <div
+                  key={chapter.chapterId}
+                  className="cursor-not-allowed bg-slate-200 px-3 pt-3"
+                >
+                  <div>
+                    <div className="grid grid-cols-6 items-center">
+                      <h3 className="col-span-5 text-xl font-bold">
                         <p className="text-xs font-bold">
                           {chapter.chapterType.toUpperCase()}
                         </p>
-                      )}
-                      {chapter.chapterTitle}
-                      {chapterCompletion[chapter.chapterId] ? " ✅" : ""}
-                    </h3>
-                    <div className="flex justify-end">
-                      <span className="decoration-5 rounded-full border border-solid border-black bg-slate-200 p-1.5 text-xs font-bold">
-                        🔓
-                      </span>
+                        {chapter.chapterTitle}
+                      </h3>
+                      <div className="flex justify-end">
+                        <span className="decoration-5 rounded-full border border-solid border-black bg-red-500 p-1.5 text-xs font-bold">
+                          🔒
+                        </span>
+                      </div>
                     </div>
+                    <p className="border-b-2 pb-3">
+                      {chapter.chapterDescription}
+                    </p>
                   </div>
-                  <p className="border-b-2 pb-3">
-                    {chapter.chapterDescription}
-                  </p>
                 </div>
-              </Link>
-            ) : (
-              <div
-                key={chapter.chapterId}
-                className="cursor-not-allowed bg-slate-200 px-3 pt-3"
-              >
-                <div>
-                  <div className="grid grid-cols-6 items-center">
-                    <h3 className="col-span-5 text-xl font-bold">
-                      <p className="text-xs font-bold">
-                        {chapter.chapterType.toUpperCase()}
-                      </p>
-                      {chapter.chapterTitle}
-                    </h3>
-                    <div className="flex justify-end">
-                      <span className="decoration-5 rounded-full border border-solid border-black bg-red-500 p-1.5 text-xs font-bold">
-                        🔒
-                      </span>
-                    </div>
-                  </div>
-                  <p className="border-b-2 pb-3">
-                    {chapter.chapterDescription}
-                  </p>
-                </div>
-              </div>
-            ),
-          )}
+              ),
+            )}
+          </div>
         </div>
       </div>
     </BaseLayout>
