@@ -184,6 +184,7 @@ export default function Home() {
       });
     }
   }
+  // Update the read streak count for the user
 
   async function updateReadStreak() {
     if (!uid || !userDocument) return;
