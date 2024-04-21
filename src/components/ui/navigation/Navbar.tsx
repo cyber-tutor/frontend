@@ -12,6 +12,7 @@ import {
 } from "@nextui-org/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { IoPersonCircleSharp, IoChevronDownOutline } from "react-icons/io5";
 
 type Topic = {
   topicId: string;
@@ -35,7 +36,7 @@ export const Navbar = ({
   showSidebar,
   userDocument,
   user,
-  topics, // Add this line
+  topics,
   handleTopicClick,
   handleLogoClick,
   handleLogout,
@@ -43,7 +44,7 @@ export const Navbar = ({
   const router = useRouter();
 
   return screenSize !== "lg" && screenSize !== "md" && showSidebar ? (
-    <NextUINavbar className="fixed left-0 top-0 w-full">
+    <NextUINavbar className="fixed left-0 top-0 w-full shadow-lg">
       <NavbarBrand className="pr-7">
         <Image
           src="/Cyber-Tutor_Logo.png"
@@ -51,21 +52,19 @@ export const Navbar = ({
           width={40}
           height={40}
           layout="fixed"
-          onClick={handleLogoClick}
         />
-        <p className="font-bold text-inherit" onClick={handleLogoClick}>
-          Cyber Tutor{" "}
-        </p>
+        <div onClick={() => router.push("/")}>Home</div>
       </NavbarBrand>
       <NavbarContent justify="end">
         {user && (
           <>
-            <NavbarItem>
-              <p className="mr-20 text-sm">Hi {userDocument?.data().name}</p>
-            </NavbarItem>
             <Dropdown>
               <DropdownTrigger>
-                <Button className="text-sm" radius="sm">
+                <Button
+                  disableRipple
+                  className="bg-transparent p-0 data-[hover=true]:bg-transparent"
+                  endContent={<IoChevronDownOutline />}
+                >
                   Topics
                 </Button>
               </DropdownTrigger>
@@ -83,13 +82,21 @@ export const Navbar = ({
             </Dropdown>
             <Dropdown>
               <DropdownTrigger>
-                <Button className="text-sm" radius="sm">
-                  Menu↓
+                <Button
+                  disableRipple
+                  className="bg-transparent p-0 data-[hover=true]:bg-transparent"
+                  endContent={<IoChevronDownOutline />}
+                >
+                  <IoPersonCircleSharp size="2em" />
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem onClick={() => router.push("/")}>
-                  Home
+                <DropdownItem
+                  onClick={() =>
+                    router.push(`/users/profile/${userDocument.id}`)
+                  }
+                >
+                  {userDocument?.data().name}
                 </DropdownItem>
                 <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
               </DropdownMenu>
