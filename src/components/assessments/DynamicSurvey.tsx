@@ -237,9 +237,9 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
               1000;
 
             const completionMessage = `
-              <div style="text-align: center; margin-top: -15%;">
-                <h3 style="color: #4A5568; font-size: 24px;">Assessment Finished</h3>
-                <h4 style="color: #718096; font-size: 20px;">You scored ${percentage.toFixed(2)}% (${resultMessage.replace("User", "You")}).</h4>
+              <div class="flex justify-center items-center flex-col mt-auto mb-20">
+                <h3 class="text-gray-700 text-xl">Assessment Finished</h3>
+                <h4 class="text-gray-500 text-lg">You scored ${percentage.toFixed(2)}% (${resultMessage.replace("User", "You")}).</h4>
               </div>
             `;
             result.completedHtml = completionMessage;
