@@ -53,7 +53,13 @@ export const Navbar = ({
           height={40}
           layout="fixed"
         />
-        <div onClick={() => router.push("/")}>Home</div>
+        <Button
+          disableRipple
+          className="bg-transparent p-0 data-[hover=true]:bg-transparent"
+          onClick={() => router.push("/")}
+        >
+          Home
+        </Button>
       </NavbarBrand>
       <NavbarContent justify="end">
         {user && (
