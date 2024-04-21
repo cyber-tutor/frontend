@@ -136,9 +136,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
         const formattedQuestions = formatQuestionsForSurveyJS(questions);
         setSurveyJson(new Model(formattedQuestions));
         startTimeRef.current = new Date();
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+        setLoading(false);
       }
     });
   }, [chapterId, userId]);
