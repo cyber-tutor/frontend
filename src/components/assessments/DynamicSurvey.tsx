@@ -91,7 +91,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
       // Randomly select 10 questions
       const selectedQuestions = allQuestions
         .sort(() => 0.5 - Math.random())
-        .slice(0, 10);
+        .slice(0, 1);
 
       const correctAnswers: Record<string, string> = {};
       selectedQuestions.forEach((question, index) => {
@@ -237,7 +237,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
               1000;
 
             const completionMessage = `
-              <div class="flex justify-center items-center flex-col mt-auto mb-20">
+              <div class="flex justify-center items-center flex-col -mt-10 mb-10">
                 <h3 class="text-gray-700 text-xl">Assessment Finished</h3>
                 <h4 class="text-gray-500 text-lg">You scored ${percentage.toFixed(2)}% (${resultMessage.replace("User", "You")}).</h4>
               </div>
