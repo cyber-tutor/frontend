@@ -21,6 +21,7 @@ const CyberSecurityNews = () => {
     if (!user || loading) return;
   
     try {
+      // Fetch news from News API
       const response = await axios.get(
         `https://newsapi.org/v2/everything?q=cybersecurity&apiKey=${process.env.NEXT_PUBLIC_NEWS_KEY}`,
       );
