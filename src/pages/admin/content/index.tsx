@@ -75,7 +75,7 @@ export default function CRUD_ControlGroupContent() {
       <Head>
         <title>Admin Interface: Control Group Content CRUD</title>
       </Head>
-      <h1 className="question-3xl font-bold">
+      <h1 className="pt-5 text-center font-bold">
         Admin Interface: Control Group Content CRUD
       </h1>
       <div className="h-100 h-full w-full overflow-auto sm:overflow-scroll">

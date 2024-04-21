@@ -190,7 +190,7 @@ export default function CRUD_Questions() {
 
   return (
     <BaseLayout>
-      <h1 className="question-3xl font-bold">Admin Interface: Question CRUD</h1>
+      <h1 className="pt-5 text-center font-bold">Admin Interface: Question CRUD</h1>
       <div className="h-100 h-full w-full overflow-auto sm:overflow-scroll">
         <div className="sticky top-0 z-10 bg-white">
           {editingId && (
