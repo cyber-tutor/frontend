@@ -4,6 +4,7 @@ import { NextUIProvider } from "@nextui-org/react";
 import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
+import "survey-react/survey.css";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (

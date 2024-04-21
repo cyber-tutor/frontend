@@ -1,7 +1,6 @@
 import { BaseLayout } from "../../../../components/layouts/BaseLayout";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import "survey-core/defaultV2.min.css";
 import { db, auth } from "~/components/firebase/config";
 import {
   DocumentData,
