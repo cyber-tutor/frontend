@@ -14,7 +14,7 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../firebase/config";
+import { auth } from "../../firebase/config";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { IoLogOutOutline } from "react-icons/io5";
 import { CustomSidebar } from "./Sidebar";

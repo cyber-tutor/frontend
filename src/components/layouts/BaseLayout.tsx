@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import queryUserDocument from "../firebase/FirebaseFunctions";
-import { Navigation } from "../ui/Navigation";
+import { Navigation } from "../ui/navigation/Navigation";
 import { Topic } from "../../types";
 
 type LayoutProps = {
