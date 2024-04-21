@@ -28,8 +28,6 @@ export const NavigationManager = ({
   const [user, loading, error] = useAuthState(auth);
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(true);
 
-  const handleLogoClick = () => router.push("/");
-
   const handleTopicClick = (topic: Topic) => {
     router.push(`/topics/${encodeURIComponent(topic.topicId)}`);
   };
@@ -51,7 +49,6 @@ export const NavigationManager = ({
         showSidebar={showSidebar}
         userDocument={userDocument}
         user={user}
-        handleLogoClick={handleLogoClick}
         handleTopicClick={handleTopicClick}
         handleLogout={handleLogout}
       />
@@ -61,7 +58,6 @@ export const NavigationManager = ({
         showSidebar={showSidebar}
         userDocument={userDocument}
         user={user}
-        handleLogoClick={handleLogoClick}
         handleTopicClick={handleTopicClick}
         handleLogout={handleLogout}
       />

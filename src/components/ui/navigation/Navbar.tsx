@@ -26,7 +26,6 @@ type NavbarProps = {
   userDocument: any;
   user: any;
   topics: Topic[];
-  handleLogoClick: () => void;
   handleLogout: () => void;
   handleTopicClick: (topic: Topic) => void;
 };
@@ -38,7 +37,6 @@ export const Navbar = ({
   user,
   topics,
   handleTopicClick,
-  handleLogoClick,
   handleLogout,
 }: NavbarProps) => {
   const router = useRouter();

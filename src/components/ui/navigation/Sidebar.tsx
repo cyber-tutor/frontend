@@ -21,7 +21,6 @@ type SidebarProps = {
   showSidebar: boolean;
   userDocument: any;
   user: any;
-  handleLogoClick: () => void;
   handleTopicClick: (topic: Topic) => void;
   handleLogout: () => void;
 };
@@ -32,7 +31,6 @@ export const Sidebar = ({
   showSidebar,
   userDocument,
   user,
-  handleLogoClick,
   handleTopicClick,
   handleLogout,
 }: SidebarProps) => {
@@ -46,7 +44,7 @@ export const Sidebar = ({
           {(screenSize === "lg" || screenSize === "md") && showSidebar ? (
             <ReactProSidebar className="flex h-full flex-col">
               <Menu>
-                <MenuItem className="flex flex-col justify-center p-2 text-center">
+                <div className="flex flex-col justify-center p-2 text-center">
                   <div className="flex items-center justify-center">
                     <Image
                       src="/Cyber-Tutor_Logo.png"
@@ -54,11 +52,10 @@ export const Sidebar = ({
                       width={40}
                       height={40}
                       layout="fixed"
-                      onClick={handleLogoClick}
                     />
-                    <span onClick={handleLogoClick}>Cyber Tutor </span>
+                    <span>Cyber Tutor</span>
                   </div>
-                </MenuItem>
+                </div>
                 <MenuItem onClick={() => router.push("/")}>Home</MenuItem>
                 <SubMenu
                   label="Topics"
