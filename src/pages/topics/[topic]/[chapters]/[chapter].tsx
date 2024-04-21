@@ -198,9 +198,11 @@ export default function ChapterPage() {
 
   return (
     <BaseLayout>
-      <div className="mx-auto mt-0 w-full md:mt-16 lg:mt-16">
+      <div className="mx-auto w-full">
         <div className="text-center">
-          <h1 className="py-3 text-3xl font-bold">{chapter.chapterTitle}</h1>
+          <h1 className="mt-20 py-3 text-3xl font-bold md:mt-20 lg:mt-10">
+            {chapter.chapterTitle}
+          </h1>
           <p className="border-b-4 py-3">{chapter.chapterDescription}</p>
         </div>
         <ChapterContentManager
