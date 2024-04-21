@@ -217,9 +217,15 @@ export const Navigation = ({
                     {user && (
                       <>
                         <br />
-                        <p className="py-2 font-bold">
+                        <div className="mx-4 border-t-2 border-gray-500 text-center"></div>
+                        <button
+                          className="w-full border-gray-500 bg-slate-50 py-3 text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
+                          onClick={() =>
+                            router.push(`/users/profile/${userDocument.id}`)
+                          }
+                        >
                           Welcome {userDocument ? userDocument.data().name : ""}
-                        </p>
+                        </button>
                         <div className="mx-4 border-t-2 border-gray-500 text-center"></div>
                         <button
                           className="w-full border-gray-500 bg-slate-50 py-3 text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
