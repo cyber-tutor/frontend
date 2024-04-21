@@ -114,6 +114,7 @@ const SignInForm = () => {
             <span className="w-1/5 border-b border-gray-300"></span>
           </div>
           <button
+            type="button"
             onClick={handleGoogleSignIn}
             className="flex w-full items-center justify-center rounded border border-gray-300 py-2 text-gray-700 shadow-sm hover:bg-gray-50"
           >
