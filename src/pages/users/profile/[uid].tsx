@@ -89,21 +89,33 @@ const UserProfile = () => {
   }
   return (
     <BaseLayout>
-      <div>
-        <h1>{userData?.name}'s Profile</h1>
-        <form onSubmit={handleFormSubmit}>
-          <label>
-            Content Preference:
+      <div className="rounded-lg p-8 text-left">
+        <h1 className="mb-6 text-2xl font-semibold text-blue-700">
+          {userData?.name}'s Profile
+        </h1>
+        <form onSubmit={handleFormSubmit} className="space-y-6">
+          <div>
+            <label className="mb-2 block text-sm text-gray-700">
+              Content Preference:
+            </label>
             <select
               value={contentPreference ?? ""}
               onChange={handleContentPreferenceChange}
+              className="w-full rounded-md border border-gray-300 bg-white px-3 py-2"
             >
               <option value="text">Text</option>
               <option value="video">Video</option>
             </select>
-            {successMessage && <p>{successMessage}</p>}
-          </label>
-          <button type="submit">Save</button>
+            {successMessage && (
+              <p className="mt-2 text-green-500">{successMessage}</p>
+            )}
+          </div>
+          <button
+            type="submit"
+            className="w-full rounded-md bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
+          >
+            Save
+          </button>
         </form>
       </div>
     </BaseLayout>
