@@ -89,8 +89,8 @@ const UserProfile = () => {
   }
   return (
     <BaseLayout>
-      <div className="rounded-lg p-8 text-left">
-        <h1 className="mb-6 text-2xl font-semibold text-blue-700">
+      <div className="mt-20 rounded-lg p-8 text-left md:mt-20 lg:mt-10">
+        <h1 className="mb-6 text-2xl font-semibold">
           {userData?.name}'s Profile
         </h1>
         <form onSubmit={handleFormSubmit} className="space-y-6">
@@ -106,9 +106,6 @@ const UserProfile = () => {
               <option value="text">Text</option>
               <option value="video">Video</option>
             </select>
-            {successMessage && (
-              <p className="mt-2 text-green-500">{successMessage}</p>
-            )}
           </div>
           <button
             type="submit"
@@ -116,6 +113,9 @@ const UserProfile = () => {
           >
             Save
           </button>
+          {successMessage && (
+            <p className="mt-2 text-center text-green-500">{successMessage}</p>
+          )}
         </form>
       </div>
     </BaseLayout>
