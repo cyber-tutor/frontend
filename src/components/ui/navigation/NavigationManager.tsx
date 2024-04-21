@@ -17,7 +17,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/config";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { IoLogOutOutline } from "react-icons/io5";
-import { CustomSidebar } from "./Sidebar";
+import { Sidebar } from "./Sidebar";
 
 type Topic = {
   topicId: string;
@@ -122,7 +122,7 @@ export const NavigationManager = ({
           </NavbarContent>
         </Navbar>
       ) : null}
-      <CustomSidebar
+      <Sidebar
         topics={topics}
         screenSize={screenSize}
         showSidebar={showSidebar}

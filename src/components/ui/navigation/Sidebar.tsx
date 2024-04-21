@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
+import {
+  Sidebar as ReactProSidebar,
+  Menu,
+  MenuItem,
+  SubMenu,
+} from "react-pro-sidebar";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { IoPersonCircleSharp, IoLogOutOutline } from "react-icons/io5";
@@ -21,7 +26,7 @@ type SidebarProps = {
   handleLogout: () => void;
 };
 
-export const CustomSidebar = ({
+export const Sidebar = ({
   topics,
   screenSize,
   showSidebar,
@@ -39,7 +44,7 @@ export const CustomSidebar = ({
       <div className="flex h-screen flex-col items-center bg-slate-400">
         <div className="flex h-full flex-col justify-between">
           {(screenSize === "lg" || screenSize === "md") && showSidebar ? (
-            <Sidebar className="flex h-full flex-col">
+            <ReactProSidebar className="flex h-full flex-col">
               <Menu>
                 <MenuItem className="flex flex-col justify-center p-2 text-center">
                   <div className="flex items-center justify-center">
@@ -116,7 +121,7 @@ export const CustomSidebar = ({
                   )}
                 </div>
               </Menu>
-            </Sidebar>
+            </ReactProSidebar>
           ) : null}
         </div>
       </div>
