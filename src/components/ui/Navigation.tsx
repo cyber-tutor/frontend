@@ -220,25 +220,25 @@ export const Navigation = ({
                       <>
                         <br />
                         <div className="border-t-3 border-gray-400"></div>
-                        <button
-                          className="flex w-full items-center bg-slate-50 px-2 py-3 text-left text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
-                          onClick={() =>
-                            router.push(`/users/profile/${userDocument.id}`)
-                          }
-                        >
-                          <IoPersonCircleSharp />
-                          <span className="ml-2">
-                            {userDocument ? userDocument.data().name : ""}
-                          </span>
-                        </button>
-                        <div className="mx-5 border-t-3 border-gray-400"></div>
-                        <button
-                          className="flex w-full items-center bg-slate-50 px-2 py-3 text-left text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
-                          onClick={handleLogout}
-                        >
-                          <IoLogOutOutline />
-                          <span className="ml-2">Logout</span>
-                        </button>
+                        <div className="flex min-h-[3rem] justify-between">
+                          <button
+                            className="flex  flex-grow items-center bg-slate-50 px-2 py-3 text-left text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
+                            onClick={() =>
+                              router.push(`/users/profile/${userDocument.id}`)
+                            }
+                          >
+                            <IoPersonCircleSharp />
+                            <span className="ml-2">
+                              {userDocument ? userDocument.data().name : ""}
+                            </span>
+                          </button>
+                          <button
+                            className="flex w-12 items-center justify-center border-l-2 bg-slate-50 py-3 text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
+                            onClick={handleLogout}
+                          >
+                            <IoLogOutOutline className="text-red-500" />
+                          </button>
+                        </div>
                       </>
                     )}
                   </div>
