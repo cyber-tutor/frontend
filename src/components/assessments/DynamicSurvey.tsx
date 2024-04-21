@@ -91,7 +91,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
       // Randomly select 10 questions
       const selectedQuestions = allQuestions
         .sort(() => 0.5 - Math.random())
-        .slice(0, 1);
+        .slice(0, 10);
 
       const correctAnswers: Record<string, string> = {};
       selectedQuestions.forEach((question, index) => {
