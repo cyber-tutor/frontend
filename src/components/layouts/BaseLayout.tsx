@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import queryUserDocument from "../firebase/FirebaseFunctions";
-import { Navigation } from "../ui/navigation/Navigation";
+import { NavigationManager } from "../ui/navigation/NavigationManager";
 import { Topic } from "../../types";
 
 type LayoutProps = {
@@ -87,7 +87,7 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
 
   return (
     <div className="flex min-h-screen items-stretch bg-slate-50">
-      <Navigation
+      <NavigationManager
         topics={topics}
         screenSize={screenSize}
         showSidebar={showSidebar}

@@ -32,7 +32,7 @@ type Props = {
   userDocument: any;
 };
 
-export const Navigation = ({
+export const NavigationManager = ({
   topics,
   screenSize,
   showSidebar,
@@ -136,4 +136,4 @@ export const Navigation = ({
   );
 };
 
-export default Navigation;
+export default NavigationManager;
