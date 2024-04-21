@@ -18,6 +18,7 @@ import {
 } from "~/components/firebase/FirebaseFunctions";
 import { useRouter } from "next/router";
 import { button, user } from "@nextui-org/react";
+import { BaseLayout } from "../layouts/BaseLayout";
 
 interface Question {
   question: string;
@@ -40,6 +41,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
   const [userFailed, setUserFailed] = useState<boolean>(false);
   const [quote, setQuote] = useState<string | null>(null);
   const startTimeRef = useRef<Date | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const router = useRouter();
   const { topic: topicId } = router.query;
@@ -135,6 +137,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
         const formattedQuestions = formatQuestionsForSurveyJS(questions);
         setSurveyJson(new Model(formattedQuestions));
         startTimeRef.current = new Date();
+        setLoading(false);
       }
     });
   }, [chapterId, userId]);
@@ -215,6 +218,13 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
       console.error("Error updating user progress:", error);
     }
   };
+
+  if (loading)
+    return (
+      <BaseLayout>
+        <div className="mt-5 text-center">Loading, please wait...</div>
+      </BaseLayout>
+    );
 
   return (
     <div className="flex items-center justify-center">
