@@ -84,7 +84,7 @@ const QuestionForm: React.FC<{
 
         setTopics(topicsArray);
       } catch (error) {
-        console.error("uh oh, error fetching topics 🦧:", error);
+        console.error("Error fetching topics:", error);
       }
     };
 
@@ -171,40 +171,39 @@ const QuestionForm: React.FC<{
     const errors: Partial<Record<keyof Question, string>> = {};
 
     if (!question.question) {
-      errors.question = "uh oh 🦧, you need a question.";
+      errors.question = "Please provide a question.";
     }
 
     if (Object.keys(question.choices).length < 2) {
-      errors.choices = "uh oh 🦧, you need at least 2 choices.";
+      errors.choices = "Please provide at least 2 choices.";
     }
 
     if (!question.answer) {
-      errors.answer = "uh oh 🦧, you need a correct answer.";
+      errors.answer = "Please provide a correct answer.";
     }
 
     if (!Object.keys(question.choices).includes(question.answer)) {
-      errors.answer =
-        "uh oh 🦧, the correct answer should be one of the choice keys.";
+      errors.answer = "The correct answer should be one of the choice keys.";
     }
 
     if (!question.explanation) {
-      errors.explanation = "uh oh 🦧, you need an explanation.";
+      errors.explanation = "Please provide an explanation.";
     }
 
     if (!question.difficulty || question.difficulty === "Select a difficulty") {
-      errors.difficulty = "uh oh 🦧, you need to select a difficulty.";
+      errors.difficulty = "Please select a difficulty.";
     }
 
     if (!question.topicId) {
-      errors.topicId = "uh oh 🦧, you need to choose a topic.";
+      errors.topicId = "Please choose a topic.";
     }
 
     if (!question.chapterId) {
-      errors.chapterId = "uh oh 🦧, you need to choose a chapter.";
+      errors.chapterId = "Please choose a chapter.";
     }
 
     if (!question.fromChapter) {
-      errors.fromChapter = "uh oh 🦧, you need to specify the chapter.";
+      errors.fromChapter = "Please specify the chapter.";
     }
 
     return errors;

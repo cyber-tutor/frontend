@@ -213,7 +213,9 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
       console.log("Control group content updated successfully");
     } catch (error) {
       console.error("Error updating control group content:", error);
-      setFeedbackMessage("uh oh 🦧, error updating control group content.");
+      setFeedbackMessage(
+        "An error occurred while updating the control group content. Please try again.",
+      );
     }
   };
 

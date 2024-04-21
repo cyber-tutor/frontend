@@ -173,19 +173,19 @@ export default function ChapterPage() {
   if (loading)
     return (
       <BaseLayout>
-        <div>please wait, loading... 🦧</div>
+        <div className="mt-5 text-center">Loading, please wait...</div>
       </BaseLayout>
     );
   if (error)
     return (
       <BaseLayout>
-        <div>uh oh, error 🦧: {error}</div>
+        <div className="mt-5 text-center">An error occurred: {error}</div>
       </BaseLayout>
     );
   if (!chapter)
     return (
       <BaseLayout>
-        <div>uh oh, chapter not found 🦧</div>
+        <div className="mt-5 text-center">Chapter not found.</div>
       </BaseLayout>
     );
 

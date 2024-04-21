@@ -176,12 +176,10 @@ export default function TopicPage() {
             chapters,
           });
         } else {
-          // console.error("uh oh, topic not found 🦧");
-          setError("uh oh, topic not found 🦧");
+          setError("The requested topic was not found.");
         }
       } catch (err) {
-        // console.error("uh oh, error fetching topic 🦧:", err);
-        setError("uh oh, error fetching topic 🦧");
+        setError("An error occurred while fetching the topic.");
       } finally {
         setLoading(false);
       }
@@ -203,26 +201,24 @@ export default function TopicPage() {
       }
     }
   }, []);
-
   if (loading || !userDataLoaded)
     return (
       <BaseLayout>
-        <div>please wait, loading... 🦧</div>
+        <div className="mt-5 text-center">Loading, please wait...</div>
       </BaseLayout>
     );
   if (error)
     return (
       <BaseLayout>
-        <div>uh oh, error 🦧: {error}</div>
+        <div className="mt-5 text-center">An error occurred: {error}</div>
       </BaseLayout>
     );
   if (!topic)
     return (
       <BaseLayout>
-        <div>uh oh, topic not found 🦧</div>
+        <div className="mt-5 text-center">Topic not found.</div>
       </BaseLayout>
     );
-
   const proficiencyRatio =
     userProficiency !== null && topic
       ? Math.round((userProficiency / topic.chapters.length) * 100)
