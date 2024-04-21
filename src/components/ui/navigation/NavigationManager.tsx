@@ -46,11 +46,13 @@ export const NavigationManager = ({
   return (
     <>
       <Navbar
+        topics={topics}
         screenSize={screenSize}
         showSidebar={showSidebar}
         userDocument={userDocument}
         user={user}
         handleLogoClick={handleLogoClick}
+        handleTopicClick={handleTopicClick}
         handleLogout={handleLogout}
       />
       <Sidebar

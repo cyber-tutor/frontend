@@ -13,13 +13,21 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/router";
 
+type Topic = {
+  topicId: string;
+  topicTitle: string;
+  isComplete: boolean;
+};
+
 type NavbarProps = {
   screenSize: string;
   showSidebar: boolean;
   userDocument: any;
   user: any;
+  topics: Topic[];
   handleLogoClick: () => void;
   handleLogout: () => void;
+  handleTopicClick: (topic: Topic) => void;
 };
 
 export const Navbar = ({
@@ -27,6 +35,8 @@ export const Navbar = ({
   showSidebar,
   userDocument,
   user,
+  topics, // Add this line
+  handleTopicClick,
   handleLogoClick,
   handleLogout,
 }: NavbarProps) => {
@@ -47,34 +57,30 @@ export const Navbar = ({
           Cyber Tutor{" "}
         </p>
       </NavbarBrand>
-      <NavbarContent className="gap-2 sm:flex" justify="center">
-        {!user && (
-          <>
-            <NavbarItem isActive>
-              <Link
-                onClick={() => router.push("/users/sign-in")}
-                className="text-sm"
-              >
-                Login
-              </Link>
-            </NavbarItem>
-            <NavbarItem>
-              <Link
-                onClick={() => router.push("/users/sign-up")}
-                className="text-sm"
-              >
-                Register
-              </Link>
-            </NavbarItem>
-          </>
-        )}
-      </NavbarContent>
       <NavbarContent justify="end">
         {user && (
           <>
             <NavbarItem>
               <p className="mr-20 text-sm">Hi {userDocument?.data().name}</p>
             </NavbarItem>
+            <Dropdown>
+              <DropdownTrigger>
+                <Button className="text-sm" radius="sm">
+                  Topics
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                {topics.map((topic) => (
+                  <DropdownItem
+                    key={topic.topicId}
+                    onClick={() => handleTopicClick(topic)}
+                  >
+                    {topic.topicTitle}
+                    {topic.isComplete && <span> 💯</span>}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
             <Dropdown>
               <DropdownTrigger>
                 <Button className="text-sm" radius="sm">
