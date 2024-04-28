@@ -20,6 +20,15 @@ type Topic = {
   isComplete: boolean;
 };
 
+type UserDocument = {
+  id: string;
+  data: () => {
+    name: string;
+    initialSurveyComplete: boolean;
+    isSuperuser: boolean;
+  };
+};
+
 type NavbarProps = {
   screenSize: string;
   showSidebar: boolean;
@@ -102,6 +111,11 @@ export const Navbar = ({
                 >
                   {userDocument?.data().name}
                 </DropdownItem>
+                {userDocument && userDocument.data().isSuperuser && (
+                  <DropdownItem onClick={() => router.push("/admin")}>
+                    Admin Dashboard
+                  </DropdownItem>
+                )}
                 <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
               </DropdownMenu>
             </Dropdown>
