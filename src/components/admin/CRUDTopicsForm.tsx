@@ -98,6 +98,14 @@ const CRUDTopicsForm: React.FC = () => {
           Add Topic
         </button>
       </form>
+      <div className="w-full">
+        {topics.map((topic) => (
+          <div key={topic.topicId}>
+            <h3>{topic.topicTitle}</h3>
+            <p>{topic.topicDescription}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
