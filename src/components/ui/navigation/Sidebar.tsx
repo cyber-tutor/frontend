@@ -8,11 +8,21 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { IoPersonCircleSharp, IoLogOutOutline } from "react-icons/io5";
+import { MdOutlineAdminPanelSettings } from "react-icons/md";
 
 type Topic = {
   topicId: string;
   topicTitle: string;
   isComplete: boolean;
+};
+
+type UserDocument = {
+  id: string;
+  data: () => {
+    name: string;
+    initialSurveyComplete: boolean;
+    isSuperuser: boolean;
+  };
 };
 
 type SidebarProps = {
@@ -89,7 +99,6 @@ export const Sidebar = ({
                     </div>
                   )}
                 </SubMenu>
-
                 <div className="absolute bottom-0 w-full">
                   {user && (
                     <>
@@ -97,7 +106,7 @@ export const Sidebar = ({
                       <div className="border-t-2 border-gray-400"></div>
                       <div className="flex min-h-[3rem] justify-between">
                         <button
-                          className="flex  flex-grow items-center bg-slate-50 px-2 py-3 text-left text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
+                          className="flex flex-grow items-center bg-slate-50 px-2 py-3 text-left text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
                           onClick={() =>
                             router.push(`/users/profile/${userDocument.id}`)
                           }
@@ -107,6 +116,14 @@ export const Sidebar = ({
                             {userDocument ? userDocument.data().name : ""}
                           </span>
                         </button>
+                        {userDocument && userDocument.data().isSuperuser && (
+                          <button
+                            className="flex w-12 items-center justify-center border-l-2 bg-slate-50 py-3 text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
+                            onClick={() => router.push("/admin")}
+                          >
+                            <MdOutlineAdminPanelSettings className="text-blue-500" />
+                          </button>
+                        )}
                         <button
                           className="flex w-12 items-center justify-center border-l-2 bg-slate-50 py-3 text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
                           onClick={handleLogout}
