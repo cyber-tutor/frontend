@@ -73,6 +73,12 @@ const CRUDTopicsForm: React.FC = () => {
     setCurrentTopicId("");
   };
 
+  const handleDeleteTopic = async (id: string) => {
+    const topicsCollection = collection(db, "topics");
+    const topicDoc = doc(topicsCollection, id);
+    await deleteDoc(topicDoc);
+  };
+
   return (
     <div className="flex w-full justify-between">
       <div className="w-1/2">
@@ -133,12 +139,12 @@ const CRUDTopicsForm: React.FC = () => {
               >
                 Edit
               </button>
-              {/* <button
-              onClick={() => handleDeleteTopic(topic.topicId || "")}
-              className="rounded bg-red-500 px-4 py-2 text-white"
-            >
-              Delete
-            </button> */}
+              <button
+                onClick={() => handleDeleteTopic(topic.topicId || "")}
+                className="rounded bg-red-500 px-4 py-2 text-white"
+              >
+                Delete
+              </button>
             </div>
           </div>
         ))}
