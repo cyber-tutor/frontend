@@ -49,19 +49,28 @@ const CRUDTopicsForm: React.FC = () => {
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = event.target;
-    setNewTopic({ ...newTopic, [name]: value });
+    setNewTopic({
+      ...newTopic,
+      [name]: name === "order" ? Number(value) : value,
+    });
   };
 
   const handleAddTopic = async (event: FormEvent) => {
     event.preventDefault();
     if (!newTopic.topicTitle || !newTopic.topicDescription) return;
 
-    const topicId = newTopic.topicTitle.toLowerCase().replace(/ /g, "_");
-
     const topicsCollection = collection(db, "topics");
-    const topicDoc = doc(topicsCollection, topicId);
-    await setDoc(topicDoc, newTopic);
+    if (currentTopicId) {
+      const topicDoc = doc(topicsCollection, currentTopicId);
+      await updateDoc(topicDoc, newTopic);
+    } else {
+      const topicId = newTopic.topicTitle.toLowerCase().replace(/ /g, "_");
+      const topicDoc = doc(topicsCollection, topicId);
+      await setDoc(topicDoc, newTopic);
+    }
+
     setNewTopic({ topicTitle: "", topicDescription: "", order: 0 });
+    setCurrentTopicId("");
   };
 
   return (
@@ -96,15 +105,41 @@ const CRUDTopicsForm: React.FC = () => {
             type="submit"
             className="rounded bg-blue-500 px-4 py-2 text-white"
           >
-            Add Topic
+            {currentTopicId ? "Save Changes" : "Add Topic"}
           </button>
         </form>
       </div>
       <div className="w-1/2">
         {topics.map((topic) => (
-          <div key={topic.topicId}>
-            <h3>{topic.topicTitle}</h3>
-            <p>{topic.topicDescription}</p>
+          <div
+            key={topic.topicId}
+            className="mb-4 flex items-center justify-between"
+          >
+            <div>
+              <h3>{topic.topicTitle}</h3>
+              <p>{topic.topicDescription}</p>
+            </div>
+            <div>
+              <button
+                onClick={() => {
+                  setCurrentTopicId(topic.topicId || "");
+                  setNewTopic({
+                    topicTitle: topic.topicTitle,
+                    topicDescription: topic.topicDescription,
+                    order: topic.order,
+                  });
+                }}
+                className="mr-2 rounded bg-blue-500 px-4 py-2 text-white"
+              >
+                Edit
+              </button>
+              {/* <button
+              onClick={() => handleDeleteTopic(topic.topicId || "")}
+              className="rounded bg-red-500 px-4 py-2 text-white"
+            >
+              Delete
+            </button> */}
+            </div>
           </div>
         ))}
       </div>
