@@ -7,6 +7,7 @@ import {
   orderBy,
   updateDoc,
   deleteDoc,
+  addDoc,
 } from "firebase/firestore";
 import { db } from "../firebase/config";
 
@@ -111,6 +112,85 @@ const CRUDChaptersForm: React.FC = () => {
     setSelectedTopic(event.target.value);
   };
 
+  const flattenChapter = (chapter: Chapter) => {
+    return {
+      chapterTitle: chapter.chapterTitle,
+      chapterDescription: chapter.chapterDescription,
+      chapterType: chapter.chapterType,
+      controlGroupContentBeginner: chapter.controlGroupContent.beginner,
+      controlGroupContentIntermediate: chapter.controlGroupContent.intermediate,
+      controlGroupContentExpert: chapter.controlGroupContent.expert,
+      controlGroupVideoURLsBeginner: chapter.controlGroupVideoURLs.beginner,
+      controlGroupVideoURLsIntermediate:
+        chapter.controlGroupVideoURLs.intermediate,
+      controlGroupVideoURLsExpert: chapter.controlGroupVideoURLs.expert,
+      controlGroupImageURLs: chapter.controlGroupImageURLs,
+      experimentalGroupContentBeginner:
+        chapter.experimentalGroupContent.beginner,
+      experimentalGroupContentIntermediate:
+        chapter.experimentalGroupContent.intermediate,
+      experimentalGroupContentExpert: chapter.experimentalGroupContent.expert,
+      experimentalGroupVideoURLsBeginner:
+        chapter.experimentalGroupVideoURLs.beginner,
+      experimentalGroupVideoURLsIntermediate:
+        chapter.experimentalGroupVideoURLs.intermediate,
+      experimentalGroupVideoURLsExpert:
+        chapter.experimentalGroupVideoURLs.expert,
+      experimentalGroupImageURLs: chapter.experimentalGroupImageURLs,
+      order: chapter.order,
+      proficiency: chapter.proficiency,
+    };
+  };
+
+  const handleAddChapter = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (selectedTopic === null) {
+      return;
+    }
+
+    const chaptersCollection = collection(
+      doc(db, "topics", selectedTopic),
+      "chapters",
+    );
+
+    const flattenedChapter = flattenChapter(newChapter);
+
+    if (isEditing) {
+      const chapterDoc = doc(chaptersCollection, currentChapterId);
+      await updateDoc(chapterDoc, flattenedChapter);
+    } else {
+      await addDoc(chaptersCollection, flattenedChapter);
+    }
+
+    setNewChapter({
+      chapterTitle: "",
+      chapterDescription: "",
+      chapterType: "",
+      controlGroupContent: { beginner: "", intermediate: "", expert: "" },
+      controlGroupVideoURLs: { beginner: "", intermediate: "", expert: "" },
+      controlGroupImageURLs: [],
+      experimentalGroupContent: { beginner: "", intermediate: "", expert: "" },
+      experimentalGroupVideoURLs: {
+        beginner: "",
+        intermediate: "",
+        expert: "",
+      },
+      experimentalGroupImageURLs: [],
+      order: 0,
+      proficiency: 0,
+    });
+  };
+
+  const handleChapterChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setNewChapter({
+      ...newChapter,
+      [event.target.name]: event.target.value,
+    });
+  };
+
   const handleEditChapter = (chapter: Chapter) => {
     setCurrentChapterId(chapter.chapterId || "");
     setNewChapter({
@@ -202,7 +282,6 @@ const CRUDChaptersForm: React.FC = () => {
             </option>
           ))}
         </select>
-
         <ol>
           {chapters.map((chapter) => (
             <li
@@ -242,8 +321,58 @@ const CRUDChaptersForm: React.FC = () => {
             </li>
           ))}
         </ol>
+        <div className="text-right">
+          <button
+            onClick={toggleLock}
+            className="mr-2 block w-full rounded bg-blue-500 px-2 py-1 text-xs text-white"
+          >
+            {isLocked ? "🔓 Unlock Delete" : "🔒 Lock Delete"}
+          </button>
+          <button
+            onClick={handleSubmitOrder}
+            className="mt-4 rounded bg-blue-500 px-2 py-1 text-xs text-white"
+          >
+            Submit Order
+          </button>
+        </div>
       </div>
-      <div className="col-span-4"></div>
+      <div className="col-span-4 mx-4">
+        <form onSubmit={handleAddChapter} className="mt-4">
+          <input
+            type="text"
+            name="chapterTitle"
+            placeholder="Chapter Title"
+            value={newChapter.chapterTitle}
+            onChange={handleChapterChange}
+            className="mb-2 block w-full rounded border border-gray-300 p-2"
+          />
+          <textarea
+            name="chapterDescription"
+            placeholder="Chapter Description"
+            value={newChapter.chapterDescription}
+            onChange={handleChapterChange}
+            className="mb-2 block w-full rounded border border-gray-300 p-2"
+          />
+          {!isEditing && (
+            <input
+              type="number"
+              name="order"
+              placeholder="Order"
+              value={newChapter.order || ""}
+              onChange={handleChapterChange}
+              className="mb-2 block w-full rounded border border-gray-300 p-2"
+            />
+          )}
+          <div className="text-center">
+            <button
+              type="submit"
+              className="rounded bg-blue-500 px-4 py-2 text-white"
+            >
+              {currentChapterId ? "Save Changes" : "Add Chapter"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
