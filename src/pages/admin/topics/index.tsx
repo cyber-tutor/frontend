@@ -53,7 +53,7 @@ export default function CRUDTopics() {
       <Head>
         <title>Admin Interface: Topics CRUD</title>
       </Head>
-      <h1 className="pt-5 text-center font-bold">
+      <h1 className="text-center font-bold md:mt-20 lg:mt-10">
         Admin Interface: Topics CRUD
       </h1>
       <div className="h-100 w-full">
