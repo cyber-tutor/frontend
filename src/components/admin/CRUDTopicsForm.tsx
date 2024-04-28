@@ -59,14 +59,16 @@ const CRUDTopicsForm: React.FC = () => {
     event.preventDefault();
     if (!newTopic.topicTitle || !newTopic.topicDescription) return;
 
+    const { topicTitle, topicDescription, order } = newTopic;
+
     const topicsCollection = collection(db, "topics");
     if (currentTopicId) {
       const topicDoc = doc(topicsCollection, currentTopicId);
-      await updateDoc(topicDoc, newTopic);
+      await updateDoc(topicDoc, { topicTitle, topicDescription, order });
     } else {
       const topicId = newTopic.topicTitle.toLowerCase().replace(/ /g, "_");
       const topicDoc = doc(topicsCollection, topicId);
-      await setDoc(topicDoc, newTopic);
+      await setDoc(topicDoc, { topicTitle, topicDescription, order });
     }
 
     setNewTopic({ topicTitle: "", topicDescription: "", order: 0 });
