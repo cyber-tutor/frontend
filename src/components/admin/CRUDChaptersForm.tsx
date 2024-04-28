@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { doc, collection, getDocs, query, orderBy } from "firebase/firestore";
+import {
+  doc,
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
 import { db } from "../firebase/config";
+
+interface Topic {
+  topicId?: string;
+  topicTitle: string;
+  topicDescription: string;
+  order: number;
+}
 
 interface Chapter {
   chapterId?: string;
@@ -96,23 +111,139 @@ const CRUDChaptersForm: React.FC = () => {
     setSelectedTopic(event.target.value);
   };
 
-  return (
-    <div>
-      <select onChange={handleTopicChange}>
-        {topics.map((topic) => (
-          <option key={topic.topicId} value={topic.topicId}>
-            {topic.topicTitle}
-          </option>
-        ))}
-      </select>
+  const handleEditChapter = (chapter: Chapter) => {
+    setCurrentChapterId(chapter.chapterId || "");
+    setNewChapter({
+      chapterTitle: chapter.chapterTitle,
+      chapterDescription: chapter.chapterDescription,
+      chapterType: chapter.chapterType,
+      controlGroupContent: chapter.controlGroupContent,
+      controlGroupVideoURLs: chapter.controlGroupVideoURLs,
+      controlGroupImageURLs: chapter.controlGroupImageURLs,
+      experimentalGroupContent: chapter.experimentalGroupContent,
+      experimentalGroupVideoURLs: chapter.experimentalGroupVideoURLs,
+      experimentalGroupImageURLs: chapter.experimentalGroupImageURLs,
+      order: chapter.order,
+      proficiency: chapter.proficiency,
+    });
+    setIsEditing(true);
+  };
 
-      <select>
-        {chapters.map((chapter) => (
-          <option key={chapter.chapterId} value={chapter.chapterId}>
-            {chapter.chapterTitle}
-          </option>
-        ))}
-      </select>
+  const handleCancelEdit = () => {
+    setCurrentChapterId("");
+    setNewChapter({
+      chapterTitle: "",
+      chapterDescription: "",
+      chapterType: "",
+      controlGroupContent: { beginner: "", intermediate: "", expert: "" },
+      controlGroupVideoURLs: { beginner: "", intermediate: "", expert: "" },
+      controlGroupImageURLs: [],
+      experimentalGroupContent: { beginner: "", intermediate: "", expert: "" },
+      experimentalGroupVideoURLs: {
+        beginner: "",
+        intermediate: "",
+        expert: "",
+      },
+      experimentalGroupImageURLs: [],
+      order: 0,
+      proficiency: 0,
+    });
+    setIsEditing(false);
+  };
+
+  useEffect(() => {
+    const newOrderInputs: { [key: string]: number } = {};
+    chapters.forEach((chapter) => {
+      newOrderInputs[chapter.chapterId || ""] = chapter.order;
+    });
+    setOrderInputs(newOrderInputs);
+  }, [chapters]);
+
+  const handleSubmitOrder = async () => {
+    if (selectedTopic === null) {
+      return;
+    }
+
+    const chaptersCollection = collection(
+      doc(db, "topics", selectedTopic),
+      "chapters",
+    );
+
+    for (const chapterId in orderInputs) {
+      const chapterDoc = doc(chaptersCollection, chapterId);
+      await updateDoc(chapterDoc, { order: orderInputs[chapterId] });
+    }
+  };
+
+  const toggleLock = () => {
+    setIsLocked(!isLocked);
+  };
+
+  const handleDeleteChapter = async (id: string) => {
+    if (selectedTopic === null) {
+      return;
+    }
+
+    const chaptersCollection = collection(
+      doc(db, "topics", selectedTopic),
+      "chapters",
+    );
+    const chapterDoc = doc(chaptersCollection, id);
+    await deleteDoc(chapterDoc);
+  };
+
+  return (
+    <div className="grid grid-cols-7 p-6">
+      <div className="col-span-3">
+        <select onChange={handleTopicChange} className="mb-4 w-full">
+          {topics.map((topic) => (
+            <option key={topic.topicId} value={topic.topicId}>
+              {topic.topicTitle}
+            </option>
+          ))}
+        </select>
+
+        <ol>
+          {chapters.map((chapter) => (
+            <li
+              key={chapter.chapterId}
+              className="mb-4 flex items-center justify-between"
+            >
+              <div className="flex items-center">
+                <input type="number" className="mr-2 w-12" />
+                <h3>{chapter.chapterTitle}</h3>
+              </div>
+              <div>
+                {isEditing && currentChapterId === chapter.chapterId ? (
+                  <button
+                    onClick={handleCancelEdit}
+                    className="mr-2 rounded bg-yellow-300 px-2 py-1 text-xs text-white"
+                  >
+                    Cancel
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleEditChapter(chapter)}
+                    className="mr-2 rounded bg-blue-500 px-2 py-1 text-xs text-white"
+                  >
+                    Edit
+                  </button>
+                )}
+                <button
+                  onClick={() => handleDeleteChapter(chapter.chapterId || "")}
+                  className={`rounded px-2 py-1 text-xs text-white ${
+                    isLocked ? "bg-gray-500" : "bg-red-500"
+                  }`}
+                  disabled={isLocked}
+                >
+                  Delete
+                </button>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div className="col-span-4"></div>
     </div>
   );
 };
