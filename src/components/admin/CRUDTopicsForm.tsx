@@ -103,8 +103,8 @@ const CRUDTopicsForm: React.FC = () => {
   };
 
   return (
-    <div className="grid grid-cols-2 p-6">
-      <ol>
+    <div className="grid grid-cols-6 p-6">
+      <ol className="col-span-2">
         {topics.map((topic) => (
           <li
             key={topic.topicId}
@@ -152,7 +152,7 @@ const CRUDTopicsForm: React.FC = () => {
           </button>
         </div>
       </ol>
-      <form onSubmit={handleAddTopic} className="mx-4">
+      <form onSubmit={handleAddTopic} className="col-span-4 mx-4">
         <input
           type="text"
           name="topicTitle"
