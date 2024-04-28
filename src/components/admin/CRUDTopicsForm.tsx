@@ -25,6 +25,7 @@ const CRUDTopicsForm: React.FC = () => {
   const [currentTopicId, setCurrentTopicId] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const [isLocked, setIsLocked] = useState(true);
+  const [orderInputs, setOrderInputs] = useState<{ [key: string]: number }>({});
   const [newTopic, setNewTopic] = useState<Topic>({
     topicTitle: "",
     topicDescription: "",
@@ -92,6 +93,23 @@ const CRUDTopicsForm: React.FC = () => {
     setIsEditing(false);
   };
 
+  useEffect(() => {
+    const newOrderInputs: { [key: string]: number } = {};
+    topics.forEach((topic) => {
+      newOrderInputs[topic.topicId || ""] = topic.order;
+    });
+    setOrderInputs(newOrderInputs);
+  }, [topics]);
+
+  const handleSubmitOrder = async () => {
+    const topicsCollection = collection(db, "topics");
+
+    for (const topicId in orderInputs) {
+      const topicDoc = doc(topicsCollection, topicId);
+      await updateDoc(topicDoc, { order: orderInputs[topicId] });
+    }
+  };
+
   const toggleLock = () => {
     setIsLocked(!isLocked);
   };
@@ -110,10 +128,19 @@ const CRUDTopicsForm: React.FC = () => {
             key={topic.topicId}
             className="mb-4 flex items-center justify-between"
           >
-            <div>
-              <h3>
-                {topic.order}. {topic.topicTitle}
-              </h3>
+            <div className="flex items-center">
+              <input
+                type="number"
+                value={orderInputs[topic.topicId || ""]}
+                className="mr-2 w-12"
+                onChange={(e) =>
+                  setOrderInputs({
+                    ...orderInputs,
+                    [topic.topicId || ""]: Number(e.target.value),
+                  })
+                }
+              />
+              <h3>{topic.topicTitle}</h3>
             </div>
             <div>
               {isEditing && currentTopicId === topic.topicId ? (
@@ -149,6 +176,12 @@ const CRUDTopicsForm: React.FC = () => {
             className="mr-2 block w-full rounded bg-blue-500 px-2 py-1 text-xs text-white"
           >
             {isLocked ? "🔓 Unlock Delete" : "🔒 Lock Delete"}
+          </button>
+          <button
+            onClick={handleSubmitOrder}
+            className="mt-4 rounded bg-blue-500 px-2 py-1 text-xs text-white"
+          >
+            Submit Order
           </button>
         </div>
       </ol>
