@@ -98,9 +98,8 @@ const CRUDTopicsForm: React.FC = () => {
   };
 
   return (
-    <div className="flex w-full justify-between">
-      <div className="w-1/2">
-        <h2 className="mb-4">Add or Update Topics</h2>
+    <div className="grid grid-cols-2 p-6">
+      <div>
         <form onSubmit={handleAddTopic} className="mb-12 w-4/5">
           <input
             type="text"
@@ -133,7 +132,7 @@ const CRUDTopicsForm: React.FC = () => {
           </button>
         </form>
       </div>
-      <div className="w-1/2">
+      <div>
         {topics.map((topic) => (
           <div
             key={topic.topicId}
