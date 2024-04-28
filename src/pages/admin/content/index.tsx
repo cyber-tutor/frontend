@@ -75,7 +75,7 @@ export default function CRUD_ControlGroupContent() {
       <Head>
         <title>Admin Interface: Control Group Content CRUD</title>
       </Head>
-      <h1 className="text-center font-bold md:mt-20 lg:mt-10">
+      <h1 className="mt-20 text-center font-bold md:mt-20 lg:mt-10">
         Admin Interface: Control Group Content CRUD
       </h1>
       <div className="h-100 h-full w-full">
