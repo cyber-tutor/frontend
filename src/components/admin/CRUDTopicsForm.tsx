@@ -23,7 +23,7 @@ interface Topic {
 const CRUDTopicsForm: React.FC = () => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [currentTopicId, setCurrentTopicId] = useState<string>("");
-
+  const [isEditing, setIsEditing] = useState(false);
   const [newTopic, setNewTopic] = useState<Topic>({
     topicTitle: "",
     topicDescription: "",
@@ -73,6 +73,22 @@ const CRUDTopicsForm: React.FC = () => {
 
     setNewTopic({ topicTitle: "", topicDescription: "", order: 0 });
     setCurrentTopicId("");
+  };
+
+  const handleEditTopic = (topic: Topic) => {
+    setCurrentTopicId(topic.topicId || "");
+    setNewTopic({
+      topicTitle: topic.topicTitle,
+      topicDescription: topic.topicDescription,
+      order: topic.order,
+    });
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setCurrentTopicId("");
+    setNewTopic({ topicTitle: "", topicDescription: "", order: 0 });
+    setIsEditing(false);
   };
 
   const handleDeleteTopic = async (id: string) => {
@@ -127,19 +143,21 @@ const CRUDTopicsForm: React.FC = () => {
               <h3>{topic.topicTitle}</h3>
             </div>
             <div>
-              <button
-                onClick={() => {
-                  setCurrentTopicId(topic.topicId || "");
-                  setNewTopic({
-                    topicTitle: topic.topicTitle,
-                    topicDescription: topic.topicDescription,
-                    order: topic.order,
-                  });
-                }}
-                className="mr-2 rounded bg-blue-500 px-2 py-1 text-xs text-white"
-              >
-                Edit
-              </button>
+              {isEditing && currentTopicId === topic.topicId ? (
+                <button
+                  onClick={handleCancelEdit}
+                  className="mr-2 rounded bg-yellow-300 px-2 py-1 text-xs text-white"
+                >
+                  Cancel
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleEditTopic(topic)}
+                  className="mr-2 rounded bg-blue-500 px-2 py-1 text-xs text-white"
+                >
+                  Edit
+                </button>
+              )}
               <button
                 onClick={() => handleDeleteTopic(topic.topicId || "")}
                 className="rounded bg-red-500 px-2 py-1 text-xs text-white"
