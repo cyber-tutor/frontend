@@ -20,13 +20,19 @@ interface UserData {
   isSuperUser: boolean;
 }
 
-const AdminLink = ({ href, title }) => (
+interface AdminLinkProps {
+  href: string;
+  title: string;
+}
+
+const AdminLink: React.FC<AdminLinkProps> = ({ href, title }) => (
   <Link href={href}>
     <div className="m-3 cursor-pointer rounded-lg bg-white p-3 shadow-lg hover:bg-slate-200">
       <h3 className="text-xl font-bold">{title}</h3>
     </div>
   </Link>
 );
+
 export default function AdminDashboard() {
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
