@@ -24,6 +24,7 @@ const CRUDTopicsForm: React.FC = () => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [currentTopicId, setCurrentTopicId] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
+  const [isLocked, setIsLocked] = useState(true);
   const [newTopic, setNewTopic] = useState<Topic>({
     topicTitle: "",
     topicDescription: "",
@@ -89,6 +90,10 @@ const CRUDTopicsForm: React.FC = () => {
     setCurrentTopicId("");
     setNewTopic({ topicTitle: "", topicDescription: "", order: 0 });
     setIsEditing(false);
+  };
+
+  const toggleLock = () => {
+    setIsLocked(!isLocked);
   };
 
   const handleDeleteTopic = async (id: string) => {
@@ -161,13 +166,24 @@ const CRUDTopicsForm: React.FC = () => {
               )}
               <button
                 onClick={() => handleDeleteTopic(topic.topicId || "")}
-                className="rounded bg-red-500 px-2 py-1 text-xs text-white"
+                className={`rounded px-2 py-1 text-xs text-white ${
+                  isLocked ? "bg-gray-500" : "bg-red-500"
+                }`}
+                disabled={isLocked}
               >
                 Delete
               </button>
             </div>
           </li>
         ))}
+        <div className="text-right">
+          <button
+            onClick={toggleLock}
+            className="mr-2 block w-full rounded bg-blue-500 px-2 py-1 text-xs text-white"
+          >
+            {isLocked ? "🔓 Unlock Delete" : "🔒 Lock Delete"}
+          </button>
+        </div>
       </ol>
     </div>
   );
