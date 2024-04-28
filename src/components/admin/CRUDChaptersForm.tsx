@@ -289,7 +289,17 @@ const CRUDChaptersForm: React.FC = () => {
               className="mb-4 flex items-center justify-between"
             >
               <div className="flex items-center">
-                <input type="number" className="mr-2 w-12" />
+                <input
+                  type="number"
+                  value={orderInputs[chapter.chapterId || ""]}
+                  className="mr-2 w-12"
+                  onChange={(e) =>
+                    setOrderInputs({
+                      ...orderInputs,
+                      [chapter.chapterId || ""]: Number(e.target.value),
+                    })
+                  }
+                />
                 <h3>{chapter.chapterTitle}</h3>
               </div>
               <div>
