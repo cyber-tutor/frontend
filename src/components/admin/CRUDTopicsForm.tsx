@@ -201,14 +201,16 @@ const CRUDTopicsForm: React.FC = () => {
           onChange={handleTopicChange}
           className="mb-2 block w-full rounded border border-gray-300 p-2"
         />
-        <input
-          type="number"
-          name="order"
-          placeholder="Order"
-          value={newTopic.order || ""}
-          onChange={handleTopicChange}
-          className="mb-2 block w-full rounded border border-gray-300 p-2"
-        />
+        {!isEditing && (
+          <input
+            type="number"
+            name="order"
+            placeholder="Order"
+            value={newTopic.order || ""}
+            onChange={handleTopicChange}
+            className="mb-2 block w-full rounded border border-gray-300 p-2"
+          />
+        )}
         <div className="text-center">
           <button
             type="submit"
