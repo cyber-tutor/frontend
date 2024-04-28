@@ -100,7 +100,7 @@ const CRUDTopicsForm: React.FC = () => {
   return (
     <div className="grid grid-cols-2 p-6">
       <div>
-        <form onSubmit={handleAddTopic} className="mb-12 w-4/5">
+        <form onSubmit={handleAddTopic} className="mx-4">
           <input
             type="text"
             name="topicTitle"
@@ -120,7 +120,7 @@ const CRUDTopicsForm: React.FC = () => {
             type="number"
             name="order"
             placeholder="Order"
-            value={newTopic.order}
+            value={newTopic.order || ""}
             onChange={handleTopicChange}
             className="mb-2 block w-full rounded border border-gray-300 p-2"
           />
