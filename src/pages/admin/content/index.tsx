@@ -75,11 +75,11 @@ export default function CRUD_ControlGroupContent() {
       <Head>
         <title>Admin Interface: Control Group Content CRUD</title>
       </Head>
-      <h1 className="pt-5 text-center font-bold">
+      <h1 className="text-center font-bold md:mt-20 lg:mt-10">
         Admin Interface: Control Group Content CRUD
       </h1>
-      <div className="h-100 h-full w-full overflow-auto sm:overflow-scroll">
-        <div className="sticky top-0 z-10 bg-white">
+      <div className="h-100 h-full w-full">
+        <div className="sticky top-0 z-10">
           <ControlGroupForm topicId={topicId} />
         </div>
       </div>
