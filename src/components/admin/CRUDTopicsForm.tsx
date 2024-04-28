@@ -137,13 +137,13 @@ const CRUDTopicsForm: React.FC = () => {
                     order: topic.order,
                   });
                 }}
-                className="mr-2 rounded bg-blue-500 px-4 py-2 text-white"
+                className="mr-2 rounded bg-blue-500 px-2 py-1 text-xs text-white"
               >
                 Edit
               </button>
               <button
                 onClick={() => handleDeleteTopic(topic.topicId || "")}
-                className="rounded bg-red-500 px-4 py-2 text-white"
+                className="rounded bg-red-500 px-2 py-1 text-xs text-white"
               >
                 Delete
               </button>
