@@ -125,7 +125,6 @@ const CRUDTopicsForm: React.FC = () => {
           >
             <div>
               <h3>{topic.topicTitle}</h3>
-              <p>{topic.topicDescription}</p>
             </div>
             <div>
               <button
