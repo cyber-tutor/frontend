@@ -270,6 +270,12 @@ const InitialSurvey = () => {
               "Proficiency levels must be provided for all 5 topics.",
             );
           }
+
+          for(const level of proficiencyLevels) {
+            if (!["beginner", "intermediate", "expert"].includes(level)) {
+              throw new Error("Proficiency level is not valid");
+            }
+          }
           const topics = [
             "online_privacy",
             "password_security",

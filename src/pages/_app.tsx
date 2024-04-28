@@ -4,7 +4,7 @@ import { NextUIProvider } from "@nextui-org/react";
 import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
-import "survey-react/survey.css";
+import "survey-core/defaultV2.min.css";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
