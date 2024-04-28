@@ -104,39 +104,6 @@ const CRUDTopicsForm: React.FC = () => {
 
   return (
     <div className="grid grid-cols-2 p-6">
-      <form onSubmit={handleAddTopic} className="mx-4">
-        <input
-          type="text"
-          name="topicTitle"
-          placeholder="Topic Title"
-          value={newTopic.topicTitle}
-          onChange={handleTopicChange}
-          className="mb-2 block w-full rounded border border-gray-300 p-2"
-        />
-        <textarea
-          name="topicDescription"
-          placeholder="Topic Description"
-          value={newTopic.topicDescription}
-          onChange={handleTopicChange}
-          className="mb-2 block w-full rounded border border-gray-300 p-2"
-        />
-        <input
-          type="number"
-          name="order"
-          placeholder="Order"
-          value={newTopic.order || ""}
-          onChange={handleTopicChange}
-          className="mb-2 block w-full rounded border border-gray-300 p-2"
-        />
-        <div className="text-center">
-          <button
-            type="submit"
-            className="rounded bg-blue-500 px-4 py-2 text-white"
-          >
-            {currentTopicId ? "Save Changes" : "Add Topic"}
-          </button>
-        </div>
-      </form>
       <ol>
         {topics.map((topic) => (
           <li
@@ -185,6 +152,39 @@ const CRUDTopicsForm: React.FC = () => {
           </button>
         </div>
       </ol>
+      <form onSubmit={handleAddTopic} className="mx-4">
+        <input
+          type="text"
+          name="topicTitle"
+          placeholder="Topic Title"
+          value={newTopic.topicTitle}
+          onChange={handleTopicChange}
+          className="mb-2 block w-full rounded border border-gray-300 p-2"
+        />
+        <textarea
+          name="topicDescription"
+          placeholder="Topic Description"
+          value={newTopic.topicDescription}
+          onChange={handleTopicChange}
+          className="mb-2 block w-full rounded border border-gray-300 p-2"
+        />
+        <input
+          type="number"
+          name="order"
+          placeholder="Order"
+          value={newTopic.order || ""}
+          onChange={handleTopicChange}
+          className="mb-2 block w-full rounded border border-gray-300 p-2"
+        />
+        <div className="text-center">
+          <button
+            type="submit"
+            className="rounded bg-blue-500 px-4 py-2 text-white"
+          >
+            {currentTopicId ? "Save Changes" : "Add Topic"}
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
