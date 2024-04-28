@@ -70,9 +70,10 @@ export default function AdminDashboard() {
         Admin Dashboard
       </h1>
       <div className="flex flex-col text-start">
-        <AdminLink href="/admin/content" title="Content Management" />
-        <AdminLink href="/admin/questions" title="Questions Management" />
-        <AdminLink href="/admin/topics" title="Topics Management" />
+        <AdminLink href="/admin/content" title="Content CRUD" />
+        <AdminLink href="/admin/questions" title="Questions CRUD" />
+        <AdminLink href="/admin/topics" title="Topics CRUD" />
+        <AdminLink href="/admin/chapters" title="Chapters CRUD" />
       </div>
     </BaseLayout>
   );
