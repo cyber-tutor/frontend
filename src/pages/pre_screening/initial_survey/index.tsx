@@ -265,6 +265,7 @@ const InitialSurvey = () => {
         .then((proficiency) => {
           const proficiencyLevels = proficiency.split(", ");
 
+
           if (proficiencyLevels.length !== 5) {
             throw new Error(
               "Proficiency levels must be provided for all 5 topics.",
@@ -272,7 +273,7 @@ const InitialSurvey = () => {
           }
 
           for(const level of proficiencyLevels) {
-            if (!["beginner", "intermediate", "expert"].includes(level)) {
+            if (level !== "beginner" && level !== "intermediate" && level !== "expert") {
               throw new Error("Proficiency level is not valid");
             }
           }
