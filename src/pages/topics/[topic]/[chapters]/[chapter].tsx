@@ -95,7 +95,7 @@ export default function ChapterPage() {
 
   useEffect(() => {
     // Check if 1 minute and 30 seconds has passed
-    if (secondsElapsed >= 30) {
+    if (secondsElapsed >= 1) {
       setProgressComplete(true);
     }
   }, [secondsElapsed]);
@@ -228,7 +228,7 @@ export default function ChapterPage() {
         secondsElapsed < 30 && (
           <div className="sticky bottom-0 w-full border-t-2 bg-white shadow">
             <div className="mx-auto">
-              {secondsElapsed < 30 && (
+              {secondsElapsed < 1 && (
                 <>
                   <div>
                     {chapter.chapterType !== "assessment" && (
