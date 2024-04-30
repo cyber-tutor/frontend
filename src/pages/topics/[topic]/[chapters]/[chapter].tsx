@@ -255,7 +255,7 @@ export default function ChapterPage() {
           </div>
         )}
 
-      {secondsElapsed >= 30 || chapterComplete ? (
+      {secondsElapsed >= 0 || chapterComplete ? (
         <div className="sticky bottom-0 w-full border-t-2 bg-white shadow">
           <div className="mx-auto flex items-center justify-center">
             {(progressComplete || chapterComplete) &&
