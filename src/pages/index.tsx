@@ -20,6 +20,7 @@ import CircularWithValueLabel from "~/components/ui/ProgressCircle";
 import { set } from "firebase/database";
 import { jsPDF } from "jspdf";
 import { FaNewspaper } from "react-icons/fa";
+import Tip from "../components/content_management/tips/tip"
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
@@ -284,6 +285,10 @@ export default function Home() {
                     </motion.button>
                   </motion.div>
                 )}
+
+                <motion.div className="text-center">
+                  <Tip/>
+                </motion.div>
 
                 <motion.div className="mt-4 text-center">
                   {streakCount > 0 ? (
