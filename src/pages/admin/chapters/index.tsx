@@ -4,7 +4,7 @@ import { BaseLayout } from "../../../components/layouts/BaseLayout";
 import CRUDChaptersForm from "../../../components/admin/CRUDChaptersForm";
 import { useIsSuperuser } from "../../../hooks/useIsSuperuser";
 
-export default function CRUDTopics() {
+export default function CRUDChapters() {
   const isSuperuser = useIsSuperuser();
 
   return (
