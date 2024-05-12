@@ -12,6 +12,12 @@ import {
   DocumentData,
   setDoc,
 } from "firebase/firestore";
+import {
+  getTopics,
+  addTopic,
+  updateTopic,
+  deleteTopic,
+} from "../../utils/topicsCRUDOperations";
 
 interface Topic {
   topicId?: string;
@@ -34,13 +40,7 @@ const CRUDTopicsForm: React.FC = () => {
 
   useEffect(() => {
     const fetchTopics = async () => {
-      const topicsCollection = collection(db, "topics");
-      const topicsQuery = query(topicsCollection, orderBy("order"));
-      const snapshot = await getDocs(topicsQuery);
-      const topicsData = snapshot.docs.map((doc) => ({
-        topicId: doc.id,
-        ...doc.data(),
-      })) as Topic[];
+      const topicsData = await getTopics();
       setTopics(topicsData);
     };
 
@@ -63,14 +63,15 @@ const CRUDTopicsForm: React.FC = () => {
 
     const { topicTitle, topicDescription, order } = newTopic;
 
-    const topicsCollection = collection(db, "topics");
     if (currentTopicId) {
-      const topicDoc = doc(topicsCollection, currentTopicId);
-      await updateDoc(topicDoc, { topicTitle, topicDescription, order });
+      await updateTopic(currentTopicId, {
+        topicTitle,
+        topicDescription,
+        order,
+      });
     } else {
       const topicId = newTopic.topicTitle.toLowerCase().replace(/ /g, "_");
-      const topicDoc = doc(topicsCollection, topicId);
-      await setDoc(topicDoc, { topicTitle, topicDescription, order });
+      await addTopic(topicId, { topicTitle, topicDescription, order });
     }
 
     setNewTopic({ topicTitle: "", topicDescription: "", order: 0 });
@@ -102,11 +103,8 @@ const CRUDTopicsForm: React.FC = () => {
   }, [topics]);
 
   const handleSubmitOrder = async () => {
-    const topicsCollection = collection(db, "topics");
-
     for (const topicId in orderInputs) {
-      const topicDoc = doc(topicsCollection, topicId);
-      await updateDoc(topicDoc, { order: orderInputs[topicId] });
+      await updateTopic(topicId, { order: orderInputs[topicId] });
     }
   };
 
@@ -115,9 +113,7 @@ const CRUDTopicsForm: React.FC = () => {
   };
 
   const handleDeleteTopic = async (id: string) => {
-    const topicsCollection = collection(db, "topics");
-    const topicDoc = doc(topicsCollection, id);
-    await deleteDoc(topicDoc);
+    await deleteTopic(id);
   };
 
   return (
