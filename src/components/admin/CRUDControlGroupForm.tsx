@@ -8,49 +8,8 @@ import {
   query,
 } from "firebase/firestore";
 import { db } from "../firebase/config";
-import InputField from "../ui/InputField";
 import { useTopics } from "../../hooks/useTopics";
-
-interface Chapter {
-  chapterId: string;
-  chapterTitle: string;
-  chapterDescription: string;
-  order: number;
-  proficiency: number;
-  controlGroupContent: {
-    beginner: string;
-    intermediate: string;
-    expert: string;
-  };
-  controlGroupVideoURLs: {
-    beginner: string;
-    intermediate: string;
-    expert: string;
-  };
-  controlGroupImageURLs: string[];
-  experimentalGroupContent: {
-    beginner: string;
-    intermediate: string;
-    expert: string;
-  };
-  experimentalGroupVideoURLs: {
-    beginner: string;
-    intermediate: string;
-    expert: string;
-  };
-  experimentalGroupImageURLs: string[];
-}
-
-interface Topic {
-  topicId: string;
-  topicTitle: string;
-}
-
-interface Chapter {
-  chapterId: string;
-  chapterTitle: string;
-  chapterType: string;
-}
+import { Chapter } from "../../types";
 
 interface ControlGroupFormProps {
   topicId: string;
