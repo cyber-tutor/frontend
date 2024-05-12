@@ -12,24 +12,28 @@ const createChapter = (chapterDoc: any): Chapter => {
   };
 };
 
-export const useChapters = (topicId: string) => {
+export const useChapters = (topicId: string | null) => {
   const [chapters, setChapters] = useState<Chapter[]>([]);
 
   useEffect(() => {
-    const fetchChapters = async () => {
-      const chaptersCollectionRef = collection(
-        db,
-        "topics",
-        topicId,
-        "chapters",
-      );
-      const chaptersSnapshot = await getDocs(chaptersCollectionRef);
-      const chapters: Chapter[] = chaptersSnapshot.docs.map(createChapter);
+    if (topicId) {
+      const fetchChapters = async () => {
+        const chaptersCollectionRef = collection(
+          db,
+          "topics",
+          topicId,
+          "chapters",
+        );
+        const chaptersSnapshot = await getDocs(chaptersCollectionRef);
+        const chapters: Chapter[] = chaptersSnapshot.docs.map(createChapter);
 
-      setChapters(chapters);
-    };
+        setChapters(chapters);
+      };
 
-    fetchChapters();
+      fetchChapters();
+    } else {
+      setChapters([]);
+    }
   }, [topicId]);
 
   return chapters;
