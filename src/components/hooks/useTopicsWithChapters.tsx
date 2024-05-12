@@ -3,6 +3,25 @@ import { db } from "../firebase/config";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { Topic, Chapter } from "../../types";
 
+const createChapter = (chapterDoc: any): Chapter => {
+  const chapterData = chapterDoc.data();
+  const chapterId = chapterDoc.id;
+  return {
+    chapterId: chapterId,
+    ...chapterData,
+  };
+};
+
+const createTopic = (topicDoc: any, chapters: Chapter[]): Topic => {
+  const topicData = topicDoc.data();
+  const topicId = topicDoc.id;
+  return {
+    topicId: topicId,
+    ...topicData,
+    chapters: chapters,
+  };
+};
+
 export const useTopicsWithChapters = () => {
   const [topics, setTopics] = useState<Topic[]>([]);
 
@@ -15,39 +34,11 @@ export const useTopicsWithChapters = () => {
         query(topicsCollectionRef, orderBy("order")),
       );
       for (const topicDoc of topicsSnapshot.docs) {
-        const topicData = topicDoc.data();
-        const topicId = topicDoc.id;
-
         const chaptersCollectionRef = collection(topicDoc.ref, "chapters");
         const chaptersSnapshot = await getDocs(chaptersCollectionRef);
-        const chapters: Chapter[] = [];
-        chaptersSnapshot.forEach((chapterDoc) => {
-          const chapterData = chapterDoc.data();
-          const chapterId = chapterDoc.id;
-          chapters.push({
-            chapterId: chapterId,
-            chapterType: chapterData.chapterType,
-            chapterTitle: chapterData.chapterTitle,
-            chapterDescription: chapterData.chapterDescription,
-            controlGroupContent: chapterData.controlGroupContent,
-            experimentalGroupContent: chapterData.experimentalGroupContent,
-            controlGroupImageURLs: chapterData.controlGroupImageURL,
-            experimentalGroupImageURLs: chapterData.experimentalGroupImageURL,
-            controlGroupVideoURLs: chapterData.controlGroupVideoURLs,
-            experimentalGroupVideoURLs: chapterData.experimentalGroupVideoURLs,
-            order: chapterData.order,
-            proficiency: chapterData.proficiency,
-          });
-        });
+        const chapters: Chapter[] = chaptersSnapshot.docs.map(createChapter);
 
-        const newTopic = {
-          topicId: topicId,
-          topicTitle: topicData.topicTitle,
-          topicDescription: topicData.topicDescription,
-          order: topicData.order,
-          isComplete: topicData.isComplete,
-          chapters: chapters,
-        };
+        const newTopic = createTopic(topicDoc, chapters);
 
         topicsArray.push(newTopic);
       }
