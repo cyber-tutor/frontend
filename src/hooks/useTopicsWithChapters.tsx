@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { db } from "../firebase/config";
+import { db } from "../components/firebase/config";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { Topic, Chapter } from "../../types";
+import { Topic, Chapter } from "../types";
 
 const createChapter = (chapterDoc: any): Chapter => {
   const chapterData = chapterDoc.data();

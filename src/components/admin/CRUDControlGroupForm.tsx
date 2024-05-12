@@ -9,7 +9,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase/config";
 import InputField from "../ui/InputField";
-import { useTopics } from "../hooks/useTopics";
+import { useTopics } from "../../hooks/useTopics";
 
 interface Chapter {
   chapterId: string;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { db } from "../firebase/config";
+import { db } from "../components/firebase/config";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { Topic } from "../../types";
+import { Topic } from "../types";
 
 export const useTopics = () => {
   const [topics, setTopics] = useState<Topic[]>([]);

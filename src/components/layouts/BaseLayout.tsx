@@ -6,7 +6,7 @@ import { DocumentData } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import queryUserDocument from "../firebase/FirebaseFunctions";
 import { NavigationManager } from "../ui/navigation/NavigationManager";
-import { useTopics } from "../hooks/useTopics";
+import { useTopics } from "../../hooks/useTopics";
 
 type LayoutProps = {
   children: ReactNode;

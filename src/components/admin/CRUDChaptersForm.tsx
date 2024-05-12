@@ -10,7 +10,7 @@ import {
   addDoc,
 } from "firebase/firestore";
 import { db } from "../firebase/config";
-import { useTopics } from "../hooks/useTopics";
+import { useTopics } from "../../hooks/useTopics";
 
 interface Topic {
   topicId?: string;
