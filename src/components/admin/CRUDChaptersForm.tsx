@@ -10,6 +10,7 @@ import {
   addDoc,
 } from "firebase/firestore";
 import { db } from "../firebase/config";
+import { useTopics } from "../hooks/useTopics";
 
 interface Topic {
   topicId?: string;
@@ -51,7 +52,7 @@ interface Chapter {
 
 const CRUDChaptersForm: React.FC = () => {
   const [chapters, setChapters] = useState<Chapter[]>([]);
-  const [topics, setTopics] = useState<Topic[]>([]);
+  const topics = useTopics();
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [currentChapterId, setCurrentChapterId] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
@@ -70,21 +71,6 @@ const CRUDChaptersForm: React.FC = () => {
     order: 0,
     proficiency: 0,
   });
-
-  useEffect(() => {
-    const fetchTopics = async () => {
-      const topicsCollection = collection(db, "topics");
-      const topicsQuery = query(topicsCollection, orderBy("order"));
-      const snapshot = await getDocs(topicsQuery);
-      const topicsData = snapshot.docs.map((doc) => ({
-        topicId: doc.id,
-        ...doc.data(),
-      })) as Topic[];
-      setTopics(topicsData);
-    };
-
-    fetchTopics();
-  }, []);
 
   useEffect(() => {
     const fetchChapters = async () => {
