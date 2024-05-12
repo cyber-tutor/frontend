@@ -13,6 +13,7 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { IoPersonCircleSharp, IoChevronDownOutline } from "react-icons/io5";
+import { useIsSuperuser } from "../../../hooks/useIsSuperuser";
 
 type Topic = {
   topicId: string;
@@ -49,6 +50,7 @@ export const Navbar = ({
   handleLogout,
 }: NavbarProps) => {
   const router = useRouter();
+  const isSuperuser = useIsSuperuser();
 
   return screenSize !== "lg" && screenSize !== "md" && showSidebar ? (
     <NextUINavbar className="fixed left-0 top-0 w-full shadow-lg">
@@ -111,11 +113,13 @@ export const Navbar = ({
                 >
                   {userDocument?.data().name}
                 </DropdownItem>
-                {userDocument && userDocument.data().isSuperuser && (
-                  <DropdownItem onClick={() => router.push("/admin")}>
-                    Admin Dashboard
-                  </DropdownItem>
-                )}
+                <>
+                  {isSuperuser && (
+                    <DropdownItem onClick={() => router.push("/admin")}>
+                      Admin Dashboard
+                    </DropdownItem>
+                  )}
+                </>
                 <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
               </DropdownMenu>
             </Dropdown>
