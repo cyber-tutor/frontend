@@ -8,48 +8,9 @@ import {
   query,
 } from "firebase/firestore";
 import { db } from "../firebase/config";
-import InputField from "../ui/InputField";
-
-interface Chapter {
-  chapterId: string;
-  chapterTitle: string;
-  chapterDescription: string;
-  order: number;
-  proficiency: number;
-  controlGroupContent: {
-    beginner: string;
-    intermediate: string;
-    expert: string;
-  };
-  controlGroupVideoURLs: {
-    beginner: string;
-    intermediate: string;
-    expert: string;
-  };
-  controlGroupImageURLs: string[];
-  experimentalGroupContent: {
-    beginner: string;
-    intermediate: string;
-    expert: string;
-  };
-  experimentalGroupVideoURLs: {
-    beginner: string;
-    intermediate: string;
-    expert: string;
-  };
-  experimentalGroupImageURLs: string[];
-}
-
-interface Topic {
-  topicId: string;
-  topicTitle: string;
-}
-
-interface Chapter {
-  chapterId: string;
-  chapterTitle: string;
-  chapterType: string;
-}
+import { useTopics } from "../../hooks/useTopics";
+import { useChapters } from "../../hooks/useChapters";
+import { Chapter } from "../../types";
 
 interface ControlGroupFormProps {
   topicId: string;
@@ -58,9 +19,9 @@ interface ControlGroupFormProps {
 type Proficiency = "beginner" | "intermediate" | "expert";
 
 const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
-  const [topics, setTopics] = useState<Topic[]>([]);
+  const topics = useTopics();
   const [selectedTopicId, setSelectedTopicId] = useState("");
-  const [chapters, setChapters] = useState<Chapter[]>([]);
+  const chapters = useChapters(selectedTopicId);
   const [updatedContent, setUpdatedContent] = useState<{
     beginner: string;
     intermediate: string;
@@ -82,48 +43,6 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
   const [updatedImageURLs, setUpdatedImageURLs] = useState<string[]>([]);
   const [selectedChapterId, setSelectedChapterId] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
-
-  useEffect(() => {
-    const fetchTopics = async () => {
-      try {
-        const topicsCollection = collection(db, "topics");
-        const topicsQuery = query(topicsCollection, orderBy("order"));
-        const topicsSnapshot = await getDocs(topicsQuery);
-        const fetchedTopics = topicsSnapshot.docs.map((doc) => ({
-          topicId: doc.id,
-          ...doc.data(),
-        })) as Topic[];
-        setTopics(fetchedTopics);
-      } catch (error) {
-        console.error("Error fetching topics:", error);
-        setFeedbackMessage("Error fetching topics. Please try again later.");
-      }
-    };
-    fetchTopics();
-  }, []);
-
-  useEffect(() => {
-    if (!selectedTopicId) return;
-    const fetchChapters = async () => {
-      try {
-        const chaptersCollection = collection(
-          db,
-          `topics/${selectedTopicId}/chapters`,
-        );
-        const chaptersQuery = query(chaptersCollection, orderBy("order"));
-        const chaptersSnapshot = await getDocs(chaptersQuery);
-        const fetchedChapters = chaptersSnapshot.docs.map((doc) => ({
-          chapterId: doc.id,
-          ...doc.data(),
-        })) as Chapter[];
-        setChapters(fetchedChapters);
-      } catch (error) {
-        console.error("Error fetching chapters:", error);
-        setFeedbackMessage("Error fetching chapters. Please try again later.");
-      }
-    };
-    fetchChapters();
-  }, [selectedTopicId]);
 
   const handleContentChange = (
     proficiency: Proficiency,
