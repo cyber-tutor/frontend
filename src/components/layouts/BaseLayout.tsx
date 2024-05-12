@@ -2,17 +2,11 @@ import { ReactNode, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../firebase/config";
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  DocumentData,
-} from "firebase/firestore";
+import { DocumentData } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import queryUserDocument from "../firebase/FirebaseFunctions";
 import { NavigationManager } from "../ui/navigation/NavigationManager";
-import { Topic } from "../../types";
+import { useTopics } from "../hooks/useTopics";
 
 type LayoutProps = {
   children: ReactNode;
@@ -20,7 +14,7 @@ type LayoutProps = {
 };
 
 export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
-  const [topics, setTopics] = useState<Topic[]>([]);
+  const topics = useTopics();
   const [screenSize, setScreenSize] = useState("");
   const [userDocument, setUserDocument] = useState<DocumentData | null>(null);
 
@@ -63,26 +57,6 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    const fetchTopics = async () => {
-      const topicsCollectionRef = collection(db, "topics");
-      const topicsQuery = query(topicsCollectionRef, orderBy("order"));
-      const topicsSnapshot = await getDocs(topicsQuery);
-      const fetchedTopics = topicsSnapshot.docs.map((doc) => {
-        const data = doc.data() as Topic;
-        return {
-          ...data,
-          topicId: doc.id,
-          isComplete: false,
-        };
-      });
-
-      setTopics(fetchedTopics);
-    };
-
-    fetchTopics();
   }, []);
 
   return (
