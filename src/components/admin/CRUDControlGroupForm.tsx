@@ -9,6 +9,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { useTopics } from "../../hooks/useTopics";
+import { useChapters } from "../../hooks/useChapters";
 import { Chapter } from "../../types";
 
 interface ControlGroupFormProps {
@@ -20,7 +21,7 @@ type Proficiency = "beginner" | "intermediate" | "expert";
 const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
   const topics = useTopics();
   const [selectedTopicId, setSelectedTopicId] = useState("");
-  const [chapters, setChapters] = useState<Chapter[]>([]);
+  const chapters = useChapters(selectedTopicId);
   const [updatedContent, setUpdatedContent] = useState<{
     beginner: string;
     intermediate: string;
@@ -42,29 +43,6 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
   const [updatedImageURLs, setUpdatedImageURLs] = useState<string[]>([]);
   const [selectedChapterId, setSelectedChapterId] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
-
-  useEffect(() => {
-    if (!selectedTopicId) return;
-    const fetchChapters = async () => {
-      try {
-        const chaptersCollection = collection(
-          db,
-          `topics/${selectedTopicId}/chapters`,
-        );
-        const chaptersQuery = query(chaptersCollection, orderBy("order"));
-        const chaptersSnapshot = await getDocs(chaptersQuery);
-        const fetchedChapters = chaptersSnapshot.docs.map((doc) => ({
-          chapterId: doc.id,
-          ...doc.data(),
-        })) as Chapter[];
-        setChapters(fetchedChapters);
-      } catch (error) {
-        console.error("Error fetching chapters:", error);
-        setFeedbackMessage("Error fetching chapters. Please try again later.");
-      }
-    };
-    fetchChapters();
-  }, [selectedTopicId]);
 
   const handleContentChange = (
     proficiency: Proficiency,
