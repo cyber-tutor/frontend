@@ -4,6 +4,7 @@ export interface Topic {
   topicDescription: string;
   order: number;
   isComplete: boolean;
+  chapters: Chapter[];
 }
 
 export interface Chapter {
