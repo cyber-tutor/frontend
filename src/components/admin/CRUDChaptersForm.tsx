@@ -11,44 +11,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { useTopics } from "../../hooks/useTopics";
-
-interface Topic {
-  topicId?: string;
-  topicTitle: string;
-  topicDescription: string;
-  order: number;
-}
-
-interface Chapter {
-  chapterId?: string;
-  chapterTitle: string;
-  chapterDescription: string;
-  chapterType: string;
-  controlGroupContent: {
-    beginner: string;
-    intermediate: string;
-    expert: string;
-  };
-  controlGroupVideoURLs: {
-    beginner: string;
-    intermediate: string;
-    expert: string;
-  };
-  controlGroupImageURLs: string[];
-  experimentalGroupContent: {
-    beginner: string;
-    intermediate: string;
-    expert: string;
-  };
-  experimentalGroupVideoURLs: {
-    beginner: string;
-    intermediate: string;
-    expert: string;
-  };
-  experimentalGroupImageURLs: string[];
-  order: number;
-  proficiency: number;
-}
+import { Topic, Chapter } from "../../types";
 
 const CRUDChaptersForm: React.FC = () => {
   const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -59,6 +22,7 @@ const CRUDChaptersForm: React.FC = () => {
   const [isLocked, setIsLocked] = useState(true);
   const [orderInputs, setOrderInputs] = useState<{ [key: string]: number }>({});
   const [newChapter, setNewChapter] = useState<Chapter>({
+    chapterId: "",
     chapterTitle: "",
     chapterDescription: "",
     chapterType: "",
@@ -100,6 +64,7 @@ const CRUDChaptersForm: React.FC = () => {
 
   const flattenChapter = (chapter: Chapter) => {
     return {
+      chapterId: chapter.chapterId,
       chapterTitle: chapter.chapterTitle,
       chapterDescription: chapter.chapterDescription,
       chapterType: chapter.chapterType,
@@ -150,6 +115,7 @@ const CRUDChaptersForm: React.FC = () => {
     }
 
     setNewChapter({
+      chapterId: "",
       chapterTitle: "",
       chapterDescription: "",
       chapterType: "",
@@ -180,17 +146,22 @@ const CRUDChaptersForm: React.FC = () => {
   const handleEditChapter = (chapter: Chapter) => {
     setCurrentChapterId(chapter.chapterId || "");
     setNewChapter({
-      chapterTitle: chapter.chapterTitle,
-      chapterDescription: chapter.chapterDescription,
-      chapterType: chapter.chapterType,
-      controlGroupContent: chapter.controlGroupContent,
-      controlGroupVideoURLs: chapter.controlGroupVideoURLs,
-      controlGroupImageURLs: chapter.controlGroupImageURLs,
-      experimentalGroupContent: chapter.experimentalGroupContent,
-      experimentalGroupVideoURLs: chapter.experimentalGroupVideoURLs,
-      experimentalGroupImageURLs: chapter.experimentalGroupImageURLs,
-      order: chapter.order,
-      proficiency: chapter.proficiency,
+      chapterId: "",
+      chapterTitle: "",
+      chapterDescription: "",
+      chapterType: "",
+      controlGroupContent: { beginner: "", intermediate: "", expert: "" },
+      controlGroupVideoURLs: { beginner: "", intermediate: "", expert: "" },
+      controlGroupImageURLs: [],
+      experimentalGroupContent: { beginner: "", intermediate: "", expert: "" },
+      experimentalGroupVideoURLs: {
+        beginner: "",
+        intermediate: "",
+        expert: "",
+      },
+      experimentalGroupImageURLs: [],
+      order: 0,
+      proficiency: 0,
     });
     setIsEditing(true);
   };
@@ -198,6 +169,7 @@ const CRUDChaptersForm: React.FC = () => {
   const handleCancelEdit = () => {
     setCurrentChapterId("");
     setNewChapter({
+      chapterId: "",
       chapterTitle: "",
       chapterDescription: "",
       chapterType: "",
