@@ -5,6 +5,7 @@ import {
   updateTopic,
   deleteTopic,
 } from "../../utils/topicsCRUDOperations";
+import { useTopics } from "../../hooks/useTopics";
 
 interface Topic {
   topicId?: string;
@@ -14,7 +15,7 @@ interface Topic {
 }
 
 const CRUDTopicsForm: React.FC = () => {
-  const [topics, setTopics] = useState<Topic[]>([]);
+  const topics = useTopics();
   const [currentTopicId, setCurrentTopicId] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const [isLocked, setIsLocked] = useState(true);
@@ -24,15 +25,6 @@ const CRUDTopicsForm: React.FC = () => {
     topicDescription: "",
     order: 0,
   });
-
-  useEffect(() => {
-    const fetchTopics = async () => {
-      const topicsData = await getTopics();
-      setTopics(topicsData);
-    };
-
-    fetchTopics();
-  }, []);
 
   const handleTopicChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
