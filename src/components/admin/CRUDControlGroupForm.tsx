@@ -9,6 +9,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase/config";
 import InputField from "../ui/InputField";
+import { useTopics } from "../hooks/useTopics";
 
 interface Chapter {
   chapterId: string;
@@ -58,7 +59,7 @@ interface ControlGroupFormProps {
 type Proficiency = "beginner" | "intermediate" | "expert";
 
 const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
-  const [topics, setTopics] = useState<Topic[]>([]);
+  const topics = useTopics();
   const [selectedTopicId, setSelectedTopicId] = useState("");
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [updatedContent, setUpdatedContent] = useState<{
@@ -82,25 +83,6 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
   const [updatedImageURLs, setUpdatedImageURLs] = useState<string[]>([]);
   const [selectedChapterId, setSelectedChapterId] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
-
-  useEffect(() => {
-    const fetchTopics = async () => {
-      try {
-        const topicsCollection = collection(db, "topics");
-        const topicsQuery = query(topicsCollection, orderBy("order"));
-        const topicsSnapshot = await getDocs(topicsQuery);
-        const fetchedTopics = topicsSnapshot.docs.map((doc) => ({
-          topicId: doc.id,
-          ...doc.data(),
-        })) as Topic[];
-        setTopics(fetchedTopics);
-      } catch (error) {
-        console.error("Error fetching topics:", error);
-        setFeedbackMessage("Error fetching topics. Please try again later.");
-      }
-    };
-    fetchTopics();
-  }, []);
 
   useEffect(() => {
     if (!selectedTopicId) return;
