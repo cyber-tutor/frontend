@@ -19,6 +19,7 @@ import QuestionForm, {
 import StickyHeadTable from "../../../components/ui/StickyHeadTable";
 import queryUserDocument from "~/components/firebase/FirebaseFunctions";
 import { useRouter } from "next/router";
+import { useIsSuperuser } from "../../../hooks/useIsSuperuser";
 
 interface TableRowData {
   id?: string;
@@ -34,35 +35,10 @@ interface TableRowData {
 }
 
 export default function CRUD_Questions() {
+  const isSuperuser = useIsSuperuser();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedQuestion, setEditedQuestion] = useState<Question | null>(null);
-
-  const router = useRouter();
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
-      if (currentUser) {
-        const usersCollection = collection(db, "users");
-        const superUserQuery = query(
-          usersCollection,
-          where("userId", "==", currentUser.uid),
-          where("isSuperuser", "==", true),
-        );
-        const querySnapshot = await getDocs(superUserQuery);
-        if (!querySnapshot.empty) {
-          // console.log("You are a superuser");
-        } else {
-          // console.log("You are not a superuser");
-          router.push("/");
-        }
-      } else {
-        router.push("/");
-      }
-    });
-
-    return () => unsubscribe();
-  }, [router]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -193,20 +169,24 @@ export default function CRUD_Questions() {
       <h1 className="mt-20 text-center font-bold md:mt-20 lg:mt-10">
         Admin Interface: Question CRUD
       </h1>
-      <div className="h-100 h-full w-full overflow-auto sm:overflow-scroll">
-        <div className="sticky top-0 z-10 bg-white">
-          {editingId && (
-            <QuestionForm
-              question={editedQuestion || undefined}
-              onSubmit={handleEditSubmit}
-            />
-          )}
+      {isSuperuser && (
+        <div className="h-100 h-full w-full overflow-auto sm:overflow-scroll">
+          <div className="sticky top-0 z-10 bg-white">
+            {editingId && (
+              <QuestionForm
+                question={editedQuestion || undefined}
+                onSubmit={handleEditSubmit}
+              />
+            )}
+          </div>
+          {!editingId && <QuestionForm onSubmit={createQuestion} />}
         </div>
-        {!editingId && <QuestionForm onSubmit={createQuestion} />}
-      </div>
-      <div className="overflow-y-auto">
-        <StickyHeadTable columns={columns} rows={transformedRows} />
-      </div>
+      )}
+      {isSuperuser && (
+        <div className="overflow-y-auto">
+          <StickyHeadTable columns={columns} rows={transformedRows} />
+        </div>
+      )}
     </BaseLayout>
   );
 }
