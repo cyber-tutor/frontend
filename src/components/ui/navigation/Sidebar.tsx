@@ -9,20 +9,12 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { IoPersonCircleSharp, IoLogOutOutline } from "react-icons/io5";
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
+import { useIsSuperuser } from "../../../hooks/useIsSuperuser";
 
 type Topic = {
   topicId: string;
   topicTitle: string;
   isComplete: boolean;
-};
-
-type UserDocument = {
-  id: string;
-  data: () => {
-    name: string;
-    initialSurveyComplete: boolean;
-    isSuperuser: boolean;
-  };
 };
 
 type SidebarProps = {
@@ -46,6 +38,7 @@ export const Sidebar = ({
 }: SidebarProps) => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(true);
   const router = useRouter();
+  const isSuperuser = useIsSuperuser();
 
   return (
     <div className="flex min-h-screen items-stretch bg-slate-50">
@@ -116,7 +109,7 @@ export const Sidebar = ({
                             {userDocument ? userDocument.data().name : ""}
                           </span>
                         </button>
-                        {userDocument && userDocument.data().isSuperuser && (
+                        {isSuperuser && (
                           <button
                             className="flex w-12 items-center justify-center border-l-2 bg-slate-50 py-3 text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
                             onClick={() => router.push("/admin")}
