@@ -113,13 +113,13 @@ export const Navbar = ({
                 >
                   {userDocument?.data().name}
                 </DropdownItem>
-                <>
-                  {isSuperuser && (
-                    <DropdownItem onClick={() => router.push("/admin")}>
-                      Admin Dashboard
-                    </DropdownItem>
-                  )}
-                </>
+                {isSuperuser ? (
+                  <DropdownItem onClick={() => router.push("/admin")}>
+                    Admin Dashboard
+                  </DropdownItem>
+                ) : (
+                  <DropdownItem className="hidden"></DropdownItem>
+                )}
                 <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
               </DropdownMenu>
             </Dropdown>
