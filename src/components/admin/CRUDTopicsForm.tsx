@@ -1,17 +1,4 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { db } from "../firebase/config";
-import {
-  collection,
-  doc,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  query,
-  orderBy,
-  DocumentData,
-  setDoc,
-} from "firebase/firestore";
 import {
   getTopics,
   addTopic,
