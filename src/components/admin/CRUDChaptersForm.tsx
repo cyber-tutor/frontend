@@ -11,12 +11,13 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { useTopics } from "../../hooks/useTopics";
+import { useChapters } from "../../hooks/useChapters";
 import { Topic, Chapter } from "../../types";
 
 const CRUDChaptersForm: React.FC = () => {
-  const [chapters, setChapters] = useState<Chapter[]>([]);
   const topics = useTopics();
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const chapters = useChapters(selectedTopic);
   const [currentChapterId, setCurrentChapterId] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const [isLocked, setIsLocked] = useState(true);
@@ -35,28 +36,6 @@ const CRUDChaptersForm: React.FC = () => {
     order: 0,
     proficiency: 0,
   });
-
-  useEffect(() => {
-    const fetchChapters = async () => {
-      if (selectedTopic === null) {
-        return;
-      }
-
-      const chaptersCollection = collection(
-        doc(db, "topics", selectedTopic),
-        "chapters",
-      );
-      const chaptersQuery = query(chaptersCollection, orderBy("order"));
-      const snapshot = await getDocs(chaptersQuery);
-      const chaptersData = snapshot.docs.map((doc) => ({
-        chapterId: doc.id,
-        ...doc.data(),
-      })) as Chapter[];
-      setChapters(chaptersData);
-    };
-
-    fetchChapters();
-  }, [selectedTopic]);
 
   const handleTopicChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedTopic(event.target.value);
