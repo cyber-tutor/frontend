@@ -2,12 +2,6 @@ import { useState, useEffect } from "react";
 import { auth, db } from "../components/firebase/config";
 import { getDocs, collection, query, where } from "firebase/firestore";
 import { useRouter } from "next/router";
-import { User } from "firebase/auth";
-
-interface UserData {
-  userId: string;
-  isSuperUser: boolean;
-}
 
 export const useIsSuperuser = () => {
   const [isSuperuser, setIsSuperuser] = useState<boolean>(false);
