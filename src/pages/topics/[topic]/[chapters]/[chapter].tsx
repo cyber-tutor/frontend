@@ -2,19 +2,12 @@ import { BaseLayout } from "../../../../components/layouts/BaseLayout";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { db, auth } from "~/components/firebase/config";
-import {
-  DocumentData,
-  doc,
-  getDoc,
-  updateDoc,
-  arrayUnion,
-} from "firebase/firestore";
+import { DocumentData, doc, getDoc } from "firebase/firestore";
 import {
   findUserDocId,
   isChapterComplete,
 } from "~/components/firebase/FirebaseFunctions";
 import TimerComponent from "~/components/ui/Timer";
-import { progress } from "framer-motion";
 import queryUserDocument from "~/components/firebase/FirebaseFunctions";
 import { motion } from "framer-motion";
 import { Chapter } from "../../../../types";

@@ -2,13 +2,10 @@ import React from "react";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import {
   findUserDocId,
-  handleVideoEnd,
-  isWatched,
   getNextChapterId,
   increaseLevel,
-  isChapterComplete,
 } from "~/components/firebase/FirebaseFunctions";
-import { db, auth } from "~/components/firebase/config";
+import { db } from "~/components/firebase/config";
 import { useRouter } from "next/router";
 
 interface NextChapterButtonProps {

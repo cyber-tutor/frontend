@@ -50,25 +50,6 @@ const SignUpForm: React.FC = () => {
     }
   };
 
-  const validateEmail = async (email: string): Promise<boolean> => {
-    const apiUrl = `https://api.hunter.io/v2/email-verifier?email=${email}&api_key=${process.env.NEXT_PUBLIC_EMAIL_VERIFIER_HUNTER_API_KEY}`;
-    try {
-      const response = await fetch(apiUrl);
-      const data = await response.json();
-      if (data.data && data.data.status === "valid") {
-        setEmailError("");
-        return true;
-      } else {
-        setEmailError("Invalid email address");
-        return false;
-      }
-    } catch (error) {
-      // console.error("Error validating email:", error);
-      setEmailError("Error validating email");
-      return false;
-    }
-  };
-
   const handleSignUp = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault();
 

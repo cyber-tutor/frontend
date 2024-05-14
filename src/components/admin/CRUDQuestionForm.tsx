@@ -1,7 +1,5 @@
-import React, { useState, useEffect, FormEvent, ChangeEvent } from "react";
+import React, { useState, FormEvent, ChangeEvent } from "react";
 import InputField from "../ui/InputField";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { db } from "../firebase/config";
 import { useTopicsWithChapters } from "../../hooks/useTopicsWithChapters";
 import { Topic } from "../../types";
 import { Chapter } from "../../types";

@@ -1,4 +1,3 @@
-// NewsCard.tsx
 import React from "react";
 import { FaBook } from "react-icons/fa";
 
