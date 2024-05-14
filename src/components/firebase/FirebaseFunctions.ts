@@ -1,13 +1,10 @@
 import {
-  Firestore,
   doc,
-  addDoc,
   collection,
   query,
   where,
   getDocs,
   DocumentData,
-  QueryDocumentSnapshot,
   updateDoc,
   getDoc,
   writeBatch,
@@ -18,8 +15,6 @@ import {
 } from "firebase/firestore";
 import { db } from "./config";
 import { User } from "firebase/auth";
-import { Console } from "console";
-import router, { useRouter } from "next/router";
 
 export default async function queryUserDocument(
   userIdString: string,

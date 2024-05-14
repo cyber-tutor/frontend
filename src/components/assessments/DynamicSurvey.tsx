@@ -8,7 +8,6 @@ import {
   getDocs,
   query,
   setDoc,
-  updateDoc,
   where,
 } from "firebase/firestore";
 import {
@@ -16,7 +15,6 @@ import {
   increaseLevel,
 } from "~/components/firebase/FirebaseFunctions";
 import { useRouter } from "next/router";
-import { button, user } from "@nextui-org/react";
 
 interface Question {
   question: string;

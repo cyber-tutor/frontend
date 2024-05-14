@@ -1,6 +1,4 @@
-import { doc, updateDoc } from "firebase/firestore";
 import React, { useEffect } from "react";
-import { db } from "~/components/firebase/config";
 
 interface TimerProps {
   secondsElapsed: number;

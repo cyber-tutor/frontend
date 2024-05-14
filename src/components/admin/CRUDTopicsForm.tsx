@@ -1,18 +1,11 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import {
-  getTopics,
   addTopic,
   updateTopic,
   deleteTopic,
 } from "../../utils/topicsCRUDOperations";
 import { useTopics } from "../../hooks/useTopics";
-
-interface Topic {
-  topicId?: string;
-  topicTitle: string;
-  topicDescription: string;
-  order: number;
-}
+import { Topic } from "src/types";
 
 const CRUDTopicsForm: React.FC = () => {
   const topics = useTopics();
@@ -21,9 +14,12 @@ const CRUDTopicsForm: React.FC = () => {
   const [isLocked, setIsLocked] = useState(true);
   const [orderInputs, setOrderInputs] = useState<{ [key: string]: number }>({});
   const [newTopic, setNewTopic] = useState<Topic>({
+    topicId: "",
     topicTitle: "",
     topicDescription: "",
     order: 0,
+    isComplete: false,
+    chapters: [],
   });
 
   const handleTopicChange = (
@@ -53,23 +49,39 @@ const CRUDTopicsForm: React.FC = () => {
       await addTopic(topicId, { topicTitle, topicDescription, order });
     }
 
-    setNewTopic({ topicTitle: "", topicDescription: "", order: 0 });
+    setNewTopic({
+      topicId: "",
+      topicTitle: "",
+      topicDescription: "",
+      order: 0,
+      isComplete: false,
+      chapters: [],
+    });
     setCurrentTopicId("");
   };
-
   const handleEditTopic = (topic: Topic) => {
     setCurrentTopicId(topic.topicId || "");
     setNewTopic({
+      topicId: topic.topicId,
       topicTitle: topic.topicTitle,
       topicDescription: topic.topicDescription,
       order: topic.order,
+      isComplete: topic.isComplete,
+      chapters: topic.chapters || [],
     });
     setIsEditing(true);
   };
 
   const handleCancelEdit = () => {
     setCurrentTopicId("");
-    setNewTopic({ topicTitle: "", topicDescription: "", order: 0 });
+    setNewTopic({
+      topicId: "",
+      topicTitle: "",
+      topicDescription: "",
+      order: 0,
+      isComplete: false,
+      chapters: [],
+    });
     setIsEditing(false);
   };
 

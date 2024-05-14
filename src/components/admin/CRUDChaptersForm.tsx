@@ -2,9 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   doc,
   collection,
-  getDocs,
-  query,
-  orderBy,
   updateDoc,
   deleteDoc,
   addDoc,
@@ -12,7 +9,7 @@ import {
 import { db } from "../firebase/config";
 import { useTopics } from "../../hooks/useTopics";
 import { useChapters } from "../../hooks/useChapters";
-import { Topic, Chapter } from "../../types";
+import { Chapter } from "../../types";
 
 const CRUDChaptersForm: React.FC = () => {
   const topics = useTopics();

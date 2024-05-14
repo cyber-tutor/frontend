@@ -1,4 +1,3 @@
-import React from "react";
 import Head from "next/head";
 import { BaseLayout } from "../../../components/layouts/BaseLayout";
 import CRUDTopicsForm from "../../../components/admin/CRUDTopicsForm";

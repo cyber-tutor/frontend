@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { auth, db } from "../../../components/firebase/config";
+import { useEffect, useState } from "react";
+import { db } from "../../../components/firebase/config";
 import {
   collection,
   addDoc,
@@ -7,18 +7,12 @@ import {
   updateDoc,
   deleteDoc,
   onSnapshot,
-  query,
-  where,
-  getDocs,
 } from "firebase/firestore";
-import Head from "next/head";
 import { BaseLayout } from "../../../components/layouts/BaseLayout";
 import QuestionForm, {
   Question,
 } from "../../../components/admin/CRUDQuestionForm";
 import StickyHeadTable from "../../../components/ui/StickyHeadTable";
-import queryUserDocument from "~/components/firebase/FirebaseFunctions";
-import { useRouter } from "next/router";
 import { useIsSuperuser } from "../../../hooks/useIsSuperuser";
 
 interface TableRowData {

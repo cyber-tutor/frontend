@@ -2,8 +2,6 @@ import {
   Navbar as NextUINavbar,
   NavbarBrand,
   NavbarContent,
-  NavbarItem,
-  Link,
   Button,
   DropdownItem,
   DropdownTrigger,
@@ -14,21 +12,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { IoPersonCircleSharp, IoChevronDownOutline } from "react-icons/io5";
 import { useIsSuperuser } from "../../../hooks/useIsSuperuser";
-
-type Topic = {
-  topicId: string;
-  topicTitle: string;
-  isComplete: boolean;
-};
-
-type UserDocument = {
-  id: string;
-  data: () => {
-    name: string;
-    initialSurveyComplete: boolean;
-    isSuperuser: boolean;
-  };
-};
+import { Topic } from "../../../types";
 
 type NavbarProps = {
   screenSize: string;

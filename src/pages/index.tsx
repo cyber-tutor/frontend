@@ -2,7 +2,7 @@ import Head from "next/head";
 import { BaseLayout } from "../components/layouts/BaseLayout";
 import { auth, db } from "../components/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import queryUserDocument, {
@@ -17,10 +17,9 @@ import {
 } from "firebase/firestore";
 import { useRouter } from "next/router";
 import CircularWithValueLabel from "~/components/ui/ProgressCircle";
-import { set } from "firebase/database";
 import { jsPDF } from "jspdf";
 import { FaNewspaper } from "react-icons/fa";
-import Tip from "../components/content_management/tips/tip"
+import Tip from "../components/content_management/tips/tip";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
@@ -287,7 +286,7 @@ export default function Home() {
                 )}
 
                 <motion.div className="text-center">
-                  <Tip/>
+                  <Tip />
                 </motion.div>
 
                 <motion.div className="mt-4 text-center">

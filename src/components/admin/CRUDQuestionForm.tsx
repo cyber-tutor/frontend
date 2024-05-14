@@ -1,7 +1,5 @@
-import React, { useState, useEffect, FormEvent, ChangeEvent } from "react";
+import React, { useState, FormEvent, ChangeEvent } from "react";
 import InputField from "../ui/InputField";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { db } from "../firebase/config";
 import { useTopicsWithChapters } from "../../hooks/useTopicsWithChapters";
 import { Topic } from "../../types";
 import { Chapter } from "../../types";
@@ -74,31 +72,6 @@ const QuestionForm: React.FC<{
       } else {
         setChapters([]);
       }
-    }
-  };
-
-  const handleArrayChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-
-    if (name === "choices") {
-      const choiceStrings = value.split(",").map((choice) => choice.trim());
-      const choicesObject: { [key: string]: string | undefined } = {};
-      for (let i = 0; i < choiceStrings.length; i++) {
-        const key = String.fromCharCode(97 + i);
-        choicesObject[key] = choiceStrings[i];
-      }
-
-      setEditedQuestion((prevQuestion) => ({
-        ...prevQuestion,
-        choices: choicesObject as { [key: string]: string },
-      }));
-    } else {
-      setEditedQuestion((prevQuestion) => ({
-        ...prevQuestion,
-        [name]: value.split(",").map((item) => item.trim()),
-      }));
     }
   };
 

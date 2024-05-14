@@ -4,12 +4,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/config";
 import { Sidebar } from "./Sidebar";
 import { Navbar } from "./Navbar";
-
-type Topic = {
-  topicId: string;
-  topicTitle: string;
-  isComplete: boolean;
-};
+import { Topic } from "../../../types";
 
 type Props = {
   topics: Topic[];

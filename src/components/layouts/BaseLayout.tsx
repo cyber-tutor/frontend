@@ -1,7 +1,7 @@
 import { ReactNode, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, db } from "../firebase/config";
+import { auth } from "../firebase/config";
 import { DocumentData } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import queryUserDocument from "../firebase/FirebaseFunctions";

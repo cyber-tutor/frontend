@@ -10,12 +10,7 @@ import { useRouter } from "next/router";
 import { IoPersonCircleSharp, IoLogOutOutline } from "react-icons/io5";
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import { useIsSuperuser } from "../../../hooks/useIsSuperuser";
-
-type Topic = {
-  topicId: string;
-  topicTitle: string;
-  isComplete: boolean;
-};
+import { Topic } from "../../../types";
 
 type SidebarProps = {
   topics: Topic[];

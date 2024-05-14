@@ -1,4 +1,3 @@
-import * as React from "react";
 import CircularProgress, {
   CircularProgressProps,
 } from "@mui/material/CircularProgress";

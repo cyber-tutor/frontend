@@ -1,16 +1,8 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import {
-  updateDoc,
-  doc,
-  collection,
-  getDocs,
-  orderBy,
-  query,
-} from "firebase/firestore";
+import React, { useState, ChangeEvent, FormEvent } from "react";
+import { updateDoc, doc } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { useTopics } from "../../hooks/useTopics";
 import { useChapters } from "../../hooks/useChapters";
-import { Chapter } from "../../types";
 
 interface ControlGroupFormProps {
   topicId: string;
