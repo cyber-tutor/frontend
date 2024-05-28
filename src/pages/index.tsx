@@ -359,6 +359,8 @@ export default function Home() {
                   LEARNING CYBER SECURITY HAS NEVER BEEN EASIER
                 </motion.h1>
 
+
+
                 {typeof window !== "undefined" && (
                     <ReactPlayer
                       url="https://youtu.be/027hGcCeoHc"
