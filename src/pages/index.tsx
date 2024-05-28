@@ -339,17 +339,15 @@ export default function Home() {
               />
             </div> */}
             <div
-                // style={{ backgroundImage: "url(/images/home_bg.jpg)" }}
-                className="h-screen w-screen bg-cover bg-no-repeat pb-10 bg-gradient-to-tr from-blue-600 to-blue-900"
-              >
-
-            <motion.div
-              className="flex flex-grow flex-col items-center justify-center p-4 text-gray-900"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
+              // style={{ backgroundImage: "url(/images/home_bg.jpg)" }}
+              className="h-screen w-screen bg-gradient-to-tr from-blue-600 to-blue-900 bg-cover bg-no-repeat pb-10"
             >
-              
+              <motion.div
+                className="flex flex-grow flex-col items-center justify-center p-4 text-gray-900"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
                 <motion.h1
                   className="mx-auto ml-9 mt-16 text-left text-4xl font-bold text-white md:text-5xl lg:w-1/2"
                   initial={{ opacity: 0 }}
@@ -359,16 +357,28 @@ export default function Home() {
                   LEARNING CYBER SECURITY HAS NEVER BEEN EASIER
                 </motion.h1>
 
-
-
-                {typeof window !== "undefined" && (
+                <div className="flex flex-col items-center justify-between gap-4 md:flex-row md:gap-x-8 lg:gap-x-16">
+                  <motion.p
+                    className="mx-auto mt-8 rounded-lg p-4 text-left text-xl font-semibold text-white md:text-2xl lg:w-1/2 lg:text-3xl"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    Welcome to CyberTutor! Protect your daily digital life with
+                    our free courses. Learn how to protect your personal
+                    information, secure your devices, and stay safe online. Our
+                    courses are designed for everyone, from beginners to
+                    advanced users. Get started today!
+                  </motion.p>
+                  {typeof window !== "undefined" && (
                     <ReactPlayer
                       url="https://youtu.be/027hGcCeoHc"
                       playing={false}
                       controls={true}
-                      className="mb-8 -mb-5 mt-7 mr-5 max-w-full justify-center items-center rounded-lg md:ml-4 lg:w-1/2"
+                      className="mb-8 mt-7 max-w-full items-center justify-center rounded-lg md:ml-4 lg:mb-0 lg:mt-0 lg:w-1/2"
                     />
                   )}
+                </div>
 
                 <motion.div
                   className="mt-10 flex items-center justify-center space-x-16 bg-cover bg-center"
@@ -402,8 +412,7 @@ export default function Home() {
                   </a>
                 </motion.div>
 
-
-              {/* <div className="container mx-auto px-4 py-8">
+                {/* <div className="container mx-auto px-4 py-8">
                 <div className="flex flex-col items-center justify-between gap-6 md:flex-row md:gap-x-24">
                   <p className="text-xl font-bold leading-relaxed text-blue-600 md:text-3xl">
                     Learning Cyber Security has never been easier. Watch or read
@@ -428,7 +437,7 @@ export default function Home() {
                 </div>
               </div> */}
 
-              {/* <div className="-mb-14 h-full w-screen bg-gradient-to-t from-blue-700 to-blue-900 ">
+                {/* <div className="-mb-14 h-full w-screen bg-gradient-to-t from-blue-700 to-blue-900 ">
                 <motion.h1
                   className="mx-auto ml-16 mt-20 text-left text-4xl font-bold font-extralight text-white md:text-5xl lg:w-1/2"
                   initial={{ opacity: 0 }}
@@ -461,11 +470,8 @@ export default function Home() {
                   )}
                 </div>
               </div> */}
-            </motion.div>
-
-
-
-              </div>
+              </motion.div>
+            </div>
 
             {/* <footer className="mt-8 w-full bg-gray-900 p-4 text-center text-white">
               2030 Cyber Tutor. All rights reserved.
