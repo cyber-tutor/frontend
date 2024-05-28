@@ -338,140 +338,78 @@ export default function Home() {
                 className="w-1/2 md:w-1/4 lg:w-1/6"
               />
             </div> */}
-            <div
-              // style={{ backgroundImage: "url(/images/home_bg.jpg)" }}
-              className="h-screen w-screen bg-gradient-to-tr from-blue-600 to-blue-900 bg-cover bg-no-repeat pb-10"
-            >
-              <motion.div
-                className="flex flex-grow flex-col items-center justify-center p-4 text-gray-900"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <motion.h1
-                  className="mx-auto ml-9 mt-16 text-left text-4xl font-bold text-white md:text-5xl lg:w-1/2"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  LEARNING CYBER SECURITY HAS NEVER BEEN EASIER
-                </motion.h1>
+           <div
+  // style={{ backgroundImage: "url(/images/home_bg.jpg)" }}
+  className="min-h-screen w-screen bg-gradient-to-tr from-blue-600 to-blue-900 bg-cover bg-no-repeat pb-10"
+>
+<motion.h1
+      className="ml-8 mt-16 text-left text-4xl font-bold text-white md:text-5xl lg:w-1/2"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      LEARNING CYBER SECURITY HAS NEVER BEEN EASIER
+    </motion.h1>
+  <motion.div
+    className="flex flex-col items-center justify-center p-4 text-gray-900"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.5 }}
+  >
+   
 
-                <div className="flex flex-col items-center justify-between gap-4 md:flex-row md:gap-x-8 lg:gap-x-16">
-                  <motion.p
-                    className="mx-auto mt-8 rounded-lg p-4 text-left text-xl font-semibold text-white md:text-2xl lg:w-1/2 lg:text-3xl"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    Welcome to CyberTutor! Protect your daily digital life with
-                    our free courses. Learn how to protect your personal
-                    information, secure your devices, and stay safe online. Our
-                    courses are designed for everyone, from beginners to
-                    advanced users. Get started today!
-                  </motion.p>
-                  {typeof window !== "undefined" && (
-                    <ReactPlayer
-                      url="https://youtu.be/027hGcCeoHc"
-                      playing={false}
-                      controls={true}
-                      className="mb-8 mt-7 max-w-full items-center justify-center rounded-lg md:ml-4 lg:mb-0 lg:mt-0 lg:w-1/2"
-                    />
-                  )}
-                </div>
+    <div className="flex flex-col items-center justify-between gap-4 md:flex-row md:gap-x-8 lg:gap-x-16">
+      <motion.p
+        className="mt-8 rounded-lg p-4 text-left text-xl font-semibold text-white md:text-2xl lg:w-1/2 lg:text-3xl"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        Welcome to CyberTutor! Protect your daily digital life with our free courses. Learn how to protect your personal information, secure your devices, and stay safe online. Our courses are designed for everyone, from beginners to advanced users. Get started today!
+      </motion.p>
+      {typeof window !== "undefined" && (
+        <ReactPlayer
+          url="https://youtu.be/027hGcCeoHc"
+          playing={false}
+          controls={true}
+          className="mb-8 mt-7 w-full rounded-lg md:ml-4 lg:mb-0 lg:mt-0 lg:w-1/2"
+        />
+      )}
+    </div>
 
-                <motion.div
-                  className="mt-10 flex items-center justify-center space-x-16 bg-cover bg-center"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <a
-                    href="/users/sign-in"
-                    className="relative flex flex-col items-center justify-center p-6 transition duration-150 ease-in-out hover:scale-110"
-                  >
-                    <FontAwesomeIcon
-                      icon={faLock}
-                      className="text-9xl text-blue-400 transition duration-150 ease-in-out"
-                    />
-                    <span className="absolute top-12 mt-14 text-center text-xl font-bold text-white transition duration-150 ease-in-out">
-                      Sign In
-                    </span>
-                  </a>
-                  <a
-                    href="/users/sign-up"
-                    className="relative flex flex-col items-center justify-center p-6 transition duration-150 ease-in-out hover:scale-110"
-                  >
-                    <FontAwesomeIcon
-                      icon={faLock}
-                      className="text-9xl text-blue-400 transition duration-150 ease-in-out "
-                    />
-                    <span className="absolute top-12 mt-14 text-center text-xl font-bold text-white transition duration-150 ease-in-out">
-                      Sign Up
-                    </span>
-                  </a>
-                </motion.div>
-
-                {/* <div className="container mx-auto px-4 py-8">
-                <div className="flex flex-col items-center justify-between gap-6 md:flex-row md:gap-x-24">
-                  <p className="text-xl font-bold leading-relaxed text-blue-600 md:text-3xl">
-                    Learning Cyber Security has never been easier. Watch or read
-                    expert curated content.
-                  </p>
-                  <img
-                    src="/images/content.png"
-                    className="h-auto w-full rounded-lg shadow-lg md:w-1/2"
-                    alt="Learning Cyber Security"
-                  />
-                </div>
-                <div className="mt-8 flex flex-col-reverse items-center justify-between gap-6 md:flex-row md:gap-x-24">
-                  <img
-                    src="/gifs/2fa.gif"
-                    alt="Two Factor Authentication"
-                    className="h-auto w-full rounded-lg shadow-lg md:w-1/2"
-                  />
-                  <p className="text-xl font-bold leading-relaxed text-blue-600 md:text-3xl">
-                    Learn topics ranging from two-factor authentication to
-                    software updates and strong passwords.
-                  </p>
-                </div>
-              </div> */}
-
-                {/* <div className="-mb-14 h-full w-screen bg-gradient-to-t from-blue-700 to-blue-900 ">
-                <motion.h1
-                  className="mx-auto ml-16 mt-20 text-left text-4xl font-bold font-extralight text-white md:text-5xl lg:w-1/2"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  ABOUT
-                </motion.h1>
-                <div className="mt-10 flex flex-wrap items-center justify-center md:flex-nowrap">
-                  <motion.p
-                    className="mx-auto mt-8 rounded-lg p-4 text-left text-xl font-semibold text-white md:text-2xl lg:w-1/2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    Welcome to CyberTutor! Protect your daily digital life with
-                    our free courses. Learn how to protect your personal
-                    information, secure your devices, and stay safe online. Our
-                    courses are designed for everyone, from beginners to
-                    advanced users. Get started today!
-                  </motion.p>
-
-                  {typeof window !== "undefined" && (
-                    <ReactPlayer
-                      url="https://youtu.be/027hGcCeoHc"
-                      playing={false}
-                      controls={true}
-                      className="mb-8 mr-5 max-w-full rounded-lg md:ml-4 lg:w-1/2"
-                    />
-                  )}
-                </div>
-              </div> */}
-              </motion.div>
-            </div>
+    <motion.div
+      className="mt-10 flex items-center justify-center space-x-16"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <a
+        href="/users/sign-in"
+        className="relative flex flex-col items-center justify-center p-6 transition duration-150 ease-in-out hover:scale-110"
+      >
+        <FontAwesomeIcon
+          icon={faLock}
+          className="text-9xl text-blue-400 transition duration-150 ease-in-out"
+        />
+        <span className="absolute top-12 mt-14 text-center text-xl font-bold text-white transition duration-150 ease-in-out">
+          Sign In
+        </span>
+      </a>
+      <a
+        href="/users/sign-up"
+        className="relative flex flex-col items-center justify-center p-6 transition duration-150 ease-in-out hover:scale-110"
+      >
+        <FontAwesomeIcon
+          icon={faLock}
+          className="text-9xl text-blue-400 transition duration-150 ease-in-out"
+        />
+        <span className="absolute top-12 mt-14 text-center text-xl font-bold text-white transition duration-150 ease-in-out">
+          Sign Up
+        </span>
+      </a>
+    </motion.div>
+  </motion.div>
+</div>
 
             {/* <footer className="mt-8 w-full bg-gray-900 p-4 text-center text-white">
               2030 Cyber Tutor. All rights reserved.
