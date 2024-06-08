@@ -390,35 +390,33 @@ export default function Home() {
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <Link href="/users/sign-in">
-                    <a
-                      className="relative flex flex-col items-center justify-center p-6 transition duration-150 ease-in-out hover:scale-110"
-                      onMouseEnter={() => setIsSUHovered(true)}
-                      onMouseLeave={() => setIsSUHovered(false)}
-                    >
-                      <FontAwesomeIcon
-                        icon={suHovered ? faUnlock : faLock}
-                        className="text-9xl text-blue-400 transition duration-150 ease-in-out"
-                      />
-                      <span className="absolute top-12 mt-14 text-center text-xl font-bold text-white transition duration-150 ease-in-out">
-                        Sign In
-                      </span>
-                    </a>
+                  <Link
+                    href="/users/sign-in"
+                    className="relative flex flex-col items-center justify-center p-6 transition duration-150 ease-in-out hover:scale-110"
+                    onMouseEnter={() => setIsSUHovered(true)}
+                    onMouseLeave={() => setIsSUHovered(false)}
+                  >
+                    <FontAwesomeIcon
+                      icon={suHovered ? faUnlock : faLock}
+                      className="text-9xl text-blue-400 transition duration-150 ease-in-out"
+                    />
+                    <span className="absolute top-12 mt-14 text-center text-xl font-bold text-white transition duration-150 ease-in-out">
+                      Sign In
+                    </span>
                   </Link>
-                  <Link href="/users/sign-up">
-                    <a
-                      className="relative flex flex-col items-center justify-center p-6 transition duration-150 ease-in-out hover:scale-110"
-                      onMouseEnter={() => setIsSIHovered(true)}
-                      onMouseLeave={() => setIsSIHovered(false)}
-                    >
-                      <FontAwesomeIcon
-                        icon={siHovered ? faUnlock : faLock}
-                        className="text-9xl text-blue-400 transition duration-150 ease-in-out"
-                      />
-                      <span className="absolute top-12 mt-14 text-center text-xl font-bold text-white transition duration-150 ease-in-out">
-                        Sign Up
-                      </span>
-                    </a>
+                  <Link
+                    href="/users/sign-up"
+                    className="relative flex flex-col items-center justify-center p-6 transition duration-150 ease-in-out hover:scale-110"
+                    onMouseEnter={() => setIsSIHovered(true)}
+                    onMouseLeave={() => setIsSIHovered(false)}
+                  >
+                    <FontAwesomeIcon
+                      icon={siHovered ? faUnlock : faLock}
+                      className="text-9xl text-blue-400 transition duration-150 ease-in-out"
+                    />
+                    <span className="absolute top-12 mt-14 text-center text-xl font-bold text-white transition duration-150 ease-in-out">
+                      Sign Up
+                    </span>
                   </Link>
                 </motion.div>
               </motion.div>
