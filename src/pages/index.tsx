@@ -20,9 +20,6 @@ import CircularWithValueLabel from "~/components/ui/ProgressCircle";
 import { jsPDF } from "jspdf";
 import { FaNewspaper } from "react-icons/fa";
 import Tip from "../components/content_management/tips/tip";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock, faUnlock } from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
@@ -41,10 +38,6 @@ export default function Home() {
   const [totalChapters, setTotalChapters] = useState(0);
   const [completedChapters, setCompletedChapters] = useState(0);
   const [hasReadToday, setHasReadToday] = useState(false);
-
-  // For changing the lock icon to unlock icon on hover
-  const [suHovered, setIsSUHovered] = useState(false);
-  const [siHovered, setIsSIHovered] = useState(false);
   const router = useRouter();
 
   // Get the user ID
@@ -336,96 +329,52 @@ export default function Home() {
           </BaseLayout>
         ) : (
           // If user is not logged in, show the landing page with the introduction video
-          <>
-            {/* <div className="flex justify-center">
-              <img
-                src="images/home_title.png"
-                className="w-1/2 md:w-1/4 lg:w-1/6"
+
+          <motion.div
+            className="flex grow flex-col items-center justify-center bg-gray-200 p-4 text-gray-900"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            {typeof window !== "undefined" && (
+              <ReactPlayer
+                url="https://youtu.be/027hGcCeoHc"
+                playing={false}
+                controls={true}
+                className="mb-8 max-w-full rounded-lg shadow-2xl"
               />
-            </div> */}
-            <div
-              // style={{ backgroundImage: "url(/images/home_bg.jpg)" }}
-              className="min-h-screen w-screen bg-gradient-to-tr from-blue-600 to-blue-900 bg-cover bg-no-repeat pb-10"
+            )}
+            <motion.p
+              className="mx-auto mt-8 rounded-lg bg-white p-4 text-center text-xl font-semibold shadow-lg md:text-2xl lg:w-1/2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
             >
-              <motion.h1
-                className="ml-8 mt-16 text-left text-4xl font-bold text-white md:text-5xl lg:w-1/2"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
+              Welcome to CyberTutor! Dive into the world of cyber security and
+              fortify your digital life today. Explore our curated video series
+              to become a savvy internet user and protect yourself against
+              online threats.
+            </motion.p>
+            <motion.div
+              className="mt-10 flex space-x-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <button
+                className="rounded-lg bg-blue-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-blue-800"
+                onClick={() => router.push("/users/sign-up")}
               >
-                LEARNING CYBER SECURITY HAS NEVER BEEN EASIER
-              </motion.h1>
-              <motion.div
-                className="flex flex-col items-center justify-center p-4 text-gray-900"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
+                Register
+              </button>
+              <button
+                className="rounded-lg bg-green-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-green-800"
+                onClick={() => router.push("/users/sign-in")}
               >
-                <div className="flex flex-col items-center justify-between gap-4 md:flex-row md:gap-x-8 lg:gap-x-16">
-                  <motion.p
-                    className="mt-8 rounded-lg p-4 text-left text-xl font-semibold text-white md:text-2xl lg:w-1/2 lg:text-3xl"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    Welcome to CyberTutor! Protect your daily digital life with
-                    our free courses. Learn how to protect your personal
-                    information, secure your devices, and stay safe online. Our
-                    courses are designed for everyone, from beginners to
-                    advanced users. Get started today!
-                  </motion.p>
-                  {typeof window !== "undefined" && (
-                    <ReactPlayer
-                      url="https://youtu.be/027hGcCeoHc"
-                      playing={false}
-                      controls={true}
-                      className="mb-8 mt-7 w-full rounded-lg md:ml-4 lg:mb-0 lg:mt-0 lg:w-1/2"
-                    />
-                  )}
-                </div>
-
-                <motion.div
-                  className="mt-10 flex items-center justify-center space-x-16"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Link
-                    href="/users/sign-in"
-                    className="relative flex flex-col items-center justify-center p-6 transition duration-150 ease-in-out hover:scale-110"
-                    onMouseEnter={() => setIsSUHovered(true)}
-                    onMouseLeave={() => setIsSUHovered(false)}
-                  >
-                    <FontAwesomeIcon
-                      icon={suHovered ? faUnlock : faLock}
-                      className="text-9xl text-blue-400 transition duration-150 ease-in-out"
-                    />
-                    <span className="absolute top-12 mt-14 text-center text-xl font-bold text-white transition duration-150 ease-in-out">
-                      Sign In
-                    </span>
-                  </Link>
-                  <Link
-                    href="/users/sign-up"
-                    className="relative flex flex-col items-center justify-center p-6 transition duration-150 ease-in-out hover:scale-110"
-                    onMouseEnter={() => setIsSIHovered(true)}
-                    onMouseLeave={() => setIsSIHovered(false)}
-                  >
-                    <FontAwesomeIcon
-                      icon={siHovered ? faUnlock : faLock}
-                      className="text-9xl text-blue-400 transition duration-150 ease-in-out"
-                    />
-                    <span className="absolute top-12 mt-14 text-center text-xl font-bold text-white transition duration-150 ease-in-out">
-                      Sign Up
-                    </span>
-                  </Link>
-                </motion.div>
-              </motion.div>
-            </div>
-
-            {/* <footer className="mt-8 w-full bg-gray-900 p-4 text-center text-white">
-              2030 Cyber Tutor. All rights reserved.
-            </footer> */}
-          </>
+                Login
+              </button>
+            </motion.div>
+          </motion.div>
         )}
       </div>
     </>
