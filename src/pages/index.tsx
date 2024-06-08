@@ -235,7 +235,7 @@ export default function Home() {
       <Head>
         <title>Cyber Tutor</title>
       </Head>
-      <div className="flex w-full flex-col ">
+      <div className="flex min-h-screen w-full flex-col">
         {user ? (
           // If user is logged in, show the dashboard with their progress information
           <BaseLayout>
