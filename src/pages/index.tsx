@@ -347,7 +347,7 @@ export default function Home() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="flex w-full flex-col justify-center lg:flex-row">
+            <div className="flex w-full flex-col justify-center lg:flex-row gap-x-8">
               <div className="flex flex-col items-center justify-center lg:w-1/2">
                 <div className="mx-auto mb-2 h-1 w-1/2 bg-slate-400 lg:block"></div>
                 <div className="mt-2 h-1 w-full bg-slate-400 lg:block"></div>
@@ -367,7 +367,7 @@ export default function Home() {
               </div>
 
               {isClient && (
-                <div className="flex items-center p-2 lg:w-1/2">
+                <div className="flex items-center p-2 mt-4 mb-16 lg:m-0 lg:w-1/2">
                   <ReactPlayer
                     url="https://youtu.be/027hGcCeoHc"
                     playing={false}
