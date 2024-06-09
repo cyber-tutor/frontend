@@ -20,6 +20,7 @@ import CircularWithValueLabel from "~/components/ui/ProgressCircle";
 import { jsPDF } from "jspdf";
 import { FaNewspaper } from "react-icons/fa";
 import Tip from "../components/content_management/tips/tip";
+import { getRandomEmoji } from "../utils/randomEmoji";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
@@ -39,6 +40,7 @@ export default function Home() {
   const [completedChapters, setCompletedChapters] = useState(0);
   const [hasReadToday, setHasReadToday] = useState(false);
   const router = useRouter();
+  const randomEmoji = getRandomEmoji();
 
   // Get the user ID
   const uid = user ? user.uid : null;
@@ -248,7 +250,8 @@ export default function Home() {
               <motion.div className="mx-auto max-w-xl px-4 pb-8  pt-12">
                 <motion.h1 className="text-center text-2xl font-bold text-gray-800">
                   <div className="mb-4 text-4xl underline">
-                    Welcome back, {userDocument?.data()?.name || "User"}
+                    Welcome back, {userDocument?.data()?.name || "User"}{" "}
+                    {randomEmoji}
                   </div>
                   <i className="fas fa-shield-alt mr-2 text-indigo-500"></i>
                   Ready to fortify your digital life and stay protected?
