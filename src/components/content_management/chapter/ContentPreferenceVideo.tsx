@@ -29,7 +29,7 @@ const ContentPreferenceVideo: React.FC<ContentPreferenceVideoProps> = ({
   }
 
   return (
-    <div className="flex h-screen flex-grow justify-center px-0 pt-0 lg:px-36 lg:py-10">
+    <div className="flex h-[525px] flex-grow justify-center px-0 pt-0 lg:px-36 lg:pt-10">
       <ReactPlayer
         url={
           userGroup === "control"
@@ -45,7 +45,7 @@ const ContentPreferenceVideo: React.FC<ContentPreferenceVideoProps> = ({
         }}
         className="h-full rounded border-4 border-slate-400 shadow-lg"
         width="100%"
-        height="65%"
+        height="100%"
         allowFullScreen
         controls={false}
         onEnded={() => {
