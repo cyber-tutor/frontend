@@ -41,9 +41,14 @@ export default function Home() {
   const [hasReadToday, setHasReadToday] = useState(false);
   const router = useRouter();
   const randomEmoji = getRandomEmoji();
+  const [isClient, setIsClient] = useState(false);
 
   // Get the user ID
   const uid = user ? user.uid : null;
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Query for the user document from Firestore
   useEffect(() => {
@@ -337,55 +342,59 @@ export default function Home() {
           // If user is not logged in, show the landing page with the introduction video
 
           <motion.div
-            className="flex grow flex-col items-center justify-center bg-gray-200 px-4 py-8 text-gray-900"
+            className="flex h-screen flex-col items-center justify-center bg-gray-200 p-4 text-gray-900"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            {typeof window !== "undefined" && (
-              <ReactPlayer
-                url="https://youtu.be/027hGcCeoHc"
-                playing={false}
-                controls={true}
-                className="mb-2 max-w-full rounded-lg shadow-2xl lg:mb-8"
-              />
-            )}
-
-            <div className="mx-auto mb-2 hidden h-1 w-1/2 bg-slate-400 lg:block"></div>
-            <div className="my-2 hidden h-1 w-3/4 bg-slate-400 lg:block"></div>
-            <div className="mt-2 hidden h-1 w-full bg-slate-400 lg:block"></div>
-
-            <motion.p
-              className="mx-auto mt-8 rounded-lg bg-white p-4 text-center text-xl font-semibold shadow-lg md:text-2xl lg:w-1/2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              Welcome to CyberTutor! Dive into the world of cyber security and
-              fortify your digital life today. Explore our curated video series
-              to become a savvy internet user and protect yourself against
-              online threats.
-            </motion.p>
-            <motion.div
-              className="mt-10 flex space-x-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="fixed inset-x-0 bottom-0 flex items-center justify-around bg-white p-2 shadow-md">
-                <button
-                  className="rounded-lg bg-blue-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-blue-800"
-                  onClick={() => router.push("/users/sign-up")}
+            <div className="flex w-full flex-col justify-center lg:flex-row">
+              <div className="flex flex-col items-center justify-center lg:w-1/2">
+                <div className="mx-auto mb-2 h-1 w-1/2 bg-slate-400 lg:block"></div>
+                <div className="mt-2 h-1 w-full bg-slate-400 lg:block"></div>
+                <motion.p
+                  className="text-md mx-auto items-center p-2 text-center font-semibold md:text-2xl"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
                 >
-                  Register
-                </button>
-                <button
-                  className="rounded-lg bg-green-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-green-800"
-                  onClick={() => router.push("/users/sign-in")}
-                >
-                  Login
-                </button>
+                  Welcome to CyberTutor! Dive into the world of cyber security
+                  and fortify your digital life today. Explore our curated video
+                  series to become a savvy internet user and protect yourself
+                  against online threats.
+                </motion.p>
+                <div className="mb-2 h-1 w-full bg-slate-400 lg:block"></div>
+                <div className="mx-auto mt-2 h-1 w-1/2 bg-slate-400 lg:block"></div>
               </div>
+
+              {isClient && (
+                <div className="flex items-center p-2 lg:w-1/2">
+                  <ReactPlayer
+                    url="https://youtu.be/027hGcCeoHc"
+                    playing={false}
+                    controls={true}
+                    className="mx-auto max-w-full rounded-lg border-5 border-slate-500 shadow-2xl"
+                  />
+                </div>
+              )}
+            </div>
+            <motion.div
+              className="fixed bottom-0 z-50 mt-10 flex w-full justify-center space-x-6 border-t-3 border-slate-500 bg-slate-50 p-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <button
+                className="rounded-lg bg-blue-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-blue-800"
+                onClick={() => router.push("/users/sign-up")}
+              >
+                Register
+              </button>
+              <button
+                className="rounded-lg bg-green-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-green-800"
+                onClick={() => router.push("/users/sign-in")}
+              >
+                Login
+              </button>
             </motion.div>
           </motion.div>
         )}
