@@ -240,13 +240,16 @@ export default function Home() {
           // If user is logged in, show the dashboard with their progress information
           <BaseLayout>
             <motion.div
-              className="  mt-20 bg-white md:mt-16 lg:mt-16"
+              className="  mt-20 md:mt-16 lg:mt-16"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1.5 }}
             >
               <motion.div className="mx-auto max-w-xl px-4 pb-8  pt-12">
                 <motion.h1 className="text-center text-2xl font-bold text-gray-800">
+                  <div className="mb-4 text-4xl underline">
+                    Welcome back, {userDocument?.data()?.name || "User"}
+                  </div>
                   <i className="fas fa-shield-alt mr-2 text-indigo-500"></i>
                   Ready to fortify your digital life and stay protected?
                 </motion.h1>
