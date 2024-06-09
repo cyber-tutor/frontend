@@ -191,7 +191,9 @@ export default function ChapterPage() {
 
   return (
     <BaseLayout>
-      <div className="mx-auto w-full">
+      <div
+        className={`mx-auto w-full ${contentPreference === "video" ? "h-screen" : ""}`}
+      >
         <div className="text-center">
           <h1 className="mt-20 py-3 text-3xl font-bold md:mt-20 lg:mt-10">
             {chapter.chapterTitle}
