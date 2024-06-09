@@ -347,7 +347,7 @@ export default function Home() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="flex w-full flex-col justify-center lg:flex-row gap-x-8">
+            <div className="flex w-full flex-col justify-center gap-x-8 lg:flex-row">
               <div className="flex flex-col items-center justify-center lg:w-1/2">
                 <div className="mx-auto mb-2 h-1 w-1/2 bg-slate-400 lg:block"></div>
                 <div className="mt-2 h-1 w-full bg-slate-400 lg:block"></div>
@@ -367,7 +367,7 @@ export default function Home() {
               </div>
 
               {isClient && (
-                <div className="flex items-center p-2 mt-4 mb-16 lg:m-0 lg:w-1/2">
+                <div className="mb-16 mt-4 flex items-center p-2 lg:m-0 lg:w-1/2">
                   <ReactPlayer
                     url="https://youtu.be/027hGcCeoHc"
                     playing={false}
@@ -378,19 +378,19 @@ export default function Home() {
               )}
             </div>
             <motion.div
-              className="fixed bottom-0 z-50 mt-10 flex w-full justify-center space-x-6 border-t-3 border-slate-500 bg-slate-50 p-2"
+              className="fixed bottom-0 z-50 mt-10 flex w-full justify-between border-t-3 border-slate-500 bg-slate-50 "
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
             >
               <button
-                className="rounded-lg bg-blue-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-blue-800"
+                className="w-1/2 bg-blue-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-blue-800"
                 onClick={() => router.push("/users/sign-up")}
               >
                 Register
               </button>
               <button
-                className="rounded-lg bg-green-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-green-800"
+                className="w-1/2 bg-green-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-green-800"
                 onClick={() => router.push("/users/sign-in")}
               >
                 Login
