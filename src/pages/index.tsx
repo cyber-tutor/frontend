@@ -337,7 +337,7 @@ export default function Home() {
           // If user is not logged in, show the landing page with the introduction video
 
           <motion.div
-            className="flex grow flex-col items-center justify-center bg-gray-200 p-4 text-gray-900"
+            className="flex grow flex-col items-center justify-center bg-gray-200 px-4 py-8 text-gray-900"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -347,9 +347,14 @@ export default function Home() {
                 url="https://youtu.be/027hGcCeoHc"
                 playing={false}
                 controls={true}
-                className="mb-8 max-w-full rounded-lg shadow-2xl"
+                className="mb-2 max-w-full rounded-lg shadow-2xl lg:mb-8"
               />
             )}
+
+            <div className="mx-auto mb-2 hidden h-1 w-1/2 bg-slate-400 lg:block"></div>
+            <div className="my-2 hidden h-1 w-3/4 bg-slate-400 lg:block"></div>
+            <div className="mt-2 hidden h-1 w-full bg-slate-400 lg:block"></div>
+
             <motion.p
               className="mx-auto mt-8 rounded-lg bg-white p-4 text-center text-xl font-semibold shadow-lg md:text-2xl lg:w-1/2"
               initial={{ opacity: 0 }}
@@ -367,18 +372,20 @@ export default function Home() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <button
-                className="rounded-lg bg-blue-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-blue-800"
-                onClick={() => router.push("/users/sign-up")}
-              >
-                Register
-              </button>
-              <button
-                className="rounded-lg bg-green-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-green-800"
-                onClick={() => router.push("/users/sign-in")}
-              >
-                Login
-              </button>
+              <div className="fixed inset-x-0 bottom-0 flex items-center justify-around bg-white p-2 shadow-md">
+                <button
+                  className="rounded-lg bg-blue-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-blue-800"
+                  onClick={() => router.push("/users/sign-up")}
+                >
+                  Register
+                </button>
+                <button
+                  className="rounded-lg bg-green-700 px-6 py-3 font-bold text-white shadow-lg transition duration-150 ease-in-out hover:bg-green-800"
+                  onClick={() => router.push("/users/sign-in")}
+                >
+                  Login
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
