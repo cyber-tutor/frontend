@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { BaseLayout } from "../../components/layouts/BaseLayout";
 import Link from "next/link";
 import { useIsSuperuser } from "../../hooks/useIsSuperuser";
@@ -19,6 +20,13 @@ const AdminLink: React.FC<AdminLinkProps> = ({ href, title }) => (
 
 export default function AdminDashboard() {
   const isSuperuser = useIsSuperuser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isSuperuser) {
+      router.push("/");
+    }
+  }, [isSuperuser, router]);
 
   return (
     <BaseLayout>

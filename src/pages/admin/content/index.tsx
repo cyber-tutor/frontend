@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { db } from "../../../components/firebase/config";
 import { getDocs, collection } from "firebase/firestore";
 import Head from "next/head";
@@ -9,6 +10,13 @@ import { useIsSuperuser } from "../../../hooks/useIsSuperuser";
 export default function CRUD_ControlGroupContent() {
   const [topicId, setTopicId] = useState<string>("");
   const isSuperuser = useIsSuperuser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isSuperuser) {
+      router.push("/");
+    }
+  }, [isSuperuser, router]);
 
   useEffect(() => {
     const fetchTopicId = async () => {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { db } from "../../../components/firebase/config";
 import {
   collection,
@@ -30,9 +31,16 @@ interface TableRowData {
 
 export default function CRUD_Questions() {
   const isSuperuser = useIsSuperuser();
+  const router = useRouter();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedQuestion, setEditedQuestion] = useState<Question | null>(null);
+
+  useEffect(() => {
+    if (!isSuperuser) {
+      router.push("/");
+    }
+  }, [isSuperuser, router]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(

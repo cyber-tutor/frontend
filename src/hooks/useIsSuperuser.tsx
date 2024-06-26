@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 
 export const useIsSuperuser = () => {
   const [isSuperuser, setIsSuperuser] = useState<boolean>(false);
-  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
@@ -21,15 +20,12 @@ export const useIsSuperuser = () => {
           setIsSuperuser(true);
         } else {
           console.log("You are not a superuser.");
-          router.push("/");
         }
-      } else {
-        router.push("/");
       }
     });
 
     return () => unsubscribe();
-  }, [router]);
+  }, []);
 
   return isSuperuser;
 };

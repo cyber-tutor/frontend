@@ -1,10 +1,19 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { BaseLayout } from "../../../components/layouts/BaseLayout";
 import CRUDChaptersForm from "../../../components/admin/CRUDChaptersForm";
 import { useIsSuperuser } from "../../../hooks/useIsSuperuser";
 
 export default function CRUDChapters() {
   const isSuperuser = useIsSuperuser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isSuperuser) {
+      router.push("/");
+    }
+  }, [isSuperuser, router]);
 
   return (
     <BaseLayout>
