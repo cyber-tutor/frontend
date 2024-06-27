@@ -6,14 +6,14 @@ import CRUDChaptersForm from "../../../components/admin/CRUDChaptersForm";
 import { useIsSuperuser } from "../../../hooks/useIsSuperuser";
 
 export default function CRUDChapters() {
-  const isSuperuser = useIsSuperuser();
+  const { isSuperuser, isLoading } = useIsSuperuser();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isSuperuser) {
+    if (!isSuperuser && !isLoading) {
       router.push("/");
     }
-  }, [isSuperuser, router]);
+  }, [isSuperuser, isLoading, router]);
 
   return (
     <BaseLayout>

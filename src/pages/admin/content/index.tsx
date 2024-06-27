@@ -9,14 +9,14 @@ import { useIsSuperuser } from "../../../hooks/useIsSuperuser";
 
 export default function CRUD_ControlGroupContent() {
   const [topicId, setTopicId] = useState<string>("");
-  const isSuperuser = useIsSuperuser();
+  const { isSuperuser, isLoading } = useIsSuperuser();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isSuperuser) {
+    if (!isSuperuser && !isLoading) {
       router.push("/");
     }
-  }, [isSuperuser, router]);
+  }, [isSuperuser, isLoading, router]);
 
   useEffect(() => {
     const fetchTopicId = async () => {

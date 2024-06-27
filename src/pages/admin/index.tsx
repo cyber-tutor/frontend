@@ -19,14 +19,14 @@ const AdminLink: React.FC<AdminLinkProps> = ({ href, title }) => (
 );
 
 export default function AdminDashboard() {
-  const isSuperuser = useIsSuperuser();
+  const { isSuperuser, isLoading } = useIsSuperuser();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isSuperuser) {
+    if (!isSuperuser && !isLoading) {
       router.push("/");
     }
-  }, [isSuperuser, router]);
+  }, [isSuperuser, isLoading, router]);
 
   return (
     <BaseLayout>
