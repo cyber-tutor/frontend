@@ -15,6 +15,7 @@ import { getAuth } from "firebase/auth";
 import queryUserDocument from "~/components/firebase/FirebaseFunctions";
 import determineProficiency from "~/components/ai/Gemini";
 import { Serializer } from "survey-react";
+import Head from "next/head";
 
 // Apply the Tailwind CSS theme
 StylesManager.applyTheme("default");
@@ -265,15 +266,18 @@ const InitialSurvey = () => {
         .then((proficiency) => {
           const proficiencyLevels = proficiency.split(", ");
 
-
           if (proficiencyLevels.length !== 5) {
             throw new Error(
               "Proficiency levels must be provided for all 5 topics.",
             );
           }
 
-          for(const level of proficiencyLevels) {
-            if (level !== "beginner" && level !== "intermediate" && level !== "expert") {
+          for (const level of proficiencyLevels) {
+            if (
+              level !== "beginner" &&
+              level !== "intermediate" &&
+              level !== "expert"
+            ) {
               throw new Error("Proficiency level is not valid");
             }
           }
@@ -345,6 +349,9 @@ const InitialSurvey = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-800">
+      <Head>
+        <title>Initial Survey</title>
+      </Head>
       {surveyJson && (
         <div className="w-full max-w-4xl rounded-lg bg-white p-10 text-gray-800 shadow-lg">
           <Survey model={surveyJson} className="font-sans" />

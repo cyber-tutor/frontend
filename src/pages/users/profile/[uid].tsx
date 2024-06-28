@@ -9,6 +9,7 @@ import {
   updateDoc,
   DocumentData,
 } from "firebase/firestore";
+import Head from "next/head";
 
 interface User {
   name: string;
@@ -83,12 +84,18 @@ const UserProfile = () => {
   if (loading) {
     return (
       <BaseLayout>
+        <Head>
+          <title>Loading User Profile...</title>
+        </Head>
         <div>Loading...</div>
       </BaseLayout>
     );
   }
   return (
     <BaseLayout>
+      <Head>
+        <title>{userData?.name}'s Profile</title>
+      </Head>
       <div className="mt-20 rounded-lg p-8 text-left md:mt-20 lg:mt-10">
         <h1 className="mb-6 text-2xl font-semibold">
           {userData?.name}'s Profile

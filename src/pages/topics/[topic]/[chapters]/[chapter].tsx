@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import { Chapter } from "../../../../types";
 import NextChapterButton from "../../../../components/ui/NextChapterButton";
 import ChapterContentManager from "../../../../components/content_management/chapter/ChapterContentManager";
+import Head from "next/head";
 
 export default function ChapterPage() {
   const [chapter, setChapter] = useState<Chapter | null>(null);
@@ -191,6 +192,9 @@ export default function ChapterPage() {
 
   return (
     <BaseLayout>
+      <Head>
+        <title>{chapter ? chapter.chapterTitle : "Loading..."}</title>
+      </Head>
       <div
         className={`mx-auto w-full ${contentPreference === "video" ? "h-screen" : ""}`}
       >

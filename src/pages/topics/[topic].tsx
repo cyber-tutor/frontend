@@ -17,6 +17,7 @@ import CircularWithValueLabel from "~/components/ui/ProgressCircle";
 import { auth } from "../../components/firebase/config";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import queryUserDocument from "../../components/firebase/FirebaseFunctions";
+import Head from 'next/head';
 
 type Topic = {
   topicId: string;
@@ -226,8 +227,11 @@ export default function TopicPage() {
 
   return (
     <BaseLayout>
+      <Head>
+        <title>{topic ? topic.topicTitle : "Loading..."}</title>
+      </Head>
       <div className="flex w-full flex-col items-center">
-        <div className="mt-20 overflow-y-auto rounded-lg border-2 border-solid text-center md:mt-20 lg:mt-10 py-10 px-10">
+        <div className="mt-20 overflow-y-auto rounded-lg border-2 border-solid px-10 py-10 text-center md:mt-20 lg:mt-10">
           <div className="grid grid-cols-6 items-center">
             <h1 className="col-span-5 flex justify-start text-3xl font-bold">
               {topic.topicTitle}

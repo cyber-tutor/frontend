@@ -18,6 +18,7 @@ import { db } from "../../../components/firebase/config";
 import queryUserDocument, {
   demographicSurveyComplete,
 } from "~/components/firebase/FirebaseFunctions";
+import Head from "next/head";
 
 Survey.StylesManager.applyTheme("default");
 
@@ -128,6 +129,9 @@ export default function SurveyComponent(): JSX.Element {
 
   return (
     <div>
+      <Head>
+        <title>Demographic Survey</title>
+      </Head>
       {surveyJson ? (
         <Survey.Survey model={surveyJson} onComplete={onComplete} />
       ) : (

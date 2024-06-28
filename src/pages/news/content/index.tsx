@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { auth } from "~/components/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import NewsCard from "~/components/content_management/news/NewsCard";
+import Head from "next/head";
 
 const CyberSecurityNews = () => {
   const [user, loading, error] = useAuthState(auth);
@@ -59,6 +60,9 @@ const CyberSecurityNews = () => {
 
   return (
     <div className="mb-7 flex min-h-screen flex-col bg-gray-800 text-white">
+      <Head>
+        <title>Cybersecurity News</title>
+      </Head>
       <div className="w-full p-4">
         <button
           onClick={() => router.push("/")}

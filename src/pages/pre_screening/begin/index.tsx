@@ -1,6 +1,7 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
+import Head from "next/head";
 
 export default function InitialSurvey() {
   const router = useRouter();
@@ -16,6 +17,9 @@ export default function InitialSurvey() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
+      <Head>
+        <title>Initial Cyber Security Survey</title>
+      </Head>
       <motion.div
         className="animate-fadeIn text-center"
         initial={{ opacity: 0 }}
