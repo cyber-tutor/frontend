@@ -19,62 +19,60 @@ const CRUDChaptersForm: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isLocked, setIsLocked] = useState(true);
   const [orderInputs, setOrderInputs] = useState<{ [key: string]: number }>({});
-  const [newChapter, setNewChapter] = useState<Chapter>({
-    chapterId: "",
-    chapterTitle: "",
-    chapterDescription: "",
-    chapterType: "",
-    controlGroupContent: { beginner: "", intermediate: "", expert: "" },
-    controlGroupVideoURLs: { beginner: "", intermediate: "", expert: "" },
-    controlGroupImageURLs: [],
-    experimentalGroupContent: { beginner: "", intermediate: "", expert: "" },
-    experimentalGroupVideoURLs: { beginner: "", intermediate: "", expert: "" },
-    experimentalGroupImageURLs: [],
-    order: 0,
-    proficiency: 0,
-  });
+  const [newChapter, setNewChapter] = useState<Chapter>(initialChapterState());
+
+  function initialChapterState(): Chapter {
+    return {
+      chapterId: "",
+      chapterTitle: "",
+      chapterDescription: "",
+      chapterType: "",
+      controlGroupContent: { beginner: "", intermediate: "", expert: "" },
+      controlGroupVideoURLs: { beginner: "", intermediate: "", expert: "" },
+      controlGroupImageURLs: [],
+      experimentalGroupContent: { beginner: "", intermediate: "", expert: "" },
+      experimentalGroupVideoURLs: { beginner: "", intermediate: "", expert: "" },
+      experimentalGroupImageURLs: [],
+      order: 0,
+      proficiency: 0,
+    };
+  }
 
   const handleTopicChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedTopic(event.target.value);
   };
 
-  const flattenChapter = (chapter: Chapter) => {
-    return {
-      chapterId: chapter.chapterId,
-      chapterTitle: chapter.chapterTitle,
-      chapterDescription: chapter.chapterDescription,
-      chapterType: chapter.chapterType,
-      controlGroupContentBeginner: chapter.controlGroupContent.beginner,
-      controlGroupContentIntermediate: chapter.controlGroupContent.intermediate,
-      controlGroupContentExpert: chapter.controlGroupContent.expert,
-      controlGroupVideoURLsBeginner: chapter.controlGroupVideoURLs.beginner,
-      controlGroupVideoURLsIntermediate:
-        chapter.controlGroupVideoURLs.intermediate,
-      controlGroupVideoURLsExpert: chapter.controlGroupVideoURLs.expert,
-      controlGroupImageURLs: chapter.controlGroupImageURLs,
-      experimentalGroupContentBeginner:
-        chapter.experimentalGroupContent.beginner,
-      experimentalGroupContentIntermediate:
-        chapter.experimentalGroupContent.intermediate,
-      experimentalGroupContentExpert: chapter.experimentalGroupContent.expert,
-      experimentalGroupVideoURLsBeginner:
-        chapter.experimentalGroupVideoURLs.beginner,
-      experimentalGroupVideoURLsIntermediate:
-        chapter.experimentalGroupVideoURLs.intermediate,
-      experimentalGroupVideoURLsExpert:
-        chapter.experimentalGroupVideoURLs.expert,
-      experimentalGroupImageURLs: chapter.experimentalGroupImageURLs,
-      order: chapter.order,
-      proficiency: chapter.proficiency,
-    };
-  };
+  const flattenChapter = (chapter: Chapter) => ({
+    chapterId: chapter.chapterId,
+    chapterTitle: chapter.chapterTitle,
+    chapterDescription: chapter.chapterDescription,
+    chapterType: chapter.chapterType,
+    ...Object.entries(chapter.controlGroupContent).reduce((acc, [key, value]) => ({
+      ...acc,
+      [`controlGroupContent${key?.[0]?.toUpperCase() + key.slice(1)}`]: value,
+    }), {}),
+    ...Object.entries(chapter.controlGroupVideoURLs).reduce((acc, [key, value]) => ({
+      ...acc,
+      [`controlGroupVideoURLs${key?.[0]?.toUpperCase() + key.slice(1)}`]: value,
+    }), {}),
+    controlGroupImageURLs: chapter.controlGroupImageURLs,
+    ...Object.entries(chapter.experimentalGroupContent).reduce((acc, [key, value]) => ({
+      ...acc,
+      [`experimentalGroupContent${key?.[0]?.toUpperCase() + key.slice(1)}`]: value,
+    }), {}),
+    ...Object.entries(chapter.experimentalGroupVideoURLs).reduce((acc, [key, value]) => ({
+      ...acc,
+      [`experimentalGroupVideoURLs${key?.[0]?.toUpperCase() + key.slice(1)}`]: value,
+    }), {}),
+    experimentalGroupImageURLs: chapter.experimentalGroupImageURLs,
+    order: chapter.order,
+    proficiency: chapter.proficiency,
+  });
 
   const handleAddChapter = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (selectedTopic === null) {
-      return;
-    }
+    if (!selectedTopic) return;
 
     const chaptersCollection = collection(
       doc(db, "topics", selectedTopic),
@@ -90,24 +88,13 @@ const CRUDChaptersForm: React.FC = () => {
       await addDoc(chaptersCollection, flattenedChapter);
     }
 
-    setNewChapter({
-      chapterId: "",
-      chapterTitle: "",
-      chapterDescription: "",
-      chapterType: "",
-      controlGroupContent: { beginner: "", intermediate: "", expert: "" },
-      controlGroupVideoURLs: { beginner: "", intermediate: "", expert: "" },
-      controlGroupImageURLs: [],
-      experimentalGroupContent: { beginner: "", intermediate: "", expert: "" },
-      experimentalGroupVideoURLs: {
-        beginner: "",
-        intermediate: "",
-        expert: "",
-      },
-      experimentalGroupImageURLs: [],
-      order: 0,
-      proficiency: 0,
-    });
+    resetChapterForm();
+  };
+
+  const resetChapterForm = () => {
+    setNewChapter(initialChapterState());
+    setIsEditing(false);
+    setCurrentChapterId("");
   };
 
   const handleChapterChange = (
@@ -121,82 +108,41 @@ const CRUDChaptersForm: React.FC = () => {
 
   const handleEditChapter = (chapter: Chapter) => {
     setCurrentChapterId(chapter.chapterId || "");
-    setNewChapter({
-      chapterId: "",
-      chapterTitle: "",
-      chapterDescription: "",
-      chapterType: "",
-      controlGroupContent: { beginner: "", intermediate: "", expert: "" },
-      controlGroupVideoURLs: { beginner: "", intermediate: "", expert: "" },
-      controlGroupImageURLs: [],
-      experimentalGroupContent: { beginner: "", intermediate: "", expert: "" },
-      experimentalGroupVideoURLs: {
-        beginner: "",
-        intermediate: "",
-        expert: "",
-      },
-      experimentalGroupImageURLs: [],
-      order: 0,
-      proficiency: 0,
-    });
+    setNewChapter({ ...chapter });
     setIsEditing(true);
   };
 
-  const handleCancelEdit = () => {
-    setCurrentChapterId("");
-    setNewChapter({
-      chapterId: "",
-      chapterTitle: "",
-      chapterDescription: "",
-      chapterType: "",
-      controlGroupContent: { beginner: "", intermediate: "", expert: "" },
-      controlGroupVideoURLs: { beginner: "", intermediate: "", expert: "" },
-      controlGroupImageURLs: [],
-      experimentalGroupContent: { beginner: "", intermediate: "", expert: "" },
-      experimentalGroupVideoURLs: {
-        beginner: "",
-        intermediate: "",
-        expert: "",
-      },
-      experimentalGroupImageURLs: [],
-      order: 0,
-      proficiency: 0,
-    });
-    setIsEditing(false);
-  };
+  const handleCancelEdit = resetChapterForm;
 
   useEffect(() => {
-    const newOrderInputs: { [key: string]: number } = {};
-    chapters.forEach((chapter) => {
-      newOrderInputs[chapter.chapterId || ""] = chapter.order;
-    });
+    const newOrderInputs = chapters.reduce((acc, chapter) => {
+      acc[chapter.chapterId || ""] = chapter.order;
+      return acc;
+    }, {} as { [key: string]: number });
+
     setOrderInputs(newOrderInputs);
   }, [chapters]);
 
   const handleSubmitOrder = async () => {
-    if (selectedTopic === null) {
-      return;
-    }
+    if (!selectedTopic) return;
 
     const chaptersCollection = collection(
       doc(db, "topics", selectedTopic),
       "chapters",
     );
 
-    for (const chapterId in orderInputs) {
-      const chapterDoc = doc(chaptersCollection, chapterId);
-      await updateDoc(chapterDoc, { order: orderInputs[chapterId] });
-    }
+    await Promise.all(
+      Object.entries(orderInputs).map(([chapterId, order]) => {
+        const chapterDoc = doc(chaptersCollection, chapterId);
+        return updateDoc(chapterDoc, { order });
+      }),
+    );
   };
 
-  const toggleLock = () => {
-    setIsLocked(!isLocked);
-  };
+  const toggleLock = () => setIsLocked(!isLocked);
 
   const handleDeleteChapter = async (id: string) => {
-    if (selectedTopic === null) {
-      return;
-    }
+    if (!selectedTopic) return;
 
     const chaptersCollection = collection(
       doc(db, "topics", selectedTopic),
