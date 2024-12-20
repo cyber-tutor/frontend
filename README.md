@@ -78,7 +78,7 @@ Gemini is a proof-of-concept web application designed to deliver personalized cy
 # Local Instance Instructions
 
 1. Clone the GitHub repository. When prompted to open cloned repository, please click "Open"
-2. Create your .env. These details will be shared with you and are NOT publicly available. Please contact the team organizing this repository @ cyber.tutor.42069@gmail.com
+2. Create your .env.
 
 ```dotenv
 # GEMINI API
