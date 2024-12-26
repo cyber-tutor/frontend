@@ -1,24 +1,21 @@
 # Local Instance Instructions
 
-1. Clone the GitHub repository. When prompted to open cloned repository, please click "Open"
-2. Create your .env. These details will be shared with you and are NOT publicly available. Please contact the team organizing this repository @ cyber.tutor.42069@gmail.com
+1. Open Visual Studio Code, and open a new terminal
+2. Clone the repository using the following command. After cloning, navigate to the root of the repository:
 
-```dotenv
-# GEMINI API
-NEXT_PUBLIC_GOOGLE_API_KEY=[PLACE ENVIRONMENT VARIABLE HERE]
-
-# FIRESTORE
-NEXT_PUBLIC_FIREBASE_API_KEY=[PLACE ENVIRONMENT VARIABLE HERE]
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=[PLACE ENVIRONMENT VARIABLE HERE]
-NEXT_PUBLIC_FIREBASE_DATABASE_URL=[PLACE ENVIRONMENT VARIABLE HERE]
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=[PLACE ENVIRONMENT VARIABLE HERE]
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=[PLACE ENVIRONMENT VARIABLE HERE]
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=[PLACE ENVIRONMENT VARIABLE HERE]
-NEXT_PUBLIC_FIREBASE_APP_ID=[PLACE ENVIRONMENT VARIABLE HERE]
-
-# NEWS API
-NEXT_PUBLIC_NEWS_KEY=[PLACE ENVIRONMENT VARIABLE HERE]
+```bash
+git clone https://github.com/Cyber-Tutor/Cyber-Tutor-Frontend.git
 ```
 
-3. Install dependencies: `npm i`
-4. Run the developement server: `npm run dev`
+3. Within the root of the repository create an `.env.local` files ensuring all of the variables from `.env.template` are present
+4. Install dependencies using the following command:
+
+```bash
+npm i
+```
+
+5. The repository should be ready for you to work with, and you can now boot up the development server using the following command:
+
+```bash
+npm run dev
+```
