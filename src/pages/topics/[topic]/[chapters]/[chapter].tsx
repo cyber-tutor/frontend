@@ -161,7 +161,7 @@ export default function ChapterPage() {
     };
 
     fetchUserProficiency();
-  }, [uid, progressData]);
+  }, [uid, progressData, topicId]);
 
   if (loading)
     return (

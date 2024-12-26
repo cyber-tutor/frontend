@@ -44,7 +44,7 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
         }
       });
     }
-  }, [user]);
+  }, [user, router]);
 
   useEffect(() => {
     const handleResize = () => {
