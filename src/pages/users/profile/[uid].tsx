@@ -94,11 +94,11 @@ const UserProfile = () => {
   return (
     <BaseLayout>
       <Head>
-        <title>{userData?.name}'s Profile</title>
+        <title>{userData?.name}&apos;s Profile</title>
       </Head>
       <div className="mt-20 rounded-lg p-8 text-left md:mt-20 lg:mt-10">
         <h1 className="mb-6 text-2xl font-semibold">
-          {userData?.name}'s Profile
+          {userData?.name}&apos;s Profile
         </h1>
         <form onSubmit={handleFormSubmit} className="space-y-6">
           <div>

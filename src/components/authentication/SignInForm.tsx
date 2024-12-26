@@ -125,7 +125,7 @@ const SignInForm = () => {
 
         <div className="my-4 border-t border-gray-300"></div>
         <p className="my-4 text-center text-sm text-gray-600">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
         </p>
         <button
           className="flex w-full items-center justify-center rounded border bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600"
