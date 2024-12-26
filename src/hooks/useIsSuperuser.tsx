@@ -13,7 +13,7 @@ export const useIsSuperuser = () => {
         const q = query(
           usersRef,
           where("userId", "==", currentUser.uid),
-          where("isSuperuser", "==", true),
+          where("isSuperuser", "==", true)
         );
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {

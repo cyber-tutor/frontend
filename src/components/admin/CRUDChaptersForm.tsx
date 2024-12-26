@@ -78,7 +78,7 @@ const CRUDChaptersForm: React.FC = () => {
 
     const chaptersCollection = collection(
       doc(db, "topics", selectedTopic),
-      "chapters",
+      "chapters"
     );
 
     const flattenedChapter = flattenChapter(newChapter);
@@ -111,7 +111,7 @@ const CRUDChaptersForm: React.FC = () => {
   };
 
   const handleChapterChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setNewChapter({
       ...newChapter,
@@ -180,7 +180,7 @@ const CRUDChaptersForm: React.FC = () => {
 
     const chaptersCollection = collection(
       doc(db, "topics", selectedTopic),
-      "chapters",
+      "chapters"
     );
 
     for (const chapterId in orderInputs) {
@@ -200,7 +200,7 @@ const CRUDChaptersForm: React.FC = () => {
 
     const chaptersCollection = collection(
       doc(db, "topics", selectedTopic),
-      "chapters",
+      "chapters"
     );
     const chapterDoc = doc(chaptersCollection, id);
     await deleteDoc(chapterDoc);

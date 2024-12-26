@@ -31,7 +31,7 @@ export const useTopicsWithChapters = () => {
       const topicsArray: Topic[] = [];
 
       const topicsSnapshot = await getDocs(
-        query(topicsCollectionRef, orderBy("order")),
+        query(topicsCollectionRef, orderBy("order"))
       );
       for (const topicDoc of topicsSnapshot.docs) {
         const chaptersCollectionRef = collection(topicDoc.ref, "chapters");

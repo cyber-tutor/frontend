@@ -51,7 +51,7 @@ export default function CRUD_Questions() {
           ...doc.data(),
         })) as Question[];
         setQuestions(fetchedQuestions);
-      },
+      }
     );
     return () => unsubscribe();
   }, []);
@@ -154,7 +154,7 @@ export default function CRUD_Questions() {
       { id: "topicId", label: "Topic ID", minWidth: 40 },
       { id: "chapterId", label: "Chapter ID", minWidth: 40 },
       { id: "difficulty", label: "Difficulty", minWidth: 40 },
-      { id: "topics", label: "Topics", minWidth: 150 },
+      { id: "topics", label: "Topics", minWidth: 150 }
     );
   } else if (windowWidth > 768) {
     columns.splice(
@@ -162,7 +162,7 @@ export default function CRUD_Questions() {
       0,
       { id: "answer", label: "Answer", minWidth: 40 },
       { id: "topicId", label: "Topic ID", minWidth: 40 },
-      { id: "chapterId", label: "Chapter ID", minWidth: 40 },
+      { id: "chapterId", label: "Chapter ID", minWidth: 40 }
     );
   }
 

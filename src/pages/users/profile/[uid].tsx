@@ -28,7 +28,7 @@ const UserProfile = () => {
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [contentPreference, setContentPreference] = useState<string | null>(
-    null,
+    null
   );
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -76,7 +76,7 @@ const UserProfile = () => {
   };
 
   const handleContentPreferenceChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
+    event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setContentPreference(event.target.value);
   };

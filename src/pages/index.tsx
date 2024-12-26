@@ -96,7 +96,7 @@ export default function Home() {
       const lastLoginDate = new Date(
         userDocument?.lastLoginDate?.seconds
           ? userDocument?.lastLoginDate.seconds
-          : 0 * 1000,
+          : 0 * 1000
       );
       const today = new Date();
       const hasRead = lastLoginDate.toDateString() === today.toDateString();
@@ -136,7 +136,7 @@ export default function Home() {
       getDocs(progressRef).then((snapshot) => {
         const totalDocuments = snapshot.size;
         const completedDocumentsCount = snapshot.docs.filter(
-          (doc) => doc.data().complete === true,
+          (doc) => doc.data().complete === true
         ).length;
         const ratio =
           totalDocuments > 0
@@ -151,7 +151,7 @@ export default function Home() {
 
   async function updateUserStreak(
     uid: string | null,
-    lastLoginDate: { seconds: number } | undefined,
+    lastLoginDate: { seconds: number } | undefined
   ) {
     if (!uid || !userDocument) return;
 
@@ -323,7 +323,7 @@ export default function Home() {
                       updateReadStreak();
                       updateUserStreak(
                         userDocument?.id,
-                        userDocument?.lastReadTime,
+                        userDocument?.lastReadTime
                       );
                       router.push("/news/content");
                     }}

@@ -76,7 +76,7 @@ const SignUpForm: React.FC = () => {
         router.push("/pre_screening/begin");
       } else {
         alert(
-          "A user already exists with this email. Please sign in, or use a different email.",
+          "A user already exists with this email. Please sign in, or use a different email."
         );
       }
     } catch (error) {
@@ -122,7 +122,7 @@ const SignUpForm: React.FC = () => {
   };
 
   const handlePasswordChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ): void => {
     setIsWeak(false);
     const newPassword = e.target.value;

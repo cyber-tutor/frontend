@@ -22,7 +22,7 @@ export const useChapters = (topicId: string | null) => {
           db,
           "topics",
           topicId,
-          "chapters",
+          "chapters"
         );
         const chaptersSnapshot = await getDocs(chaptersCollectionRef);
         const chapters: Chapter[] = chaptersSnapshot.docs.map(createChapter);

@@ -67,7 +67,7 @@ const NextChapterButton: React.FC<NextChapterButtonProps> = ({
               "users",
               userDocId,
               "levels",
-              progressData.topicId,
+              progressData.topicId
             );
             const levelSnapshot = await getDoc(userLevel);
             const levelData = levelSnapshot.data();
@@ -75,17 +75,17 @@ const NextChapterButton: React.FC<NextChapterButtonProps> = ({
             const topicString: String | null = await getNextChapterId(
               chapterOrder,
               progressData.topicId,
-              levelData?.level,
+              levelData?.level
             );
 
             if (topicString === null) {
               alert(
-                "Your knowledge level is too low to access the next chapter. Please complete some other chapters to raise it.",
+                "Your knowledge level is too low to access the next chapter. Please complete some other chapters to raise it."
               );
               router.push(`/topics/${progressData.topicId}`);
             } else if (topicString !== null) {
               router.push(
-                `/topics/${progressData.topicId}/chapters/${topicString}`,
+                `/topics/${progressData.topicId}/chapters/${topicString}`
               );
             }
           } else {

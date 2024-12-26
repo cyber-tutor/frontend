@@ -17,7 +17,7 @@ import { db } from "./config";
 import { User } from "firebase/auth";
 
 export default async function queryUserDocument(
-  userIdString: string,
+  userIdString: string
 ): Promise<DocumentData | null> {
   const usersCollectionRef = collection(db, "users");
 
@@ -48,7 +48,7 @@ export default async function queryUserDocument(
 
 export async function handleVideoEnd(
   played: number,
-  userDocumentId: string,
+  userDocumentId: string
 ): Promise<void> {
   try {
     if (!userDocumentId) {
@@ -90,7 +90,7 @@ export async function isWatched(userDocumentId: string): Promise<boolean> {
 
 export async function createUserDocument(
   user: User,
-  userName: string,
+  userName: string
 ): Promise<void> {
   const isExperimental = Math.random() < 0.5;
   const group = isExperimental ? "experimental" : "control";
@@ -116,7 +116,7 @@ export async function createUserDocument(
   const topicsCollectionRef = collection(db, "topics");
   try {
     const topicsSnapshot = await getDocs(
-      query(topicsCollectionRef, orderBy("order")),
+      query(topicsCollectionRef, orderBy("order"))
     );
     for (const topicDoc of topicsSnapshot.docs) {
       const topicId = topicDoc.id;
@@ -124,7 +124,7 @@ export async function createUserDocument(
       // Proficiency collection with proficiency attribute as string
       const proficiencyRef = doc(
         collection(db, "users", userRef.id, "proficiency"),
-        topicId,
+        topicId
       );
       batch.set(proficiencyRef, {
         proficiency: "",
@@ -133,7 +133,7 @@ export async function createUserDocument(
       // Level collection with value attribute as number
       const levelRef = doc(
         collection(db, "users", userRef.id, "levels"),
-        topicId,
+        topicId
       );
       batch.set(levelRef, {
         level: 0,
@@ -143,7 +143,7 @@ export async function createUserDocument(
         db,
         "topics",
         topicId,
-        "chapters",
+        "chapters"
       );
       const chaptersSnapshot = await getDocs(chaptersCollectionRef);
 
@@ -168,7 +168,7 @@ export async function createUserDocument(
 
         const progressRef = doc(
           collection(db, "users", userRef.id, "progress"),
-          chapterId,
+          chapterId
         );
         batch.set(progressRef, progressData);
       }
@@ -201,7 +201,7 @@ export const findUserDocId = async (userId: string): Promise<string | null> => {
 export const updateProgress = async (
   userId: string,
   chapterId: string,
-  timeElapsed: number,
+  timeElapsed: number
 ) => {
   const progressDocRef = doc(db, "users", userId, "progress", chapterId);
 
@@ -214,7 +214,7 @@ export const updateProgress = async (
 export async function getNextChapterId(
   order: number,
   documentId: string,
-  userProficiency: number,
+  userProficiency: number
 ) {
   const topicsCollection = collection(db, "topics", documentId, "chapters");
   const q = query(topicsCollection, where("order", "==", order + 1));
@@ -261,7 +261,7 @@ export async function initialSurveyComplete(userId: string, quizResponse: any) {
 
 export async function demographicSurveyComplete(
   userId: string,
-  quizResponse: any,
+  quizResponse: any
 ) {
   const docId = await findUserDocId(userId);
   const userDoc = doc(db, "users", docId ? docId : "");

@@ -17,7 +17,7 @@ import CircularWithValueLabel from "~/components/ui/ProgressCircle";
 import { auth } from "../../components/firebase/config";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import queryUserDocument from "../../components/firebase/FirebaseFunctions";
-import Head from 'next/head';
+import Head from "next/head";
 
 type Topic = {
   topicId: string;
@@ -44,7 +44,7 @@ const updateChapterCompletion = (
   complete: boolean,
   setChapterCompletion: React.Dispatch<
     React.SetStateAction<Record<string, boolean>>
-  >,
+  >
 ): void => {
   setChapterCompletion((prev: Record<string, boolean>) => {
     const updated: Record<string, boolean> = { ...prev, [chapterId]: complete };
@@ -92,7 +92,7 @@ export default function TopicPage() {
         const levelRef = doc(
           db,
           `users/${userDoc?.id}/levels`,
-          topicId?.toString() ?? "",
+          topicId?.toString() ?? ""
         );
         const levelSnapshot = await getDoc(levelRef);
         if (levelSnapshot.exists()) {
@@ -105,11 +105,11 @@ export default function TopicPage() {
 
         const progressCollectionRef = collection(
           db,
-          `users/${userDoc?.id}/progress`,
+          `users/${userDoc?.id}/progress`
         );
         const progressQuery = query(
           progressCollectionRef,
-          where("topicId", "==", topicId?.toString() ?? ""),
+          where("topicId", "==", topicId?.toString() ?? "")
         );
         const progressSnapshot = await getDocs(progressQuery);
 
@@ -122,7 +122,7 @@ export default function TopicPage() {
         if (typeof window !== "undefined") {
           localStorage.setItem(
             "chapterCompletion",
-            JSON.stringify(completionStatus),
+            JSON.stringify(completionStatus)
           );
         }
       }
@@ -148,7 +148,7 @@ export default function TopicPage() {
 
           const chaptersCollectionRef = collection(
             db,
-            `topics/${topicId}/chapters`,
+            `topics/${topicId}/chapters`
           );
 
           const chaptersQuery = query(chaptersCollectionRef, orderBy("order"));
@@ -250,7 +250,7 @@ export default function TopicPage() {
                 <Link
                   key={chapter.chapterId}
                   href={`/topics/${encodeURIComponent(
-                    topic.topicId,
+                    topic.topicId
                   )}/chapters/${encodeURIComponent(chapter.chapterId)}`}
                   className="px-3 pt-3 hover:bg-slate-200"
                 >
@@ -300,7 +300,7 @@ export default function TopicPage() {
                     </p>
                   </div>
                 </div>
-              ),
+              )
             )}
           </div>
         </div>

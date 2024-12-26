@@ -23,7 +23,7 @@ const CRUDTopicsForm: React.FC = () => {
   });
 
   const handleTopicChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target;
     setNewTopic({

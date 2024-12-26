@@ -29,7 +29,7 @@ export default function ChapterPage() {
   const [progressData, setProgressData] = useState<DocumentData | null>(null);
   const [chapterComplete, setChapterComplete] = useState<boolean>(false);
   const [contentPreference, setContentPreference] = useState<string | null>(
-    null,
+    null
   );
   const [controlGroupImageIndex, setControlGroupImageIndex] =
     useState<number>();
@@ -39,12 +39,12 @@ export default function ChapterPage() {
   useEffect(() => {
     if (chapter && chapter.controlGroupImageURLs) {
       setControlGroupImageIndex(
-        Math.floor(Math.random() * chapter.controlGroupImageURLs.length),
+        Math.floor(Math.random() * chapter.controlGroupImageURLs.length)
       );
     }
     if (chapter && chapter.controlGroupImageURLs) {
       setExperimentalGroupImageIndex(
-        Math.floor(Math.random() * chapter.experimentalGroupImageURLs.length),
+        Math.floor(Math.random() * chapter.experimentalGroupImageURLs.length)
       );
     }
   }, [chapter]);
@@ -150,7 +150,7 @@ export default function ChapterPage() {
         "users",
         userDocId,
         "proficiency",
-        String(topicId),
+        String(topicId)
       );
       const proficiencySnapshot = await getDoc(userProficiencyRef);
       const proficiencyData = proficiencySnapshot.data();
@@ -184,7 +184,7 @@ export default function ChapterPage() {
 
   const handleChapterComplete = async () => {
     setChapterComplete(
-      await isChapterComplete(user?.uid ?? "", chapterId?.toString() ?? ""),
+      await isChapterComplete(user?.uid ?? "", chapterId?.toString() ?? "")
     );
   };
 

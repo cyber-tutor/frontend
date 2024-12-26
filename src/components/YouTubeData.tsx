@@ -13,7 +13,7 @@ export default async function getVideoDuration(videoUrl: string) {
           part: "contentDetails",
           key: process.env.NEXT_PUBLIC_YOUTUBE_DATA_API_KEY,
         },
-      },
+      }
     );
 
     const duration = response.data.items[0]?.contentDetails?.duration;
