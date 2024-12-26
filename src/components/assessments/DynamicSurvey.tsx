@@ -32,7 +32,7 @@ interface DynamicSurveyProps {
 const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
   const [surveyJson, setSurveyJson] = useState<Model>(new Model({}));
   const [correctAnswers, setCorrectAnswers] = useState<Record<string, string>>(
-    {}
+    {},
   );
   const [userFailed, setUserFailed] = useState<boolean>(false);
   const [quote, setQuote] = useState<string | null>(null);
@@ -61,7 +61,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
         "users",
         userDocId,
         "proficiency",
-        String(topicId)
+        String(topicId),
       );
       const proficiencyDocSnapshot = await getDoc(proficiencyDocRef);
       const proficiencyData = proficiencyDocSnapshot.data();
@@ -76,7 +76,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
       const q = query(
         collection(db, "quizQuestions"),
         where("chapterId", "==", chapterId),
-        where("difficulty", "==", proficiency)
+        where("difficulty", "==", proficiency),
       );
       const querySnapshot = await getDocs(q);
 
@@ -136,7 +136,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
         setLoading(false);
       }
     });
-  }, [chapterId, userId]);
+  }, [chapterId, userId, topicId]);
 
   // useEffect(() => {
   //   console.log("Correct Answers:", correctAnswers);
@@ -144,7 +144,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
 
   const calculateResults = (
     results: Record<string, string>,
-    correctAnswers: Record<string, string>
+    correctAnswers: Record<string, string>,
   ) => {
     let correctCount = 0;
     Object.entries(results).forEach(([key, userChoiceKey]) => {
@@ -163,7 +163,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
   const updateUserProgress = async (
     score: number,
     passed: boolean,
-    timeElapsed: number
+    timeElapsed: number,
   ) => {
     const { chapterId: String } = router.query;
 
@@ -207,7 +207,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
         await setDoc(progressDocRef, { complete: true }, { merge: true });
         await increaseLevel(
           progressData ? progressData.topicId : (topicId as string),
-          userDocId
+          userDocId,
         );
       }
     } catch (error) {
@@ -230,7 +230,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
           }) => {
             const { percentage, resultMessage } = calculateResults(
               result.data,
-              correctAnswers
+              correctAnswers,
             );
             const endTime = new Date();
             const timeElapsed =
@@ -270,7 +270,7 @@ const DynamicSurvey = ({ chapterId, userId }: DynamicSurveyProps) => {
               Try again
             </button>
             <p className="text-lg font-semibold">
-              Don't give up! You can do it!
+              Don&apos;t give up! You can do it!
             </p>
             {quote && (
               <p className="text-md mt-4 text-center italic text-gray-500">
