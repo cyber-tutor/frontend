@@ -38,7 +38,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
 
   const handleContentChange = (
     proficiency: Proficiency,
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setUpdatedContent((prevContent) => ({
       ...prevContent,
@@ -51,7 +51,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
     setSelectedChapterId(selectedChapterId);
 
     const selectedChapter = chapters.find(
-      (chapter) => chapter.chapterId === selectedChapterId,
+      (chapter) => chapter.chapterId === selectedChapterId
     );
 
     if (selectedChapter && selectedChapter.controlGroupContent) {
@@ -86,17 +86,17 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
 
   const handleImageUrlChange = (
     index: number,
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const newUrl = e.target.value;
     setUpdatedImageURLs((prevUrls) =>
-      prevUrls.map((url, i) => (i === index ? newUrl : url)),
+      prevUrls.map((url, i) => (i === index ? newUrl : url))
     );
   };
 
   const handleVideoUrlChange = (
     proficiency: Proficiency,
-    e: ChangeEvent<HTMLInputElement>,
+    e: ChangeEvent<HTMLInputElement>
   ) => {
     setUpdatedVideoURLs((prevUrls) => ({
       ...prevUrls,
@@ -109,7 +109,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
     if (!selectedChapterId) return;
     try {
       const updatedChapter = chapters.find(
-        (chapter) => chapter.chapterId === selectedChapterId,
+        (chapter) => chapter.chapterId === selectedChapterId
       );
       if (!updatedChapter) return;
       await updateDoc(
@@ -118,14 +118,14 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
           controlGroupContent: updatedContent,
           controlGroupImageURLs: updatedImageURLs,
           controlGroupVideoURLs: updatedVideoURLs,
-        },
+        }
       );
       setFeedbackMessage("Control group content updated successfully");
       console.log("Control group content updated successfully");
     } catch (error) {
       console.error("Error updating control group content:", error);
       setFeedbackMessage(
-        "An error occurred while updating the control group content. Please try again.",
+        "An error occurred while updating the control group content. Please try again."
       );
     }
   };
@@ -219,7 +219,7 @@ const ControlGroupForm: React.FC<ControlGroupFormProps> = ({ topicId }) => {
                     className="w-full resize-y rounded-md border p-2 text-sm text-gray-500"
                   />
                 </div>
-              ),
+              )
             )}
             <div className="mt-4">
               <h3 className="text-sm font-medium">Control Group Image URLs:</h3>

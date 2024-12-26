@@ -2,7 +2,7 @@ import Head from "next/head";
 import { BaseLayout } from "../components/layouts/BaseLayout";
 import { auth, db } from "../components/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import queryUserDocument, {
@@ -71,7 +71,7 @@ export default function Home() {
     } else {
       setHasReadToday(false);
     }
-  }, [uid]);
+  }, [uid, userDocument?.lastReadTime]);
 
   useEffect(() => {
     if (userDocument?.lastReadTime) {
@@ -90,13 +90,60 @@ export default function Home() {
     }
   }, [userDocument?.lastReadTime]);
 
+  const updateUserStreak = useCallback(
+    async (
+      uid: string | null,
+      lastLoginDate: { seconds: number } | undefined
+    ) => {
+      if (!uid || !userDocument) return;
+
+      const userDocRef = doc(db, "users", userDocument.id);
+      const currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0);
+
+      let newStreakCount = userDocument.streakCount || 0;
+      let shouldUpdateFirebase = false;
+
+      if (lastLoginDate) {
+        const lastLogin = new Date(lastLoginDate.seconds * 1000);
+        lastLogin.setHours(0, 0, 0, 0);
+        const diffInDays =
+          (currentDate.getTime() - lastLogin.getTime()) / (1000 * 3600 * 24);
+
+        if (diffInDays >= 1 && diffInDays < 2) {
+          newStreakCount += 1;
+          shouldUpdateFirebase = true;
+        } else if (diffInDays < 1) {
+          return;
+        } else if (diffInDays >= 2) {
+          newStreakCount = 0;
+          shouldUpdateFirebase = true;
+        }
+      } else {
+        newStreakCount = 1;
+        shouldUpdateFirebase = true;
+      }
+
+      setStreakCount(newStreakCount);
+
+      if (shouldUpdateFirebase) {
+        await updateDoc(userDocRef, {
+          lastReadTime: currentDate,
+          streakCount: newStreakCount,
+        });
+      }
+    },
+    [userDocument]
+  );
+  // Update the read streak count for the user
+
   // Check if the user has completed the initial survey, demographic survey and update the streak count. If not, redirect to the respective survey page
   useEffect(() => {
     if (userDocument) {
       const lastLoginDate = new Date(
         userDocument?.lastLoginDate?.seconds
           ? userDocument?.lastLoginDate.seconds
-          : 0 * 1000,
+          : 0 * 1000
       );
       const today = new Date();
       const hasRead = lastLoginDate.toDateString() === today.toDateString();
@@ -106,7 +153,7 @@ export default function Home() {
         updateUserStreak(userDocument.id, userDocument.lastLoginDate);
       }
     }
-  }, [userDocument]);
+  }, [userDocument, updateUserStreak]);
 
   // Fetch the number of topics completed by the user by calling the function numberOfTopicsCompleted from firebase_functions.ts
   if (uid) {
@@ -136,7 +183,7 @@ export default function Home() {
       getDocs(progressRef).then((snapshot) => {
         const totalDocuments = snapshot.size;
         const completedDocumentsCount = snapshot.docs.filter(
-          (doc) => doc.data().complete === true,
+          (doc) => doc.data().complete === true
         ).length;
         const ratio =
           totalDocuments > 0
@@ -148,50 +195,6 @@ export default function Home() {
       });
     }
   }, [userDocument]);
-
-  async function updateUserStreak(
-    uid: string | null,
-    lastLoginDate: { seconds: number } | undefined,
-  ) {
-    if (!uid || !userDocument) return;
-
-    const userDocRef = doc(db, "users", userDocument.id);
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-
-    let newStreakCount = userDocument.streakCount || 0;
-    let shouldUpdateFirebase = false;
-
-    if (lastLoginDate) {
-      const lastLogin = new Date(lastLoginDate.seconds * 1000);
-      lastLogin.setHours(0, 0, 0, 0);
-      const diffInDays =
-        (currentDate.getTime() - lastLogin.getTime()) / (1000 * 3600 * 24);
-
-      if (diffInDays >= 1 && diffInDays < 2) {
-        newStreakCount += 1;
-        shouldUpdateFirebase = true;
-      } else if (diffInDays < 1) {
-        return;
-      } else if (diffInDays >= 2) {
-        newStreakCount = 0;
-        shouldUpdateFirebase = true;
-      }
-    } else {
-      newStreakCount = 1;
-      shouldUpdateFirebase = true;
-    }
-
-    setStreakCount(newStreakCount);
-
-    if (shouldUpdateFirebase) {
-      await updateDoc(userDocRef, {
-        lastReadTime: currentDate,
-        streakCount: newStreakCount,
-      });
-    }
-  }
-  // Update the read streak count for the user
 
   async function updateReadStreak() {
     if (!uid || !userDocument) return;
@@ -323,7 +326,7 @@ export default function Home() {
                       updateReadStreak();
                       updateUserStreak(
                         userDocument?.id,
-                        userDocument?.lastReadTime,
+                        userDocument?.lastReadTime
                       );
                       router.push("/news/content");
                     }}

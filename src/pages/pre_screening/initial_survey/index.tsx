@@ -64,7 +64,7 @@ const InitialSurvey = () => {
     Serializer.addProperty("question", { name: "questionCategory:string" });
     Serializer.addProperty("question", { name: "geminiDescription:string" });
     const formatQuestionsForSurveyJS = (
-      questions: { id: string; data: Question }[],
+      questions: { id: string; data: Question }[]
     ) => {
       return {
         showProgressBar: "bottom",
@@ -147,7 +147,7 @@ const InitialSurvey = () => {
                 "initialSurveyQuestions",
                 questionId,
                 "users",
-                userId,
+                userId
               );
               setDoc(userDocRef, {
                 response: userAnswer !== undefined ? userAnswer : null,
@@ -171,7 +171,7 @@ const InitialSurvey = () => {
               };
             }, count);
           },
-          { incorrect: 0, total: 0, points: 0 },
+          { incorrect: 0, total: 0, points: 0 }
         );
 
         setTotalPoints(points);
@@ -233,11 +233,11 @@ const InitialSurvey = () => {
             if (questionData.choices) {
               const userResponseText =
                 questionData.choices.find(
-                  (choice: any) => choice.value === userResponse,
+                  (choice: any) => choice.value === userResponse
                 )?.text ?? "No response provided";
               correctAnswerText =
                 questionData.choices.find(
-                  (choice: any) => choice.value === questionData.correctAnswer,
+                  (choice: any) => choice.value === questionData.correctAnswer
                 )?.text ?? "No correct answer provided";
               responseText = userResponseText;
             } else {
@@ -258,7 +258,7 @@ const InitialSurvey = () => {
                 : "None"
             },
             Question Description: ${questionData.geminiDescription}`;
-          }),
+          })
         )
         .join("\n");
 
@@ -268,7 +268,7 @@ const InitialSurvey = () => {
 
           if (proficiencyLevels.length !== 5) {
             throw new Error(
-              "Proficiency levels must be provided for all 5 topics.",
+              "Proficiency levels must be provided for all 5 topics."
             );
           }
 
@@ -289,7 +289,7 @@ const InitialSurvey = () => {
             "two_factor_authentication",
           ];
           const userDocRef = queryUserDocument(
-            getAuth().currentUser?.uid || "",
+            getAuth().currentUser?.uid || ""
           );
 
           // console.log('Proficiency levels:', proficiencyLevels);
@@ -299,7 +299,7 @@ const InitialSurvey = () => {
               topics.forEach((topic, index) => {
                 const proficiencyRef = doc(
                   collection(doc(db, "users", docRef.id), "proficiency"),
-                  topic,
+                  topic
                 );
                 setDoc(proficiencyRef, {
                   proficiency: proficiencyLevels[index]?.trim() ?? "",
@@ -326,7 +326,7 @@ const InitialSurvey = () => {
             "two_factor_authentication",
           ];
           const userDocRef = queryUserDocument(
-            getAuth().currentUser?.uid || "",
+            getAuth().currentUser?.uid || ""
           );
 
           userDocRef.then((docRef) => {
@@ -334,7 +334,7 @@ const InitialSurvey = () => {
               topics.forEach((topic, index) => {
                 const proficiencyRef = doc(
                   collection(doc(db, "users", docRef.id), "proficiency"),
-                  topic,
+                  topic
                 );
                 setDoc(proficiencyRef, {
                   proficiency: proficiency[index]?.trim() ?? "",

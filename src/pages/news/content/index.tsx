@@ -1,10 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
-import axios from "axios";
 import { useRouter } from "next/router";
 import { auth } from "~/components/firebase/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import NewsCard from "~/components/content_management/news/NewsCard";
 import Head from "next/head";
+import fetchNews from "~/utils/fetchNews";
 
 const CyberSecurityNews = () => {
   const [user, loading, error] = useAuthState(auth);
@@ -18,12 +18,12 @@ const CyberSecurityNews = () => {
     }
   }, [user, loading, router]);
 
-  const fetchNews = useCallback(async () => {
+  const loadNews = useCallback(async () => {
     if (!user || loading) return;
 
     try {
-      const response = await axios.get("/api/news");
-      const articles = response.data.articles;
+      const data = await fetchNews();
+      const articles = data.articles;
 
       for (let i = articles.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -39,8 +39,8 @@ const CyberSecurityNews = () => {
   }, [user, loading]);
 
   useEffect(() => {
-    fetchNews();
-  }, [fetchNews]);
+    loadNews();
+  }, [loadNews]);
 
   if (loading) {
     return (

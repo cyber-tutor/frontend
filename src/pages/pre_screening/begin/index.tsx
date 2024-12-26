@@ -27,7 +27,7 @@ export default function InitialSurvey() {
         transition={{ duration: 0.5, delay: 0.5 }}
       >
         <h1 className="mb-4 text-3xl text-white">
-          Let's start by assessing how much cyber security you know
+          Let&apos;s start by assessing how much cyber security you know
         </h1>
         <motion.button
           onClick={handleRouter}

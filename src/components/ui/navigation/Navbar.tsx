@@ -39,12 +39,11 @@ export const Navbar = ({
   return screenSize !== "lg" && screenSize !== "md" && showSidebar ? (
     <NextUINavbar className="fixed left-0 top-0 w-full shadow-lg">
       <NavbarBrand className="pr-7">
-        <Image
+        <img
           src="/Cyber-Tutor_Logo.png"
           alt="Cyber Tutor Logo"
           width={40}
           height={40}
-          layout="fixed"
         />
         <Button
           disableRipple
@@ -91,6 +90,7 @@ export const Navbar = ({
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem
+                  key="profile"
                   onClick={() =>
                     router.push(`/users/profile/${userDocument.id}`)
                   }
@@ -98,13 +98,18 @@ export const Navbar = ({
                   {userDocument?.data().name}
                 </DropdownItem>
                 {isSuperuser ? (
-                  <DropdownItem onClick={() => router.push("/admin")}>
+                  <DropdownItem
+                    key="admin"
+                    onClick={() => router.push("/admin")}
+                  >
                     Admin Dashboard
                   </DropdownItem>
                 ) : (
-                  <DropdownItem className="hidden"></DropdownItem>
+                  <DropdownItem key="hidden" className="hidden"></DropdownItem>
                 )}
-                <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+                <DropdownItem key="logout" onClick={handleLogout}>
+                  Logout
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </>

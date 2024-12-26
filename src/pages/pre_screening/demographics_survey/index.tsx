@@ -77,7 +77,7 @@ export default function SurveyComponent(): JSX.Element {
           "demographicSurveyQuestions",
           questionId,
           "users",
-          user.uid,
+          user.uid
         );
         batch.set(userResponseDocRef, { answer: answerKey });
       });
@@ -94,7 +94,7 @@ export default function SurveyComponent(): JSX.Element {
           const questionDocRef = doc(
             db,
             "demographicSurveyQuestions",
-            lastQuestionId,
+            lastQuestionId
           );
           const questionDocSnapshot = await getDoc(questionDocRef);
           if (questionDocSnapshot.exists()) {
@@ -105,7 +105,7 @@ export default function SurveyComponent(): JSX.Element {
 
         const userQuery = query(
           collection(db, "users"),
-          where("userId", "==", user.uid),
+          where("userId", "==", user.uid)
         );
         const querySnapshot = await getDocs(userQuery);
         let userDocRef = null;

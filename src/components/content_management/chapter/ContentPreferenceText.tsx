@@ -65,7 +65,7 @@ const ContentPreferenceText: React.FC<ContentPreferenceTextProps> = ({
                 dangerouslySetInnerHTML={removeBreakTags(
                   chapter.controlGroupContent?.[
                     userProficiency as keyof typeof chapter.controlGroupContent
-                  ] ?? "",
+                  ] ?? ""
                 )}
               />
             ) : (
@@ -73,7 +73,7 @@ const ContentPreferenceText: React.FC<ContentPreferenceTextProps> = ({
                 dangerouslySetInnerHTML={removeBreakTags(
                   chapter.experimentalGroupContent?.[
                     userProficiency as keyof typeof chapter.experimentalGroupContent
-                  ] ?? "",
+                  ] ?? ""
                 )}
               />
             )}

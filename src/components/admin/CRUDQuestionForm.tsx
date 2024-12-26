@@ -36,15 +36,15 @@ const QuestionForm: React.FC<{
       explanation: "",
       topics: [],
       fromChapter: "",
-    },
+    }
   );
   const [errors, setErrors] = useState<Partial<Record<keyof Question, string>>>(
-    {},
+    {}
   );
 
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
@@ -76,7 +76,7 @@ const QuestionForm: React.FC<{
   };
 
   const validateQuestion = (
-    question: Question,
+    question: Question
   ): Partial<Record<keyof Question, string>> => {
     const errors: Partial<Record<keyof Question, string>> = {};
 

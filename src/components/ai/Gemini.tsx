@@ -4,7 +4,7 @@ const determineProficiency = async (responses: string): Promise<string> => {
   const genAI = new GoogleGenerativeAI(
     process.env.NEXT_PUBLIC_GOOGLE_API_KEY
       ? process.env.NEXT_PUBLIC_GOOGLE_API_KEY
-      : "",
+      : ""
   );
 
   console.log("User responses: ", responses);

@@ -38,19 +38,19 @@ export const BaseLayout = ({ children, showSidebar = true }: LayoutProps) => {
             router.push(
               data.initialSurveyComplete
                 ? "/pre_screening/demographics_survey"
-                : "/pre_screening/begin",
+                : "/pre_screening/begin"
             );
           }
         }
       });
     }
-  }, [user]);
+  }, [user, router]);
 
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
       setScreenSize(
-        width > 1200 ? "lg" : width > 992 ? "md" : width > 768 ? "sm" : "xs",
+        width > 1200 ? "lg" : width > 992 ? "md" : width > 768 ? "sm" : "xs"
       );
     };
 
