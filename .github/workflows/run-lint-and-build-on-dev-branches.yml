@@ -23,4 +23,3 @@ jobs:
 
       - name: Run Prettier and ESLint checks
         run: npm run lint:ci
-        working-directory: apps/functions
