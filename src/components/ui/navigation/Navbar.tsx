@@ -39,12 +39,11 @@ export const Navbar = ({
   return screenSize !== "lg" && screenSize !== "md" && showSidebar ? (
     <NextUINavbar className="fixed left-0 top-0 w-full shadow-lg">
       <NavbarBrand className="pr-7">
-        <Image
+        <img
           src="/Cyber-Tutor_Logo.png"
           alt="Cyber Tutor Logo"
           width={40}
           height={40}
-          layout="fixed"
         />
         <Button
           disableRipple

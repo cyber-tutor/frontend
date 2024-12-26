@@ -44,12 +44,11 @@ export const Sidebar = ({
               <Menu>
                 <div className="flex flex-col justify-center p-2 text-center">
                   <div className="flex items-center justify-center">
-                    <Image
+                    <img
                       src="/Cyber-Tutor_Logo.png"
                       alt="Cyber Tutor Logo"
                       width={40}
                       height={40}
-                      layout="fixed"
                     />
                     <span>Cyber Tutor</span>
                   </div>
