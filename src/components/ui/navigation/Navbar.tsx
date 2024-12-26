@@ -91,6 +91,7 @@ export const Navbar = ({
               </DropdownTrigger>
               <DropdownMenu>
                 <DropdownItem
+                  key="profile"
                   onClick={() =>
                     router.push(`/users/profile/${userDocument.id}`)
                   }
@@ -98,13 +99,18 @@ export const Navbar = ({
                   {userDocument?.data().name}
                 </DropdownItem>
                 {isSuperuser ? (
-                  <DropdownItem onClick={() => router.push("/admin")}>
+                  <DropdownItem
+                    key="admin"
+                    onClick={() => router.push("/admin")}
+                  >
                     Admin Dashboard
                   </DropdownItem>
                 ) : (
-                  <DropdownItem className="hidden"></DropdownItem>
+                  <DropdownItem key="hidden" className="hidden"></DropdownItem>
                 )}
-                <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+                <DropdownItem key="logout" onClick={handleLogout}>
+                  Logout
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </>
