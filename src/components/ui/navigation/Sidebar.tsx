@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Sidebar as ReactProSidebar,
   Menu,
@@ -33,7 +33,7 @@ export const Sidebar = ({
 }: SidebarProps) => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(true);
   const router = useRouter();
-  const isSuperuser = useIsSuperuser();
+  const { isSuperuser, isLoading } = useIsSuperuser();
 
   return (
     <div className="flex min-h-screen items-stretch bg-slate-50">
@@ -103,7 +103,7 @@ export const Sidebar = ({
                             {userDocument ? userDocument.data().name : ""}
                           </span>
                         </button>
-                        {isSuperuser && (
+                        {!isLoading && isSuperuser && (
                           <button
                             className="flex w-12 items-center justify-center border-l-2 bg-slate-50 py-3 text-gray-700 transition duration-200 ease-in-out hover:bg-gray-300"
                             onClick={() => router.push("/admin")}
